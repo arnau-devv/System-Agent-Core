@@ -1,0 +1,7 @@
+# --- Virtual enviroment ---
+venv/
+.venv/
+env/
+
+# Environment variable file
+.env
