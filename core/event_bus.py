@@ -1,5 +1,4 @@
 import asyncio
-
     # Central message bus for inter-module communication.
     # Modules publish events here without knowing who listens.
     # The StateManager consumes events and reacts accordingly.
