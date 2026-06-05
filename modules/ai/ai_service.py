@@ -1,4 +1,4 @@
-from modules.ai.provider_factory import create_provider
+from modules.ai.provider_factory import create_llm_provider
 from core.event_bus import EventBus
 
 # ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
@@ -13,7 +13,7 @@ from core.event_bus import EventBus
 class AiService:
     def __init__(self, event_bus: EventBus):
         self._event_bus = event_bus
-        self._provider = create_provider()
+        self._provider = create_llm_provider()
         # First system message that configures the AI behavior
         # System prompt is currently hardcoded for simplicity, but it should be moved to configuration
         # (e.g. .env, config file, or web settings) so the AI personality can be changed without modifying code.
@@ -38,7 +38,7 @@ class AiService:
         await self._event_bus.publish("THINKING", {})
         
         # API call — this is the slow part, other tasks can run while waiting
-        response = await self._provider.generate(self._chat_history)
+        response = await self._provider.generate_text(self._chat_history)
         
         self._add_message("assistant", response)
         

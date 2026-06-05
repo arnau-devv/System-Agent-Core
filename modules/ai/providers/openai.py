@@ -1,15 +1,15 @@
-from modules.ai.providers.base import BaseProvider
+from modules.ai.providers.base import BaseLLMProvider
 from openai import AsyncOpenAI
 
 # OpenAi API provider implementation.
 # Sends the full conversation history and returns the model's response as plain text.
-class OpenAiProvider(BaseProvider):
+class OpenAiProvider(BaseLLMProvider):
     def __init__(self, api_key: str, model: str):
         self._client = AsyncOpenAI(api_key=api_key)
         self._model = model
         
     # sends all chat history to AI model & returns AI response
-    async def generate(self, chat_history: list) -> str:
+    async def generate_text(self, chat_history: list) -> str:
         try: 
             completion = await self._client.chat.completions.create(
                 model = self._model,

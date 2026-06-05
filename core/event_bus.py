@@ -6,18 +6,20 @@ import asyncio
     # without changing the public interface.
 class EventBus:
     def __init__(self):
-        self._queue = asyncio.Queue()
-        
-    # Publish an event to the bus.
-    # Any module can call this without knowing who will consume it.
+        self._subscribers: dict[str, asyncio.Queue] = {}
+
+    # Register a new subscriber and return its personal queue.
+    # Each module calls this once at startup.
+    def subscribe(self, name: str) -> asyncio.Queue:
+        queue = asyncio.Queue()
+        self._subscribers[name] = queue
+        print(f"[EventBus] Subscriber registered: {name}")
+        return queue
+
+    # Publish an event to ALL subscribers simultaneously.
+    # Any module can call this without knowing who listens.
     async def publish(self, event_name: str, data: dict):
         message = {"name": event_name.upper(), "data": data}
-        await self._queue.put(message)
-        print(f"[EventBus] Send: {event_name}")
-    
-    # Wait for the next event and return it.
-    # Suspends execution (await) until a message is available,
-    # allowing other coroutines to run in the meantime.  
-    async def listen(self):
-        message = await self._queue.get()
-        return message
+        for queue in self._subscribers.values():
+            await queue.put(message)
+        print(f"[EventBus] Published: {event_name}")

@@ -5,14 +5,14 @@ class StateManager:
     system_states = ["IDLE", "LISTENING", "PROCESSING_STT", "THINKING", "AI_DONE", "SPEAKING", "SPEAKING_DONE"]
     emocional_states = ["NEUTRAL", "HAPPY", "CONFUSED", "ANGRY"]
     def __init__(self, event_bus: EventBus):
-        self._event_bus = event_bus
+        self._queue = event_bus.subscribe("state_manager")
         self.system_state = "IDLE"
         self.emocional_state = "NEUTRAL"
         
     # Recieves a Event_Bus message -> {"name": event_name, "data": data} 
     async def put_states(self):
         while True:
-            message = await self._event_bus.listen()
+            message = await self._queue.get()
             state = message["name"]
             data = message["data"]
         
