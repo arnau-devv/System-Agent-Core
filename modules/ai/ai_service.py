@@ -7,6 +7,9 @@ from modules.ai.provider_factory import create_provider
 # user          → user messages/inputs
 # assistant     → AI responses
 
+
+# Central AI module. Manages conversation history and exposes get_ai_response().
+# Agnostic to the underlying provider — switching models only requires .env changes.
 class AiService:
     def __init__(self):
         self._provider = create_provider()
@@ -27,7 +30,7 @@ class AiService:
         self._chat_history.append({"role": role, "content": content})
     
     # Call IA API to return a response    
-    async def get_ai_response(self, user_input: str):
+    async def get_ai_response(self, user_input: str) -> str:
         # Add user input to chat history
         self._add_message("user", user_input)
         # AI API uses last message from chat history to return a response

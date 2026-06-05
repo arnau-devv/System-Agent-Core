@@ -1,21 +1,21 @@
 from modules.ai.providers.base import BaseProvider
 from groq import AsyncGroq
 
+# Groq API provider implementation.
+# Sends the full conversation history and returns the model's response as plain text.
 class GroqProvider(BaseProvider):
     def __init__(self, api_key : str, model: str):
         self._client = AsyncGroq(api_key=api_key)
         self._model = model
         
     # sends all chat history to AI model & returns AI response
-    async def generate(self, chat_history):
+    async def generate(self, chat_history: list) -> str:
         try: 
-            # Call Groq API
             completion = await self._client.chat.completions.create(
                 model = self._model,
                 messages = chat_history,
-                # tempeture: Controls how random or creative the response is
-                # Low temperature → more deterministic, repetitive, and safe responses
-                # High temperature → more creativity, variation, and randomness
+                # temperature controls response creativity/randomness.
+                # 0.0 = deterministic, 1.0 = very creative. 0.7 is a balanced default.
                 temperature = 0.7,
             )
             

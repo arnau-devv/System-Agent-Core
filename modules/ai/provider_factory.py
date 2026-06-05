@@ -3,6 +3,8 @@ from modules.ai.providers.groq import GroqProvider
 from modules.ai.providers.openai import OpenAiProvider
 
 
+# Reads AI_PROVIDER from .env and returns the corresponding provider instance.
+# Adding a new provider only requires creating its class and registering it here.
 def create_provider():
     provider_name = os.getenv("AI_PROVIDER")
 
