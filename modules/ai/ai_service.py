@@ -1,48 +1,56 @@
 from modules.ai.provider_factory import create_llm_provider
 from core.event_bus import EventBus
 
-# ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
-# AI CHAT MESSAGES ROLES:
-# system        → system rules
-# user          → user messages/inputs
-# assistant     → AI responses
+# AI chat message roles:
+# system    → initial instructions that define the agent's behavior and personality
+# user      → transcribed voice input from the user (via STT)
+# assistant → AI responses, stored to maintain conversation context
 
-
-# Central AI module. Manages conversation history and exposes get_ai_response().
+# Central AI module. Manages conversation history and coordinates the AI response cycle.
 # Agnostic to the underlying provider — switching models only requires .env changes.
 class AiService:
     def __init__(self, event_bus: EventBus):
         self._event_bus = event_bus
+        self._queue = event_bus.subscribe("ai_service")
         self._provider = create_llm_provider()
-        # First system message that configures the AI behavior
-        # System prompt is currently hardcoded for simplicity, but it should be moved to configuration
-        # (e.g. .env, config file, or web settings) so the AI personality can be changed without modifying code.
+        # System prompt defines the agent's personality and language.
+        # Currently hardcoded — should be moved to .env or web config
+        # so it can be changed without touching code.
         self._chat_history = [
-            {   "role": "system",
+            {
+                "role": "system",
                 "content": (
                     "You are a helpful assistant. "
                     "You must always respond in Spanish."
                 )
             }
         ]
-        
-    # Add message to history
+
+    # Appends a message to the conversation history.
+    # Called before and after each API call to keep the full context.
     def _add_message(self, role: str, content: str):
         self._chat_history.append({"role": role, "content": content})
-    
-    # Call IA API to return a response    
-    async def get_ai_response(self, user_input: str) -> str:
-        self._add_message("user", user_input)
-        
-        # Notify system that AI is now processing — published BEFORE the API call
-        await self._event_bus.publish("THINKING", {})
-        
-        # API call — this is the slow part, other tasks can run while waiting
-        response = await self._provider.generate_text(self._chat_history)
-        
-        self._add_message("assistant", response)
-        
-        # Notify system that AI finished — published AFTER the API call
-        await self._event_bus.publish("IA_DONE", {"response": response})
 
-        return response
+    # Main service loop — listens for STT_DONE events.
+    # Sends the transcribed text to the AI provider and publishes the response.
+    # Maintains full conversation history so the AI has context across turns.
+    async def run(self):
+        while True:
+            message = await self._queue.get()
+
+            if message["name"] == "STT_DONE":
+                user_input = message["data"]["user_input"]
+                print(f"[AiService] Received: '{user_input}'")
+                self._add_message("user", user_input)
+
+                # Notify system before API call — lets animation react immediately
+                await self._event_bus.publish("THINKING", {})
+
+                # API call — awaited so other coroutines run while waiting for response
+                response = await self._provider.generate_text(self._chat_history)
+                self._add_message("assistant", response)
+
+                # Notify system after API call — triggers TTS playback
+                await self._event_bus.publish("IA_DONE", {"response": response})
+                
+
