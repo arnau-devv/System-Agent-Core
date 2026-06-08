@@ -2,7 +2,7 @@
 import asyncio
 from core.event_bus import EventBus
 class StateManager:
-    system_states = ["IDLE",  "WAKE_DETECTED", "LISTENING", "PROCESSING_STT", "THINKING", "AI_DONE", "SPEAKING", "SPEAKING_DONE"]
+    system_states = ["IDLE", "LISTENING", "PROCESSING_STT", "THINKING", "SPEAKING", "SPEAKING_DONE"]
     emocional_states = ["NEUTRAL", "HAPPY", "CONFUSED", "ANGRY"]
     def __init__(self, event_bus: EventBus):
         self._queue = event_bus.subscribe("state_manager")

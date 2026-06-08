@@ -11,7 +11,7 @@ CHUNK_SIZE = int(SAMPLE_RATE * CHUNK_DURATION)
 
 # --- Detection parameters ---
 VOICE_THRESHOLD = 300     # Minimum RMS level to consider speech detected — tune as needed
-SILENCE_DURATION = 2.0    # Seconds of silence before considering the utterance finished
+SILENCE_DURATION = 1.0    # Seconds of silence before considering the utterance finished
 VOICE_TIMEOUT = 4.0       # Maximum time to wait for speech before cancelling
 
 
