@@ -3,27 +3,30 @@ from modules.ai.providers.groq import GroqProvider
 from modules.ai.providers.openai import OpenAiProvider
 
 
-# Reads AI_PROVIDER from .env and returns the corresponding provider instance.
-# Adding a new provider only requires creating its class and registering it here.
-def create_llm_provider():
-    provider_name = os.getenv("AI_PROVIDER")
-
-    if not provider_name:
-        raise ValueError("Missing required environment variable: 'AI_PROVIDER'")
+def create_llm_providers():
+    providers = []
     
-    provider_name = provider_name.lower().strip()
-    
-    if provider_name == "groq":
-        return GroqProvider(
-            api_key = os.getenv("GROQ_API_KEY"), 
-            model = os.getenv("GROQ_AI_MODEL")
+    # Groq — primary, ultra-low latency, requires API key and internet
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if groq_api_key:
+        providers.append(
+            GroqProvider(
+                api_key = groq_api_key, 
+                model = os.getenv("GROQ_AI_MODEL")
+            )
         )
         
-    
-    elif provider_name == "openai":
-        return OpenAiProvider(
-            api_key = os.getenv("OPENAI_API_KEY"),
-            model = os.getenv("OPENAI_AI_MODEL")
+    # OpenAI — secondary/robust, high model variety, requires API key and internet
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    if openai_api_key:
+        providers.append(
+            OpenAiProvider(
+                api_key = openai_api_key,
+                model = os.getenv("OPENAI_AI_MODEL")
+            )
         )
     
-    raise ValueError(f"Unsupported LLM provider: {provider_name}")  
+    if not providers:
+            raise ValueError("No LLM providers configured in .env")
+
+    return providers

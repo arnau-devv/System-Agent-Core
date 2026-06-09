@@ -35,7 +35,7 @@ class SttService:
                 await self._event_bus.publish("STT_DONE", {"user_input": text})
 
     # Transcribes a numpy audio array to text using faster-whisper.
-    # Language is auto-detected — no forced Spanish, the system accepts any language.
+    # delete language = "" to use auto-detected language (not recomended)
     def _transcribe(self, audio: np.ndarray) -> str:
         # faster-whisper requires float32 normalized between -1.0 and 1.0
         audio_float = audio.astype(np.float32) / 32768.0

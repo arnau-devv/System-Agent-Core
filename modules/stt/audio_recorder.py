@@ -19,7 +19,6 @@ class AudioRecorder:
     # Records audio from the default microphone until speech is detected and ends.
     # Returns the recorded audio as a numpy int16 array, or None if timeout.
     async def record(self) -> np.ndarray | None:
-        loop = asyncio.get_running_loop()
         audio_chunks = []
         silence_counter = 0.0
         voice_detected = False

@@ -4,7 +4,6 @@ from elevenlabs.client import AsyncElevenLabs
 
 # Audio constants — must match the output_format requested to ElevenLabs
 SAMPLE_RATE = 16000  # Hz  (pcm_16000)
-CHANNELS = 1         # mono
 DTYPE = np.int16     # 16-bit signed PCM
 BYTES_PER_SAMPLE = 2  # int16 = 2 bytes
 

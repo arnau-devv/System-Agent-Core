@@ -1,10 +1,11 @@
 import asyncio
+
+class EventBus:
     # Central message bus for inter-module communication.
     # Modules publish events here without knowing who listens.
     # The StateManager consumes events and reacts accordingly.
     # Internally uses asyncio.Queue — designed to migrate to MQTT in the future
     # without changing the public interface.
-class EventBus:
     def __init__(self):
         self._subscribers: dict[str, asyncio.Queue] = {}
 

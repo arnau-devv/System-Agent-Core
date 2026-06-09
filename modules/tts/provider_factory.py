@@ -10,7 +10,7 @@ def create_tts_providers() -> list:
     if elevenlabs_api_key:
         providers.append( 
             ElevenLabsProvider(
-                api_key = os.getenv("ELEVENLABS_API_KEY"),
+                api_key = elevenlabs_api_key,
                 model = os.getenv("ELEVENLABS_MODEL"),
                 voice_id = os.getenv("ELEVENLABS_VOICE_ID")
             )

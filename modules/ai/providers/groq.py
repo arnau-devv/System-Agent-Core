@@ -16,7 +16,7 @@ class GroqProvider(BaseLLMProvider):
                 messages = chat_history,
                 # temperature controls response creativity/randomness.
                 # 0.0 = deterministic, 1.0 = very creative. 0.7 is a balanced default.
-                temperature = 0.3,
+                temperature = 0.5,
             )
             
             response_text = completion.choices[0].message.content.strip()
