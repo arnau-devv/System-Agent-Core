@@ -1,7 +1,15 @@
-# --- Virtual enviroment ---
+# --- Virtual Environments ---
+# Folders containing local project dependencies
 venv/
 .venv/
 env/
 
-# Environment variable file
+# --- Configuration & Secrets ---
+# Environment variable files containing sensitive keys and credentials
 .env
+
+# --- Python Compiled Files ---
+# Byte-compiled or optimized files and directories
+__pycache__/
+*.py[cod]
+*$py.class
