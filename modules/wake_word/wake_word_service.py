@@ -35,7 +35,10 @@ class WakeWordService:
             message = await self._queue.get()
             if message["name"] == "IDLE":
                 self._wake_word = False
-                self._audio_recorder.flush()
+                await asyncio.sleep(0.5)
+                
+                for provider in self._providers:
+                    provider.reset()
                 
                 print("[WakeWordService] System idle, starting microphone listener...")
                 await self._listen()

@@ -12,7 +12,11 @@ class StateManager:
         
     # Recieves a Event_Bus message -> {"name": event_name, "data": data} 
     async def run(self):
+        # Always start the system in the IDLE state to ensure a
+        # consistent initialization sequence and prevent startup
+        # state transitions from interfering with each other.
         await self._event_bus.publish("IDLE", {})
+        
         while True:
             message = await self._queue.get()
             state = message["name"]

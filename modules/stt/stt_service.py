@@ -1,3 +1,4 @@
+import asyncio
 import numpy as np
 from core.event_bus import EventBus
 from faster_whisper import WhisperModel
@@ -21,6 +22,7 @@ class SttService:
 
             if message["name"] in ["WAKE_DETECTED", "KEEP_LISTENING"]:
                 await self._event_bus.publish("LISTENING", {})
+                await asyncio.sleep(0.5)  # wait for wake word audio to fade
                 audio = await self._audio_recorder.record()
 
                 if audio is None:

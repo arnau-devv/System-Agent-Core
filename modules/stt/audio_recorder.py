@@ -20,8 +20,8 @@ class AudioRecorder:
     def __init__(self):
         self._q = queue.Queue()
         
-    def flush(self):
-        """Limpia todo el audio residual pendiente en el buffer del micrófono."""
+    # Clears any pending residual audio from the microphone buffer.
+    def _flush(self):
         while not self._q.empty():
             try:
                 self._q.get_nowait()
@@ -31,6 +31,7 @@ class AudioRecorder:
     # Records audio from the default microphone until speech is detected and ends.
     # Returns the recorded audio as a numpy int16 array, or None if timeout.
     async def record(self) -> np.ndarray | None:
+        self._flush()
         audio_chunks = []
         silence_counter = 0.0
         voice_detected = False
@@ -51,20 +52,23 @@ class AudioRecorder:
                 except queue.Empty:
                     continue
                 
-                audio_chunks.append(chunk)
                 rms = np.sqrt(np.mean(chunk.astype(np.float32) ** 2))
 
                 if not voice_detected:
                     # Waiting for voice to start
                     elapsed_waiting += CHUNK_DURATION
+                    
                     if rms > VOICE_THRESHOLD:
                         voice_detected = True
                         silence_counter = 0.0
+                    
                     elif elapsed_waiting >= VOICE_TIMEOUT:
                         # No voice detected within timeout — cancel
                         return None
                 else:
                     # Voice already detected — checking for silence
+                    audio_chunks.append(chunk)
+                    
                     if rms < VOICE_THRESHOLD:
                         silence_counter += CHUNK_DURATION
                         if silence_counter >= SILENCE_DURATION:

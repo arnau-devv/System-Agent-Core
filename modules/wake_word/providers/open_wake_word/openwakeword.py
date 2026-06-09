@@ -13,6 +13,11 @@ class OpenWakeWordProvider(BaseWakeWordProvider):
         self._model = model_instance
         self._loop_count = 0
         
+    def reset(self):
+        # Clears the model's internal prediction state to prevent false positives
+        # after reactivation with residual audio from previous session
+        self._model.reset()
+        
     async def detect_wake_word(self, chunk: np.ndarray) -> bool:
         score = await self._wake_word_score(chunk)
         
