@@ -17,9 +17,6 @@ VOICE_TIMEOUT = 4.0       # Maximum time to wait for speech before cancelling
 
 
 class AudioRecorder:
-    def __init__(self):
-        self._q = queue.Queue()
-        
     def flush(self):
         """Limpia todo el audio residual pendiente en el buffer del micrófono."""
         while not self._q.empty():
@@ -31,6 +28,7 @@ class AudioRecorder:
     # Records audio from the default microphone until speech is detected and ends.
     # Returns the recorded audio as a numpy int16 array, or None if timeout.
     async def record(self) -> np.ndarray | None:
+        q = queue.Queue()
         audio_chunks = []
         silence_counter = 0.0
         voice_detected = False
@@ -39,7 +37,7 @@ class AudioRecorder:
         def callback(indata, frames, time, status):
             # Called by sounddevice on a separate thread for each chunk
             # frames, time and status are required by sounddevice but not used here
-            self._q.put(indata.copy())
+            q.put(indata.copy())
 
         with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS,
                             dtype=DTYPE, blocksize=CHUNK_SIZE,
@@ -47,7 +45,7 @@ class AudioRecorder:
             while True:
                 await asyncio.sleep(CHUNK_DURATION)
                 try: 
-                    chunk = self._q.get_nowait()
+                    chunk = q.get_nowait()
                 except queue.Empty:
                     continue
                 

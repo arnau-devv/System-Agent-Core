@@ -12,6 +12,7 @@ class StateManager:
         
     # Recieves a Event_Bus message -> {"name": event_name, "data": data} 
     async def run(self):
+        await self._event_bus.publish("IDLE", {})
         while True:
             message = await self._queue.get()
             state = message["name"]
@@ -25,5 +26,5 @@ class StateManager:
                 print(f"[StateManager] Emotional state: {state}")
                 
             if state == "SPEAKING_DONE":
-                self.system_state = "IDLE"
-                await self._event_bus.publish("WAKE_DETECTED", {})
+                await self._event_bus.publish("KEEP_LISTENING", {})
+                

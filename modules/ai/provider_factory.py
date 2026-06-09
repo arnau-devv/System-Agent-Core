@@ -3,7 +3,7 @@ from modules.ai.providers.groq import GroqProvider
 from modules.ai.providers.openai import OpenAiProvider
 
 
-def create_llm_providers():
+def create_llm_providers() -> list:
     providers = []
     
     # Groq — primary, ultra-low latency, requires API key and internet

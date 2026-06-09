@@ -1,14 +1,14 @@
 import numpy as np
+from core.event_bus import EventBus
 from faster_whisper import WhisperModel
 from modules.stt.audio_recorder import AudioRecorder
-from core.event_bus import EventBus
 
 
 class SttService:
-    def __init__(self, event_bus: EventBus):
+    def __init__(self, event_bus: EventBus, audio_recorder: AudioRecorder):
         self._event_bus = event_bus
         self._queue = event_bus.subscribe("stt_service")
-        self._audio_recorder = AudioRecorder()
+        self._audio_recorder = audio_recorder
         # 'base' model for PC development — switch to 'tiny' on Raspberry Pi if needed
         self._model = WhisperModel("base", device="cpu")
 
@@ -19,7 +19,7 @@ class SttService:
         while True:
             message = await self._queue.get()
 
-            if message["name"] == "WAKE_DETECTED":
+            if message["name"] in ["WAKE_DETECTED", "KEEP_LISTENING"]:
                 await self._event_bus.publish("LISTENING", {})
                 audio = await self._audio_recorder.record()
 
@@ -30,6 +30,7 @@ class SttService:
 
                 await self._event_bus.publish("PROCESSING_STT", {})
                 print(f"[SttService] Audio length: {len(audio)} samples ({len(audio)/16000:.1f}s)")
+                
                 text = self._transcribe(audio)
                 print(f"[SttService] Transcribed: '{text}'")
                 await self._event_bus.publish("STT_DONE", {"user_input": text})
@@ -40,4 +41,4 @@ class SttService:
         # faster-whisper requires float32 normalized between -1.0 and 1.0
         audio_float = audio.astype(np.float32) / 32768.0
         segments, _ = self._model.transcribe(audio_float, beam_size=5, language="es")
-        return " ".join([segment.text for segment in segments])
+        return " ".join([segment.text for segment in segments]) 
