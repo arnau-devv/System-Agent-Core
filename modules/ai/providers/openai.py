@@ -22,6 +22,5 @@ class OpenAiProvider(BaseLLMProvider):
             response_text = completion.choices[0].message.content.strip()
             return response_text
         
-        # Exceptions pendent to solve
         except Exception as e:
             raise RuntimeError(f"[OpenAiProvider Error] {e}")

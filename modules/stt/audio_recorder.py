@@ -11,7 +11,7 @@ CHUNK_DURATION = 0.1      # seconds per chunk (100 ms)
 CHUNK_SIZE = int(SAMPLE_RATE * CHUNK_DURATION)
 
 # --- Detection parameters ---
-VOICE_THRESHOLD = 300     # Minimum RMS level to consider speech detected — tune as needed
+VOICE_THRESHOLD = 400     # Minimum RMS level to consider speech detected — tune as needed
 SILENCE_DURATION = 1.0    # Seconds of silence before considering the utterance finished
 VOICE_TIMEOUT = 4.0       # Maximum time to wait for speech before cancelling
 
@@ -25,7 +25,7 @@ class AudioRecorder:
         while not self._q.empty():
             try:
                 self._q.get_nowait()
-            except:
+            except queue.Empty:
                 break
             
     # Records audio from the default microphone until speech is detected and ends.
@@ -42,41 +42,45 @@ class AudioRecorder:
             # frames, time and status are required by sounddevice but not used here
             self._q.put(indata.copy())
 
-        with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS,
-                            dtype=DTYPE, blocksize=CHUNK_SIZE,
-                            callback=callback):
-            while True:
-                await asyncio.sleep(CHUNK_DURATION)
-                try: 
-                    chunk = self._q.get_nowait()
-                except queue.Empty:
-                    continue
-                
-                rms = np.sqrt(np.mean(chunk.astype(np.float32) ** 2))
+        try:
+            with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS,
+                                dtype=DTYPE, blocksize=CHUNK_SIZE,
+                                callback=callback):
+                while True:
+                    await asyncio.sleep(CHUNK_DURATION)
+                    try: 
+                        chunk = self._q.get_nowait()
+                    except queue.Empty:
+                        continue
+                    
+                    rms = np.sqrt(np.mean(chunk.astype(np.float32) ** 2))
 
-                if not voice_detected:
-                    # Waiting for voice to start
-                    elapsed_waiting += CHUNK_DURATION
-                    
-                    if rms > VOICE_THRESHOLD:
-                        voice_detected = True
-                        silence_counter = 0.0
-                    
-                    elif elapsed_waiting >= VOICE_TIMEOUT:
-                        # No voice detected within timeout — cancel
-                        return None
-                else:
-                    # Voice already detected — checking for silence
-                    audio_chunks.append(chunk)
-                    
-                    if rms < VOICE_THRESHOLD:
-                        silence_counter += CHUNK_DURATION
-                        if silence_counter >= SILENCE_DURATION:
-                            # Silence long enough — end of speech
-                            break
+                    if not voice_detected:
+                        # Waiting for voice to start
+                        elapsed_waiting += CHUNK_DURATION
+                        
+                        if rms > VOICE_THRESHOLD:
+                            voice_detected = True
+                            silence_counter = 0.0
+                        
+                        elif elapsed_waiting >= VOICE_TIMEOUT:
+                            # No voice detected within timeout — cancel
+                            return None
                     else:
-                        # Voice again — reset silence counter
-                        silence_counter = 0.0
+                        # Voice already detected — checking for silence
+                        audio_chunks.append(chunk)
+                        
+                        if rms < VOICE_THRESHOLD:
+                            silence_counter += CHUNK_DURATION
+                            if silence_counter >= SILENCE_DURATION:
+                                # Silence long enough — end of speech
+                                break
+                        else:
+                            # Voice again — reset silence counter
+                            silence_counter = 0.0
+        except Exception as e:
+            print(f"[AudioRecorder] Microphone error: {e}")
+            return None
 
         # Concatenate all chunks into a single array
         return np.concatenate(audio_chunks, axis=0).flatten()

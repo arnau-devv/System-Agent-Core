@@ -22,7 +22,7 @@ class SttService:
 
             if message["name"] in ["WAKE_DETECTED", "KEEP_LISTENING"]:
                 await self._event_bus.publish("LISTENING", {})
-                await asyncio.sleep(0.5)  # wait for wake word audio to fade
+                await asyncio.sleep(0.9)  # wait for wake word audio to fade
                 audio = await self._audio_recorder.record()
 
                 if audio is None:
@@ -34,13 +34,27 @@ class SttService:
                 print(f"[SttService] Audio length: {len(audio)} samples ({len(audio)/16000:.1f}s)")
                 
                 text = self._transcribe(audio)
-                print(f"[SttService] Transcribed: '{text}'")
-                await self._event_bus.publish("STT_DONE", {"user_input": text})
+                
+                if text is None:
+                    # Transcription failed due to an error
+                    print("[SttService] Transcription error")
+                    await self._event_bus.publish("IDLE", {})
+                elif not text.strip():
+                    # Transcription succeeded but returned empty — silence or inaudible audio
+                    print("[SttService] Empty transcription")
+                    await self._event_bus.publish("IDLE", {})
+                else:
+                    print(f"[SttService] Transcribed: '{text}'")
+                    await self._event_bus.publish("STT_DONE", {"user_input": text})
 
     # Transcribes a numpy audio array to text using faster-whisper.
-    # delete language = "" to use auto-detected language (not recomended)
-    def _transcribe(self, audio: np.ndarray) -> str:
-        # faster-whisper requires float32 normalized between -1.0 and 1.0
-        audio_float = audio.astype(np.float32) / 32768.0
-        segments, _ = self._model.transcribe(audio_float, beam_size=5, language="es")
-        return " ".join([segment.text for segment in segments]) 
+    # Remove 'language' to enable auto-detection (not recommended)
+    def _transcribe(self, audio: np.ndarray) -> str | None:
+        try: 
+            # faster-whisper requires float32 normalized between -1.0 and 1.0
+            audio_float = audio.astype(np.float32) / 32768.0
+            segments, _ = self._model.transcribe(audio_float, beam_size=5, language="es")
+            return " ".join([segment.text for segment in segments]) 
+        except Exception as e:
+            print(f"[SttService] Transcription error: {e}")
+            return None

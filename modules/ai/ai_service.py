@@ -59,6 +59,8 @@ class AiService:
         if response:
             self._add_message("assistant", response)
             await self._event_bus.publish("AI_DONE", {"response": response})
+        else:
+            await self._event_bus.publish("IDLE", {})
 
     async def _generate_response(self) -> str | None:
         # Tries each provider in order until one succeeds

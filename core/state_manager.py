@@ -10,7 +10,7 @@ class StateManager:
         self.system_state = "IDLE"
         self.emotional_state = "NEUTRAL"
         
-    # Recieves a Event_Bus message -> {"name": event_name, "data": data} 
+    # Receieves a Event_Bus message -> {"name": event_name, "data": data} 
     async def run(self):
         # Always start the system in the IDLE state to ensure a
         # consistent initialization sequence and prevent startup
@@ -20,7 +20,6 @@ class StateManager:
         while True:
             message = await self._queue.get()
             state = message["name"]
-            data = message["data"]
         
             if state in StateManager.system_states:
                 self.system_state = state

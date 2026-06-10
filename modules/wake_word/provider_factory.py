@@ -1,28 +1,39 @@
+import os
 from openwakeword.model import Model
 from openwakeword.utils import download_models
 from modules.wake_word.providers.open_wake_word.openwakeword import OpenWakeWordProvider
 
+# Wake word used for activation — must match an available model name in each provider
+WAKE_WORD = os.getenv("WAKE_WORD", "hey_jarvis")  # default to hey_jarvis if not set
+
+
 def create_wake_word_providers() -> list:
     providers = []
 
-    # --- Configuración de OpenWakeWord ---    
-    # 1. Usamos la función oficial para descargar de forma nativa TODO lo necesario.
-    # Esto descargará de golpe hey_jarvis_v0.1.onnx, melspectrogram, embeddings, etc.
-    print("[WakeWordFactory] Verificando y descargando modelos oficiales de openWakeWord...")
+    # OpenWakeWord — current provider, open source, no API key required
+    _ensure_models_downloaded()
+    # Loads the ONNX model for the given wake word.
+    # inference_framework="onnx" uses the downloaded .onnx file directly,
+    # which is faster and more compatible than the tflite alternative.
+    model = Model(wakeword_models=[WAKE_WORD], inference_framework="onnx")
+    providers.append(OpenWakeWordProvider(model_instance=model, wake_word=WAKE_WORD))
+
+    # Porcupine — future provider, better accuracy, requires API key
+    # porcupine_key = os.getenv("PORCUPINE_API_KEY")
+    # if porcupine_key:
+    #     providers.append(PorcupineProvider(api_key=porcupine_key, wake_word=WAKE_WORD))
+
+    if not providers:
+        raise ValueError("No wake word providers configured")
+
+    return providers
+
+def _ensure_models_downloaded():
+    # Downloads base models and wake word files on first run.
+    # Safe to call every startup — skips download if already cached.
+    print("[WakeWordFactory] Checking OpenWakeWord models...")
     try:
         download_models()
-        print("[WakeWordFactory] ¡Modelos base y wake words descargados con éxito!")
+        print("[WakeWordFactory] Models ready.")
     except Exception as e:
-        print(f"[WakeWordFactory] Advertencia durante la descarga automática: {e}")
-
-    # 2. Usamos el identificador limpio de Jarvis que reconoce la librería internamente
-    wake_word_key = "hey_jarvis"
-    
-    # 3. Inicializamos el modelo con ONNX Runtime (que ya está listo en tu venv)
-    # Al pasarle inference_framework="onnx", buscará la versión ONNX descargada en el paso 1.
-    onnx_model = Model(wakeword_models=[wake_word_key], inference_framework="onnx")
-    
-    # 4. Inyectamos la instancia al proveedor asíncrono
-    providers.append(OpenWakeWordProvider(model_instance=onnx_model, wake_word=wake_word_key))    
-    
-    return providers
+        print(f"[WakeWordFactory] Warning during model download: {e}")

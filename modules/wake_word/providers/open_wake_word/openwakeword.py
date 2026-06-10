@@ -3,68 +3,70 @@ import numpy as np
 from openwakeword.model import Model
 from modules.wake_word.providers.base import BaseWakeWordProvider
 
+
 class OpenWakeWordProvider(BaseWakeWordProvider):
-    # Threshold for OpenWakeWord detection (0.0 to 1.0).
-    # Higher values reduce false positives.
-    VOICE_THRESHOLD = 0.5
-    
+    # Detection confidence threshold (0.0 to 1.0).
+    # The model outputs a score per chunk — if it exceeds this value, the wake word is considered detected.
+    # Higher values = fewer false positives but may miss real activations.
+    # Lower values = more sensitive but may trigger on similar-sounding words.
+    DETECTION_THRESHOLD = 0.3
+
     def __init__(self, model_instance: Model, wake_word: str):
-        self._wake_word = wake_word
         self._model = model_instance
-        self._loop_count = 0
-        
+        # Wake word key used to look up the score in the model's prediction dictionary.
+        # The model may return keys like "hey_jarvis" or "hey_jarvis_v0.1" — we match loosely.
+        self._wake_word = wake_word
+        # Counter used to print diagnostic telemetry every N chunks without blocking detection.
+        self._chunk_count = 0
+
     def reset(self):
-        # Clears the model's internal prediction state to prevent false positives
-        # after reactivation with residual audio from previous session
+        # Clears the model's internal rolling context window.
+        # OpenWakeWord accumulates audio history to improve detection accuracy.
+        # Without resetting, residual audio from a previous session can cause
+        # a false positive on the very first chunks of a new listening session.
         self._model.reset()
-        
+        self._chunk_count = 0
+
     async def detect_wake_word(self, chunk: np.ndarray) -> bool:
-        score = await self._wake_word_score(chunk)
-        
-        if score >= OpenWakeWordProvider.VOICE_THRESHOLD:
-            print(f"\n[¡ÉXITO!] ¡Wake word detectada con puntuación: {score:.4f}!")
+        score = await self._get_score(chunk)
+        if score >= OpenWakeWordProvider.DETECTION_THRESHOLD:
+            print(f"[OpenWakeWordProvider] Wake word detected (score: {score:.4f})")
             return True
-        else:
-            return False
-        
-    async def _wake_word_score(self, chunk: np.ndarray) -> float:
+        return False
+
+    async def _get_score(self, chunk: np.ndarray) -> float:
         flat_chunk = chunk.flatten()
-        
-        # CORRECCIÓN: 'predict' devuelve directamente un diccionario con las puntuaciones.
-        # Al capturar su retorno, evitamos usar 'prediction_accumulators' y solucionamos el error.
+
+        # model.predict() is a synchronous CPU-bound call.
+        # Running it with asyncio.to_thread() moves it to a background thread,
+        # so it doesn't block the async event loop while the model processes audio.
         predictions = await asyncio.to_thread(self._model.predict, flat_chunk)
-        
-        self._loop_count += 1
-        # --- BLOQUE DE DIAGNÓSTICO (Cada ~2 segundos) ---
-        if self._loop_count % 25 == 0:
-            volumen_pico = np.max(np.abs(flat_chunk))
-            print(f"[Telemetría] Vol. Micrófono: {volumen_pico} | Evaluando: {list(predictions.keys())} | Scores: {list(predictions.values())}")
-        
-        # Buscamos el score de Jarvis de forma tolerante a nombres (ej: "hey_jarvis" o "hey_jarvis_v0.1")
+
+        self._chunk_count += 1
+        if self._chunk_count % 25 == 0:
+            # Print diagnostic info every ~2 seconds (25 chunks × 0.08s = 2s).
+            # Useful during calibration to check microphone volume and model scores.
+            peak_volume = np.max(np.abs(flat_chunk))
+            print(f"[OpenWakeWordProvider] Volume: {peak_volume} | Scores: {dict(predictions)}")
+
+        # The model returns a dict like {"hey_jarvis_v0.1": 0.03, ...}.
+        # We search loosely by wake word name to handle version suffixes in model keys.
         for key, score in predictions.items():
             if self._wake_word in key or key in self._wake_word:
                 return float(score)
-        
-        # Si la predicción tiene datos pero la clave varía, extraemos el primer valor por defecto
+
+        # If no key matched by name, fall back to the first score in the dict.
+        # This handles edge cases where the model returns an unexpected key format.
         if predictions:
             return float(next(iter(predictions.values())))
-            
+
         return 0.0
 
 
-
-
-# Problemas en Raspberry Pi / ARM64:
-# Si estás intentando instalarlo en dispositivos tipo Raspberry Pi
-# (especialmente con versiones recientes de Python o Linux), podrías
-# encontrar errores debido a la dependencia `tflite-runtime`.
+# --- Raspberry Pi / ARM64 compatibility note ---
+# openwakeword depends on tflite-runtime, which may not be available on ARM64.
+# If installation fails on Raspberry Pi, use inference_framework="onnx" (already configured)
+# and install onnxruntime instead — it works on ARM64 without issues.
 #
-# En esos casos, la comunidad suele recomendar usar un fork del proyecto
-# o instalar las dependencias manualmente, omitiendo `tflite-runtime`
-# para utilizar `onnxruntime` como backend alternativo.
-
-# Versiones alternativas:
-# Existen variantes como `openwakeword-pruned`, una versión optimizada
-# y más ligera que elimina el código relacionado con el entrenamiento
-# de modelos. Puede ser una buena opción en entornos con recursos
-# limitados o restricciones de memoria RAM.
+# Lighter alternative: openwakeword-pruned removes training-related code,
+# reducing memory usage. Worth considering for resource-constrained devices.

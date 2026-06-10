@@ -12,12 +12,8 @@ from modules.wake_word.provider_factory import create_wake_word_providers
 SAMPLE_RATE = 16000       # Hz — required by faster-whisper
 CHANNELS = 1              # mono
 DTYPE = np.int16          # standard PCM format
-CHUNK_DURATION = 0.08     # seconds per chunk (100 ms)
+CHUNK_DURATION = 0.08     # seconds per chunk (80 ms)
 CHUNK_SIZE = int(SAMPLE_RATE * CHUNK_DURATION)
-
-# --- Detection parameters ---
-SILENCE_DURATION = 1.0    # Seconds of silence before considering the utterance finished
-VOICE_TIMEOUT = 4.0       # Maximum time to wait for speech before cancelling
 
 
 class WakeWordService:
