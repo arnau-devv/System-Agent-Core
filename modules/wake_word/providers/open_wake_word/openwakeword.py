@@ -9,7 +9,7 @@ class OpenWakeWordProvider(BaseWakeWordProvider):
     # The model outputs a score per chunk — if it exceeds this value, the wake word is considered detected.
     # Higher values = fewer false positives but may miss real activations.
     # Lower values = more sensitive but may trigger on similar-sounding words.
-    DETECTION_THRESHOLD = 0.3
+    DETECTION_THRESHOLD = 0.2
 
     def __init__(self, model_instance: Model, wake_word: str):
         self._model = model_instance

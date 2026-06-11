@@ -13,3 +13,6 @@ env/
 __pycache__/
 *.py[cod]
 *$py.class
+
+
+count_code_lines.py

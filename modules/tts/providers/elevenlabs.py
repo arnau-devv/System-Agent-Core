@@ -1,6 +1,6 @@
 import numpy as np
-from modules.tts.providers.base import BaseVoiceProvider
 from elevenlabs.client import AsyncElevenLabs
+from modules.tts.providers.base import BaseVoiceProvider
 
 # Audio constants — must match the output_format requested to ElevenLabs
 SAMPLE_RATE = 16000  # Hz  (pcm_16000)

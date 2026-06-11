@@ -24,6 +24,7 @@ class TtsService:
         # Thread-safe queue to pass audio chunks from async loop to the playback thread
         self._audio_queue = queue.Queue()
         # Dedicated thread for blocking audio playback to keep the event loop responsive
+        # daemon=True ensures the thread dies automatically when the program exits.
         self._audio_thread = threading.Thread(target=self._audio_worker, daemon=True)
         self._audio_thread.start()
 
