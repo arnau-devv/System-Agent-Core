@@ -27,6 +27,17 @@ class TtsService:
         self._audio_thread = threading.Thread(target=self._audio_worker, daemon=True)
         self._audio_thread.start()
 
+    # Main service loop — listens for AI_DONE events and triggers audio playback.
+    async def run(self):
+        while True:
+            message = await self._queue.get()
+            if message["name"] == "AI_DONE":
+                text = message["data"]["response"]
+                print(f"[TtsService] Response: {text}")
+                await self._event_bus.publish("SPEAKING", {})
+                await self._play_stream(text)
+                await self._event_bus.publish("SPEAKING_DONE", {})
+                
     # Background worker that handles synchronous sounddevice operations.
     # Opens the hardware stream dynamically only when an active voice response starts,
     # and closes it immediately when the transmission finishes to release OS audio resources.
@@ -57,17 +68,6 @@ class TtsService:
                     # Write continuous blocks into the active sound hardware
                     stream.write(chunk)
                     self._audio_queue.task_done()
-
-    # Main service loop — listens for AI_DONE events and triggers audio playback.
-    async def run(self):
-        while True:
-            message = await self._queue.get()
-            if message["name"] == "AI_DONE":
-                text = message["data"]["response"]
-                print(f"[TtsService] Response: {text}")
-                await self._event_bus.publish("SPEAKING", {})
-                await self._play_stream(text)
-                await self._event_bus.publish("SPEAKING_DONE", {})
 
     # Tries each provider in order, skipping those in cooldown.
     # If a provider fails, it enters a 5 minute cooldown before being retried.
