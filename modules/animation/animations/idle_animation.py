@@ -23,7 +23,7 @@ BLINK_MIN_HEIGHT  = 10
 
 # --- Gaze movement ---
 # Time delay between gaze shifts (in seconds)
-LOOK_INTERVAL     = 7.0   
+LOOK_INTERVAL     = 15.0   
 # X-axis distance for the eye movement
 LOOK_OFFSET_X     = 45    
 # Smoothing factor for gaze movement
