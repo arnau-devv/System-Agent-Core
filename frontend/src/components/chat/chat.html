@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+  <link rel="stylesheet" href="chat_style.css">
+</head>
+
+<body>
+
+  <!-- chat panel header -->
+  <div class="chat_panel_header">
+    <button id="minimize_chat_panel_btn"></button>
+  </div>
+
+  <!-- chat panel content -->
+  <div class="chat_panel_content" id="chat_panel_content">
+
+    <!-- chat messages -->
+    <div class="chat_messages" id="chat_messages"></div>
+
+    <!-- chat input -->
+    <div class="chat_input_container">
+      <input type="text" id="chat_input" placeholder="Type a message...">
+      <button id="send_chat_btn"><img class="send_message_btn" src="../../../assets/send_message_button.png"></button>
+    </div>
+
+  </div>
+
+  <script src="chat_renderer.js"></script>
+</body>
+</html>
