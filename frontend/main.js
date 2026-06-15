@@ -6,14 +6,13 @@ let mainWindow
 let chatWindow
 
 
-/* ================================================
-   MAIN WINDOW
-   ================================================ */
-
+// ----------- MAIN WINDOW -----------
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 750,
+        minWidth: 300,
+        minHeight: 400,
         frame: false,
         webPreferences: {
             nodeIntegration: true,
@@ -26,11 +25,7 @@ function createMainWindow() {
     mainWindow.webContents.openDevTools()
 }
 
-
-/* ================================================
-   CHAT WINDOW
-   ================================================ */
-
+// ----------- CHAT WINDOW -----------
 function createChatWindow() {
     chatWindow = new BrowserWindow({
         width: 450,
@@ -54,11 +49,7 @@ function createChatWindow() {
     })
 }
 
-
-/* ================================================
-   IPC — communication between windows
-   ================================================ */
-
+// ----------- IPC — communication between windows -----------
 // Main window sends 'toggle-chat' when the navbar button is clicked
 ipcMain.on('toggle-chat', () => {
     if (chatWindow.isVisible()) {
@@ -86,12 +77,20 @@ ipcMain.on('close-chat', () => {
     chatWindow.hide()
 })
 
-
 // WebSocket Message Router
 ipcMain.on('backend-message', (event, message) => {
-    // CHAT MESSAGES
+    // Messages -> Main Window
+    handleMainMessages(message)
+    // Messages -> Chat Window
     handleChatMessages(message)
 })
+
+const mainEvents = ['LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVIDERS_DOWN',
+                    'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
+                    'WW_PROVIDER_NAMES', 'ACTIVE_WW_PROVIDER', 'ALL_WW_PROVIDERS_DOWN']
+function handleMainMessages(message) {
+    if (mainEvents.includes(message.name)) mainWindow.webContents.send('backend-message', message)
+}
 
 function handleChatMessages(message) {
     if (message.name === 'STT_DONE' || message.name === 'AI_DONE') {
@@ -101,11 +100,7 @@ function handleChatMessages(message) {
 
 
 
-
-/* ================================================
-   APP STARTUP
-   ================================================ */
-
+// ----------- APP STARTUP -----------
 app.whenReady().then(() => {
 
     // Launch the Python backend as a subprocess

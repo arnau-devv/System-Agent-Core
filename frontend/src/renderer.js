@@ -1,6 +1,6 @@
 const { ipcRenderer, ipcMain } = require('electron')
 
-// ------ WEBSOCKET CONNECTION ------
+// ------------ WEBSOCKET CONNECTION ------------
 function connectWebSocket() {
    const socket = new WebSocket('ws://localhost:8000/ws')
 
@@ -19,24 +19,124 @@ function connectWebSocket() {
 
 connectWebSocket()
 
-/* ================================================
-   DOM REFERENCES
-   ================================================ */
+//Filters messages by intern modules (titlebar, ...) to use them
+function canHandleMessage(message, module_name, module_events) {
+   if (module_name === 'titlebar' && module_events.includes(message.name)) return true
+   return false
+}
 
+// ------------ DOM REFERENCES ------------
 const openChatBtn = document.getElementById('open_chat_btn')
 const closeAppBtn = document.getElementById('close_app_btn')
 
 
-/* ================================================
-   NAVBAR — open / close chat window via IPC
-   ================================================ */
+// -----------------------------------------------------------------------------
+//                                  TITLEBAR 
+// -----------------------------------------------------------------------------
+ipcRenderer.on('backend-message', (event, message) => {
+   if (canHandleMessage(message, "titlebar", titlebarEvents)) {
+      console.log('[Titlebar]:', message.name, message.data)
+      titlebar_event_router(message)
+   }
+})
+function titlebar_event_router(message) {
+   // Connection Status
+   if (connectionEvents.includes(message.name)) handleConnections(message)
+}
 
+// ----------------------------- CONNECTION STATUS -----------------------------
+const statusDiv = document.getElementById('connection_status')
+const statusText = document.getElementById('connection_status_text')
+
+const connectedLlmP = document.getElementById('tooltip_llm_container')
+const connectedTtsP = document.getElementById('tooltip_tts_container')
+const connectedWwP = document.getElementById('tooltip_ww_container')
+const connectedLlmSpan = document.getElementById('tooltip_llm')
+const connectedTtsSpan = document.getElementById('tooltip_tts')
+const connectedWwSpan = document.getElementById('tooltip_ww')
+
+const titlebarEvents = ['LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVIDERS_DOWN',
+                        'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
+                        'WW_PROVIDER_NAMES', 'ACTIVE_WW_PROVIDER', 'ALL_WW_PROVIDERS_DOWN']
+
+
+const connectionEvents = ['LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVIDERS_DOWN',
+                           'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
+                           'WW_PROVIDER_NAMES', 'ACTIVE_WW_PROVIDER', 'ALL_WW_PROVIDERS_DOWN']
+
+let providers = [null, null, null] // possible api_provers positions [0: llm, 1: tts, 2: wake word]
+let initializedProviders = new Set() // tracks which providers have connected at least once.
+function handleConnections(message) {
+   //LLM Providers
+   if (message.name === 'ALL_LLM_PROVIDERS_DOWN') {
+      providers[0] = null
+      connectedLlmSpan.textContent = "not connected"
+   }
+   else if (message.name === 'ACTIVE_LLM_PROVIDER') { 
+      providers[0] = message.data; initializedProviders.add(0) 
+      connectedLlmSpan.textContent = providers[0]
+      connectedLlmP.classList.remove('connecting')
+   }
+   //TTS Providers
+   if (message.name === 'ALL_TTS_PROVIDERS_DOWN') {
+      providers[1] = null
+      connectedTtsSpan.textContent = "not connected"
+   }
+   else if (message.name === 'ACTIVE_TTS_PROVIDER') { 
+      providers[1] = message.data; initializedProviders.add(1) 
+      connectedTtsSpan.textContent = providers[1]
+      connectedTtsP.classList.remove('connecting')
+   }
+   //WW   
+   if (message.name === 'ACTIVE_WW_PROVIDER') {
+      providers[2] = message.data
+      connectedWwSpan.textContent = providers[2]
+      connectedWwP.classList.remove('connecting')
+   }
+
+   // Only update status if LLM and TTS have connected at least once.
+   if (initializedProviders.has(0) && initializedProviders.has(1)) {
+      updateConnectionStatus()
+   }
+}
+function updateConnectionStatus() {
+   statusDiv.classList.remove('connecting')
+   
+   let allConnected = providers.slice(0, 2).every(p => p !== null)
+   if (allConnected) {
+         statusDiv.classList.remove('disconnected')
+         statusText.textContent = 'connected'
+      } else {
+         statusDiv.classList.add('disconnected')
+         statusText.textContent = 'disconnected'
+      }
+}
+//-- Hover behavior
+const connectionStatus = document.getElementById('connection_status')
+const tooltip = connectionStatus.querySelector('.conection_status_tooltip')
+
+connectionStatus.addEventListener('mouseenter', () => {
+   tooltip.style.opacity = '1'
+   tooltip.style.visibility = 'visible'
+})
+
+connectionStatus.addEventListener('mouseleave', (e) => {
+   if (tooltip.contains(e.relatedTarget)) return
+   tooltip.style.opacity = '0'
+   tooltip.style.visibility = 'hidden'
+})
+
+tooltip.addEventListener('mouseenter', () => {
+   tooltip.style.opacity = '0'
+   tooltip.style.visibility = 'hidden'
+})
+// --
+
+// ---------------- NAVBAR ----------------
+// open / close chat window
 closeAppBtn.addEventListener('click', () => {
    ipcRenderer.send('close-app')
 })
-
-
-// Tell the main process to toggle the chat window
 openChatBtn.addEventListener('click', () => {
    ipcRenderer.send('toggle-chat')
 })

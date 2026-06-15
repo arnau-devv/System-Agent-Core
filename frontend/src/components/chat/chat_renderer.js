@@ -10,7 +10,7 @@ const TRACKED_NAMES = ['STT_DONE', 'AI_DONE']
 const messageStore = []
 
 ipcRenderer.on('backend-message', (event, message) => {
-    console.log('RAW:', message.name, message.data)
+    console.log('[ChatRenderer]:', message.name, message.data)
     handleMessage(message)
 })
 
@@ -31,18 +31,19 @@ function handleMessage(message) {
    CHAT RENDERING
    Appends only the latest message to the DOM.
    ================================================ */
-
+let messageSource = ""
 function renderMessages() {
     const entry = messageStore[messageStore.length - 1]
+    if (entry.name == 'AI_DONE') messageSource = "agent"
+    else messageSource = "user"
 
     const div = document.createElement('div')
     div.classList.add('chat_message')
 
     div.innerHTML = `
-        <h3>${entry.name}</h3>
+        <h3>${messageSource}</h3>
         <p>${entry.text}</p>
     `
-
     // Start invisible and shifted down
     div.style.opacity = '0'
     div.style.transform = 'translateY(10px)'
