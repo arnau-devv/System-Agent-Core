@@ -5,8 +5,8 @@ from openai import AsyncOpenAI
 # Sends the full conversation history and returns the model's response as plain text.
 class OpenAiProvider(BaseLLMProvider):
     def __init__(self, api_key: str, model: str):
-        self._client = AsyncOpenAI(api_key=api_key)
-        self._model = model
+        super().__init__(model, "openai")
+        self._client = AsyncOpenAI(api_key = api_key)
         
     # sends all chat history to AI model & returns AI response
     async def generate_text(self, chat_history: list) -> str:

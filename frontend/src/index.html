@@ -7,34 +7,48 @@
 
 <body>
 
+  <!-- TITLEBAR -->
   <div class="titlebar">
+    <!-- Titlebar content -->
     <div class="titlebar_content">
+      <!-- connection status -->
       <div class="conection_status connecting" id="connection_status">
         <p id="connection_status_text">connecting...</p>
-
         <div class="conection_status_tooltip">
           <p id="tooltip_llm_container" class="connecting">llm: <span id="tooltip_llm">not connected</span></p>
           <p id="tooltip_tts_container" class="connecting">tts: <span id="tooltip_tts">not connected</span></p>
           <p id="tooltip_ww_container" class="connecting">ww: <span id="tooltip_ww">not connected</span></p>
         </div>
-
       </div>
+      <!-- basic Tools -->
+      <div class="basic_tools">
+        <button id="tools_toggle"><img src="../assets/arrow.png" id="tools_arrow"></button>
+        <button id="settings_panel"><img src="../assets/settings.png"></button>
+        <button id="customization_panel"><img src="../assets/personalize.png"></button>
+      </div>
+      
     </div>
+    <!-- close app -->
     <button id="close_app_btn"></button>
   </div>
 
-  <!-- principal interface -->
+  <!-- PRINCIPAL INTERFACE -->
   <div class="principal_content">
     <h1></h1>
   </div>
 
-  <!-- navbar -->
+  <!-- NAVBAR -->
   <div class="navbar" id="navbar">
-    <button id="open_chat_btn" class="open_chat_btn"><img class="open_chat_icon" src="../assets/open_chat.png"></button>
+    <button id="btn1"></button>
     <button id="btn2"></button>
     <button id="btn3"></button>
+    <button id="open_chat_btn" class="open_chat_btn"><img class="open_chat_icon" src="../assets/open_chat.png"></button>
+    <button id="btn4"></button>
+    <button id="btn5"></button>
+    <button id="btn6"></button>
   </div>
 
   <script src="renderer.js"></script>
+  <script src="grainy_bg.js"></script>
 </body>
 </html>

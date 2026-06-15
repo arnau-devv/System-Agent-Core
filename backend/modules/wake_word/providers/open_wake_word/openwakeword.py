@@ -13,6 +13,7 @@ class OpenWakeWordProvider(BaseWakeWordProvider):
 
     def __init__(self, model_instance: Model, wake_word: str):
         self._model = model_instance
+        self._name = "open-wake-word"
         # Wake word key used to look up the score in the model's prediction dictionary.
         # The model may return keys like "hey_jarvis" or "hey_jarvis_v0.1" — we match loosely.
         self._wake_word = wake_word

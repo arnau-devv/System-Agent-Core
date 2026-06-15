@@ -4,3 +4,5 @@ class BaseWakeWordProvider:
 # Detection logic is handled here, but acting on it is handled by WakeWordService.
     async def listen(self):
         raise NotImplementedError("Wake word provider must implement listen()")
+    
+    def get_name(self): return self._name

@@ -1,5 +1,7 @@
+import json
 import queue
 import asyncio
+import ws_server
 import threading
 import numpy as np
 import sounddevice as sd
@@ -19,7 +21,7 @@ class TtsService:
         self._event_bus = event_bus
         self._queue = event_bus.subscribe("tts_service")
         self._providers = create_tts_providers()
-        # Tracks when each provider is available again after a failure
+        self._provider_names = [p.get_name() for p in self._providers]
         self._provider_cooldowns = {}
         # Thread-safe queue to pass audio chunks from async loop to the playback thread
         self._audio_queue = queue.Queue()
@@ -30,6 +32,8 @@ class TtsService:
 
     # Main service loop — listens for AI_DONE events and triggers audio playback.
     async def run(self):
+        # WebSocket -> Sends all TTS provider names to the frontend
+        await self._ws_send("TTS_PROVIDER_NAMES", self._provider_names)
         while True:
             message = await self._queue.get()
             if message["name"] == "AI_DONE":
@@ -84,6 +88,8 @@ class TtsService:
                 self._provider_cooldowns[provider] = datetime.now() + timedelta(minutes=5)
                 print(f"[TtsService] Provider failed, cooldown 5min: {e}")
                 continue
+        # WebSocket -> Sends all providers failed log
+        await self._ws_send("ALL_TTS_PROVIDERS_DOWN", "")
         print("[TtsService] All providers failed — skipping audio")
 
     # Streams chunks as they arrive from the provider and offloads them to the playback thread.
@@ -101,7 +107,13 @@ class TtsService:
         self._audio_queue.put(np.zeros(int(SAMPLE_RATE * 0.3), dtype=DTYPE))
         
         # Non-blocking collection of incoming generator audio chunks
+        first = True
         async for chunk in provider.generate_voice(text):
+            if first:
+                # WebSocket -> Sends active TTS provider
+                await self._ws_send("ACTIVE_TTS_PROVIDER", provider.get_name())
+                first = False
+                
             self._audio_queue.put(chunk)
             # Yield control explicitly allowing other async background tasks to execute
             await asyncio.sleep(0)
@@ -112,3 +124,8 @@ class TtsService:
         # Block the execution flow here until the background worker finishes flushing the queue
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, self._audio_queue.join)
+        
+    async def _ws_send(self, name: str, data: str | list):
+        if ws_server.connected_socket:
+            try: await ws_server.connected_socket.send_text(json.dumps({"name": name, "data": data}))
+            except Exception: pass

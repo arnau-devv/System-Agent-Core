@@ -12,6 +12,7 @@ class ElevenLabsProvider(BaseVoiceProvider):
         self._client = AsyncElevenLabs(api_key=api_key)
         self._model = model
         self._voice_id = voice_id
+        self._name = "elevenlabs"
 
     # Yields PCM audio chunks as they arrive from ElevenLabs.
     # Does NOT reproduce — that's TtsService's responsibility.

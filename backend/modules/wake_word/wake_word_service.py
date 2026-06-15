@@ -1,5 +1,7 @@
+import json
 import queue
 import asyncio
+import ws_server
 import numpy as np
 import sounddevice as sd
 from core.event_bus import EventBus
@@ -19,14 +21,17 @@ CHUNK_SIZE = int(SAMPLE_RATE * CHUNK_DURATION)
 class WakeWordService:
     def __init__(self, event_bus: EventBus, audio_recorder: AudioRecorder):
         self._providers = create_wake_word_providers()
+        self._provider_names = [p.get_name() for p in self._providers]
         self._audio_recorder = audio_recorder
         self._event_bus = event_bus
         self._wake_word = False
         self._queue = event_bus.subscribe("wake_word_service")
         self._provider_cooldowns = {}
         
-        
+    # Main service loop — listens for IDLE to continuous recording until wake word is detected
     async def run(self):
+        # WebSocket -> Sends all WW provider names to the frontend
+        await self._ws_send("WW_PROVIDER_NAMES", self._provider_names)
         while True:
             message = await self._queue.get()
             if message["name"] == "IDLE":
@@ -75,11 +80,17 @@ class WakeWordService:
                 wake_word = await provider.detect_wake_word(chunk)
                 if wake_word:
                     self._wake_word = True
+                    # WebSocket -> Sends active WW provider
+                    await self._ws_send("ACTIVE_WW_PROVIDER", provider.get_name())
                     return # Stop checking other providers if one already matched
             except RuntimeError as e:
                 # Any failure — cooldown 5 minutes before retrying
                 self._provider_cooldowns[provider] = datetime.now() + timedelta(minutes=5)
                 print(f"[WakeWordService] Provider failed, cooldown 5min: {e}")
-        # print("[WakeWordService] All providers failed")
+        
+    async def _ws_send(self, name: str, data: str | list):
+        if ws_server.connected_socket:
+            try: await ws_server.connected_socket.send_text(json.dumps({"name": name, "data": data}))
+            except Exception: pass
         
         

@@ -5,3 +5,6 @@ class BaseVoiceProvider:
     async def generate_voice(self, text: str):
         raise NotImplementedError("Voice provider must implement generate_voice()")
         yield  # makes Python treat this as an async generator
+    
+    def get_name(self): return self._name
+    

@@ -22,7 +22,7 @@ function createMainWindow() {
 
     Menu.setApplicationMenu(null)
     mainWindow.loadFile('src/index.html')
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 }
 
 // ----------- CHAT WINDOW -----------

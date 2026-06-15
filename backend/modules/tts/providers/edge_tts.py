@@ -16,6 +16,7 @@ DTYPE = np.int16     # 16-bit signed PCM — standard format for sounddevice
 class EdgeTTSProvider(BaseVoiceProvider):
     def __init__(self, voice_id: str):
         self._voice_id = voice_id
+        self._name = "edge-tts"
 
     # Generates PCM audio from text using Edge TTS.
     # Collects all MP3 chunks, decodes to PCM and normalizes format for sounddevice.

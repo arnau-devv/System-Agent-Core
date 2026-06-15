@@ -1,3 +1,5 @@
+import json
+import ws_server
 from core.event_bus import EventBus
 from datetime import datetime, timedelta
 from modules.ai.provider_factory import create_llm_providers
@@ -14,7 +16,7 @@ class AiService:
         self._event_bus = event_bus
         self._queue = event_bus.subscribe("ai_service")
         self._providers = create_llm_providers()
-        # Tracks when each provider is available again after a failure
+        self._provider_names = [p.get_name() for p in self._providers]
         self._provider_cooldowns = {}
         # System prompt defines the agent's personality and language.
         # Currently hardcoded — should be moved to .env or web config
@@ -42,7 +44,8 @@ class AiService:
         self._chat_history.append({"role": role, "content": content})
         
     async def run(self):
-        # Listens for STT_DONE events and triggers the response cycle
+        # WebSocket -> Sends all LLM provider names to the frontend
+        await self._ws_send("LLM_PROVIDER_NAMES", self._provider_names)
         while True:
             message = await self._queue.get()
             if message["name"] == "STT_DONE":
@@ -64,13 +67,25 @@ class AiService:
     async def _generate_response(self) -> str | None:
         # Tries each provider in order until one succeeds
         for provider in self._providers:
+            # WebSocket -> Sends active LLM provider
             if datetime.now() < self._provider_cooldowns.get(provider, datetime.min):
                 continue
             try:
-                return await provider.generate_text(self._chat_history)
+                response = await provider.generate_text(self._chat_history)
+                # publish via websocket -> active provider
+                await self._ws_send("ACTIVE_LLM_PROVIDER", provider.get_name())
+                return response
             except RuntimeError as e:
                 # Any failure — cooldown 5 minutes before retrying
                 self._provider_cooldowns[provider] = datetime.now() + timedelta(minutes=5)
                 print(f"[AiService] Provider failed, cooldown 5min: {e}")
+        # publish via websocket -> all providers failed
+        await self._ws_send("ALL_LLM_PROVIDERS_DOWN", "")
         print("[AiService] All providers failed")
+        
         return None
+    
+    async def _ws_send(self, name: str, data: str | list):
+        if ws_server.connected_socket:
+            try: await ws_server.connected_socket.send_text(json.dumps({"name": name, "data": data}))
+            except Exception: pass
