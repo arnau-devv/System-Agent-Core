@@ -4,13 +4,14 @@ const { spawn } = require('child_process')
 let pythonProcess
 let mainWindow
 let chatWindow
-
+let settingsWindow
 
 // ----------- MAIN WINDOW -----------
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 750,
+        backgroundColor: "#000000",
         minWidth: 300,
         minHeight: 400,
         frame: false,
@@ -22,7 +23,7 @@ function createMainWindow() {
 
     Menu.setApplicationMenu(null)
     mainWindow.loadFile('src/index.html')
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 }
 
 // ----------- CHAT WINDOW -----------
@@ -30,6 +31,7 @@ function createChatWindow() {
     chatWindow = new BrowserWindow({
         width: 450,
         height: 600,
+        backgroundColor: "#000000",
         minWidth: 300,
         minHeight: 400,
         frame: false,
@@ -41,7 +43,6 @@ function createChatWindow() {
     })
 
     chatWindow.loadFile('src/components/chat/chat.html')
-
     // When the user closes the chat window, just hide it instead of destroying it
     chatWindow.on('close', (event) => {
         event.preventDefault()
@@ -49,8 +50,32 @@ function createChatWindow() {
     })
 }
 
+// ----------- SETTINGS WINDOW -----------
+function createSettingsWindow() {
+    settingsWindow = new BrowserWindow({
+        width: 840,
+        height: 525,
+        minWidth: 300,
+        minHeight: 400,
+        backgroundColor: "#000000",
+        frame: false,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    })
+
+    settingsWindow.loadFile('src/components/settings/settings.html')
+    // When the user closes the chat window, just hide it instead of destroying it
+    settingsWindow.on('close', (event) => {
+        event.preventDefault()
+        settingsWindow.hide()
+    })
+}
+
 // ----------- IPC — communication between windows -----------
-// Main window sends 'toggle-chat' when the navbar button is clicked
+// ------- TOGGLE WINDOWS LOGIC ---------
 ipcMain.on('toggle-chat', () => {
     if (chatWindow.isVisible()) {
         chatWindow.hide()
@@ -59,7 +84,16 @@ ipcMain.on('toggle-chat', () => {
         chatWindow.focus()
     }
 })
+ipcMain.on('toggle-settings', () => {
+    if (settingsWindow.isVisible()) {
+        settingsWindow.hide()
+    } else {
+        settingsWindow.show()
+        settingsWindow.focus()
+    }
+})
 
+// ------- CLOSE WINDOWS LOGIC ---------
 // Kill the Python process when all windows are closed
 ipcMain.on('close-app', () => {
     if (pythonProcess) {
@@ -72,10 +106,9 @@ ipcMain.on('close-app', () => {
     app.quit()
 })
 
-// Chat window sends 'close-chat' when the header button is clicked
-ipcMain.on('close-chat', () => {
-    chatWindow.hide()
-})
+ipcMain.on('close-chat', () => { chatWindow.hide() })
+ipcMain.on('close-settings', () => { settingsWindow.hide() })
+
 
 // WebSocket Message Router
 ipcMain.on('backend-message', (event, message) => {
@@ -87,7 +120,9 @@ ipcMain.on('backend-message', (event, message) => {
 
 const mainEvents = ['LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVIDERS_DOWN',
                     'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
-                    'WW_PROVIDER_NAMES', 'ACTIVE_WW_PROVIDER', 'ALL_WW_PROVIDERS_DOWN']
+                    'WW_PROVIDER_NAMES', 'ACTIVE_WW_PROVIDER', 'ALL_WW_PROVIDERS_DOWN',
+                    'WAKE_DETECTED', 'IDLE'
+                ]
 function handleMainMessages(message) {
     if (mainEvents.includes(message.name)) mainWindow.webContents.send('backend-message', message)
 }
@@ -110,4 +145,5 @@ app.whenReady().then(() => {
 
     createMainWindow()
     createChatWindow()
+    createSettingsWindow()
 })

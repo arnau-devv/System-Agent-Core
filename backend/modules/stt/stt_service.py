@@ -10,10 +10,9 @@ class SttService:
         self._event_bus = event_bus
         self._queue = event_bus.subscribe("stt_service")
         self._audio_recorder = audio_recorder
-        # 'base' model for PC — switch to 'tiny' on Raspberry Pi if performance drops.
         # compute_type="int8" forces integer quantization: optimal for CPU (ARM/x86) registers,
         # halving RAM (~150MB) and doubling speed, whereas int16 / float16 would degrade CPU performance
-        self._model = WhisperModel("base", device="cpu", compute_type="int8")
+        self._model = WhisperModel("small", device="cpu", compute_type="int8")
 
     # Main service loop — listens for WAKE_DETECTED events.
     # Records audio via AudioRecorder, transcribes it and publishes STT_DONE with the text.

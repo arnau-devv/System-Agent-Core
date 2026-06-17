@@ -153,7 +153,9 @@ body {
     border-radius: 10px;
 
     max-width: 37px;
+    margin-top: 3px;
     padding-left: 10px;
+    -webkit-app-region: no-drag;
     padding-bottom: 3px;
     box-sizing: border-box;
     overflow: hidden;
@@ -164,6 +166,8 @@ body {
 
 #tools_arrow {
     margin-right: 10px;
+    width: 60%;
+    height: 60%;
     transform: rotate(90deg);
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) opacity 0.2s ease;
 }
@@ -171,7 +175,6 @@ body {
     transform: rotate(0deg);
     opacity: 0.3;
 }
-
 .basic_tools > button {
     flex-shrink: 0;
     height: 24px;
@@ -184,22 +187,21 @@ body {
 }
 
 .basic_tools > button img {
-    width: 60%;
-    height: 60%;
+    width: 80%;
+    height: 80%;
     margin-top: 5px;
     opacity: 0.8;
     object-fit: contain;
-    filter: brightness(0.7);
     transition: transform 0.2s ease-in;
 }
 
 #settings_panel { transition: transform 0.2s ease-in; }
 #settings_panel:hover { transform: rotate(90deg); }
-#settings_panel:active { transform: scale(0.85) rotate(30deg); }
+#settings_panel:active { transform: scale(0.99) rotate(30deg); }
 
 #customization_panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 #customization_panel:hover { transform: translateX(3px) rotate(15deg); }
-#customization_panel:active { transform: translateX(5px) translateY(2px) rotate(-1deg); }
+#customization_panel:active { transform: translateX(0px) translateY(-2px) rotate(-1deg); }
 
 
 
@@ -230,11 +232,31 @@ body {
 
 
 
-/* ================= PRINCIPAL CONTENT ================= */
+/* ----------------------------------------------------------------
+                        PRINCIPAL CONTENT
+-------------------------------------------------------------------*/
 .principal_content {
     flex: 1;
     box-sizing: border-box;
     background-color: transparent;
+}
+
+/* ================= SPHERE CONTAINER ================= */
+.principal_content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sphere_container {
+    width: 300px;
+    height: 300px;
+}
+
+#sphere_container canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* ================= NAVBAR ================= */
@@ -257,7 +279,7 @@ body {
 }
 
 /* -- Navbar buttons -- */
-.navbar button {
+.navbar > button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -272,17 +294,63 @@ body {
     transition: background-color 0.3s ease-in-out, transform 0.15s ease;
 }
 
-.navbar button:hover {
+.navbar > button:hover {
     background: rgba(255, 255, 255, 0.03);
     box-shadow: inset 0 1px 0 0.5px rgba(255, 255, 255, 0.04);
 }
-.navbar button:active img {transform: scale(0.85);}
+.navbar > button:active img {transform: scale(0.85);}
 
 /* -- Navbar icons -- */
-.navbar button img {
+.navbar > button img {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
     transition: transform 0.1s ease;
 }
+
+@media (max-width: 400px) {
+    .navbar {
+        width: 90%; 
+        max-width: none;
+        height: auto; 
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(40px, max-content));
+        justify-content: center;
+        justify-items: center;
+        align-content: center;
+        padding: 10px; 
+    }
+
+    .basic_tools {
+        flex-direction: column;
+        margin-top: 5px;
+        min-height: 25px; 
+        width: 37px;
+        max-width: 37px; 
+        max-height: 35px; 
+        box-sizing: border-box;
+        overflow: hidden;
+        transition: min-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        align-self: flex-start; 
+    }
+
+    .basic_tools:hover {min-height: 110px; }
+
+    #tools_arrow {
+        margin-right: 0;   
+        margin-bottom: 5px; 
+        transform: rotate(0deg); 
+        flex-shrink: 0;
+    }
+    
+    .basic_tools:hover #tools_arrow {
+        transform: rotate(90deg);
+        opacity: 0.3;
+    }
+}
+
+
+
+
+
 

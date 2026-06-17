@@ -22,6 +22,7 @@ connectWebSocket()
 //Filters messages by intern modules (titlebar, ...) to use them
 function canHandleMessage(message, module_name, module_events) {
    if (module_name === 'titlebar' && module_events.includes(message.name)) return true
+   if (module_name === 'sphere' && sphereEvents.includes(message.name)) return true
    return false
 }
 
@@ -132,6 +133,27 @@ tooltip.addEventListener('mouseenter', () => {
 })
 // --
 
+// ----------------------------- TOOLS -----------------------------
+const settingsButton = document.getElementById('settings_panel')
+settingsButton.addEventListener('click', () => { ipcRenderer.send('toggle-settings')})
+
+
+
+
+// -----------------------------------------------------------------------------
+//                                  SPHERE 
+// -----------------------------------------------------------------------------
+const sphereEvents = ['WAKE_DETECTED', 'IDLE']
+ipcRenderer.on('backend-message', (event, message) => {
+   if (canHandleMessage(message, "sphere", sphereEvents)) {
+      console.log('[Sphere]:', message.name, message.data)
+      if (message.name === 'WAKE_DETECTED') setTimeout(() => window.sphereSetState(message.name), 500)
+      else if (message.name === 'IDLE') window.sphereSetState(message.name)
+   }
+})
+
+
+
 // ---------------- NAVBAR ----------------
 // open / close chat window
 closeAppBtn.addEventListener('click', () => {
@@ -140,3 +162,5 @@ closeAppBtn.addEventListener('click', () => {
 openChatBtn.addEventListener('click', () => {
    ipcRenderer.send('toggle-chat')
 })
+
+

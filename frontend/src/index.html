@@ -7,7 +7,7 @@
 
 <body>
 
-  <!-- TITLEBAR -->
+  <!-------- TITLEBAR -------->
   <div class="titlebar">
     <!-- Titlebar content -->
     <div class="titlebar_content">
@@ -23,8 +23,8 @@
       <!-- basic Tools -->
       <div class="basic_tools">
         <button id="tools_toggle"><img src="../assets/arrow.png" id="tools_arrow"></button>
-        <button id="settings_panel"><img src="../assets/settings.png"></button>
-        <button id="customization_panel"><img src="../assets/personalize.png"></button>
+        <button id="settings_panel"><img src="../assets/settings2.webp"></button>
+        <button id="customization_panel"><img src="../assets/brush.png"></button>
       </div>
       
     </div>
@@ -32,9 +32,9 @@
     <button id="close_app_btn"></button>
   </div>
 
-  <!-- PRINCIPAL INTERFACE -->
+  <!--------  PRINCIPAL INTERFACE --------->
   <div class="principal_content">
-    <h1></h1>
+    <div id="sphere_container"></div>
   </div>
 
   <!-- NAVBAR -->
@@ -49,6 +49,8 @@
   </div>
 
   <script src="renderer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="sphere.js"></script>
   <script src="grainy_bg.js"></script>
 </body>
 </html>

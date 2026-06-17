@@ -1,0 +1,327 @@
+/* ================================================================
+                        GLOBAL RESET
+================================================================ */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: white;
+    letter-spacing: 0.5px;
+    /* background: radial-gradient(ellipse 50% 55% at 0% 10%, rgb(35, 35, 35) 0%, rgb(20, 20, 20) 100%); */
+    background: rgb(15, 15, 15);
+}
+
+.bg_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    /* background-color: rgba(15, 15, 30, 0.9); */
+}
+
+/* ================================================================
+                        TITLEBAR
+================================================================ */
+#draggable_header {
+    height: 15px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    -webkit-app-region: drag;
+}
+
+/* ----------- Close button ----------- */
+.close_settings_panel_btn_container {
+    z-index: 10;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgb(15, 15, 15);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.close_settings_panel_btn_container:hover #close_settings_panel_btn {
+    background-color: rgba(255, 107, 107, 0.555);
+}
+.close_settings_panel_btn_container:active #close_settings_panel_btn {
+    background-color: rgba(255, 50, 50, 0.664);
+    transform: scale(0.9);
+}
+#close_settings_panel_btn {
+    width: 10px;
+    height: 10px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* ================================================================
+                        SIDEBAR
+================================================================ */
+.settings_panel_header {
+    height: 100%;
+    min-width: 0;
+    width: 200px;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
+
+.settings_panel_options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    margin-left: 15px;
+    margin-top: 50px;
+    gap: 5px;
+}
+
+.settings_panel_options > button {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    width: 100%;
+    gap: 10px;
+    padding-left: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: gray;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.settings_panel_options > button > img {
+    height: 70%;
+    aspect-ratio: 1 / 1;
+}
+.settings_panel_options > button:hover  { background-color: rgba(54, 54, 54, 0.5); }
+.settings_panel_options > button:active { transform: scale(0.95); }
+.settings_panel_options > button.active {
+    background-color: rgba(54, 54, 54, 0.5);
+    color: white;
+    font-weight: 300;
+}
+
+/* ================================================================
+                        CONTENT AREA
+    La cadena de altura: body(100vh) > bg_container(100%) >
+    content_inner_container(100%) > settings_panel_content(100%)
+    Todos necesitan altura definida y overflow:hidden excepto el view.
+================================================================ */
+.settings_panel_content_inner_container {
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: stretch;
+}
+
+.settings_panel_content {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    background: rgb(22, 22, 22);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden; /* contiene los views, sin esto se rompe todo */
+    position: relative;
+}
+
+/* ----------- VIEWS ------------- */
+/* Por defecto ocultos */
+.settings_view {
+    display: none;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* El view activo ocupa todo el contenedor con flex,
+   permitiendo que su contenido interno haga scroll */
+.settings_view.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================================================================
+                    VIEW: CUSTOMIZATION
+================================================================ */
+#view_customization {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 15px 15px 15px;
+    border: 0px solid yellow; /* debug */
+}
+
+/* Scrollbar */
+#view_customization::-webkit-scrollbar { width: 2px; }
+#view_customization::-webkit-scrollbar-track { background: transparent; }
+#view_customization::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+#view_customization::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ----- HEADER ----- */
+.background_settings_header {
+    padding: 25px 15px 20px 15px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border: 0px solid blue; /* debug */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 20px;
+}
+.background_settings_header > h2 {
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 4px 0;
+}
+.background_settings_header > h3 {
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 4px 0;
+}
+.background_settings_header > p {
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+    margin: 0;
+}
+
+/* ----- CONTENT ----- */
+.background_settings_container {
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    height: 500px;
+    border-radius: 5px;
+    background:rgb(17, 17, 17);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+.background_previsualizer_container {
+    width: 90%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+.bacgorund_previsualizer_header {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(22, 22, 22);
+    border-radius: 5px;
+    padding: 3px 5px;
+}
+.bacgorund_previsualizer_header > p {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 300;
+    color: rgb(172, 172, 172);
+}
+
+.background_previsualizer {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    height: 80px;
+    width: 120px;
+    border-radius: 5px;
+    background: transparent;
+    position: relative;  /* ← necesario para contener el canvas absoluto */
+    overflow: hidden;    /* ← para respetar el border-radius */
+}
+
+.bacground_selector_container {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.bacground_selector_container > p{
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.background_selector {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(10, 10, 10);
+    border-radius: 5px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+}
+
+
+
+.theme_card {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 1px solid rgb(88, 88, 88);
+    transition: border 0.2s ease, transform 0.15s ease;
+}
+.theme_card:hover    { transform: scale(1.05); }
+.theme_card:active    { transform: scale(1); }
+.theme_card.selected { border: 2px solid rgba(255, 255, 255, 0.8); }
+
+
+/*
+backgound
+
+color selector
+dark/bright mode background color button
+
+actual bg / slected bg - preview
+*/
+
+
