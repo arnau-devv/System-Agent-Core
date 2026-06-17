@@ -7,7 +7,7 @@ try {
 }
 
 // ------ Close Settings --------
-const minimizeBtn = document.getElementById('close_settings_panel_btn');
+const minimizeBtn = document.getElementById('close_settings_panel_btn_container');
 minimizeBtn.addEventListener('click', () => {
     if (ipcRenderer) ipcRenderer.send('close-settings');
 });
@@ -20,54 +20,40 @@ minimizeBtn.addEventListener('click', () => {
 
 // ---------------------------- BACKDOUNDS ----------------------------
 
-const BG_THEMES = {
-    "Original Bright": {
-        normal: ["#5b0bb5", "#7c3aed", "#fb923c", "#db2777"],
-        dark:   ["#1a0336", "#2a0f6b", "#7a3a0a", "#5a0a2e"],
-    },
-    "Midnight Ocean": {
-        normal: ["#0a0a2e", "#1a1a5e", "#0d3b6e", "#1a6b8a"],
-        dark:   ["#020408", "#060d1f", "#0a1628", "#0f2040"],
-    },
-    "Aurora": {
-        normal: ["#0d1b2a", "#1b4332", "#00b4d8", "#7b2d8b"],
-        dark:   ["#020a0d", "#041520", "#06202e", "#1f0b2e"],
-    },
-    "Ember": {
-        normal: ["#1a0000", "#7f1d1d", "#c2410c", "#b45309"],
-        dark:   ["#0a0200", "#1a0500", "#2d0d00", "#3d1500"],
-    },
-    "Neon Noir": {
-        normal: ["#0f0020", "#3b0764", "#db2777", "#f97316"],
-        dark:   ["#050508", "#0f0a1a", "#1a0a2e", "#2d1054"],
-    },
-    "Deep Forest": {
-        normal: ["#052e16", "#14532d", "#1e3a2f", "#065f46"],
-        dark:   ["#010a04", "#041a0a", "#062e12", "#0a3d18"],
-    },
-    "Dusk": {
-        normal: ["#1c1017", "#7c2d42", "#c084fc", "#fdba74"],
-        dark:   ["#080508", "#150a12", "#22101e", "#2e0f22"],
-    },
-    "Monochrome Blue": {
-        normal: ["#0c1445", "#1e3a8a", "#2563eb", "#93c5fd"],
-        dark:   ["#080810", "#10101a", "#181825", "#1e1e2e"],
-    },
-};
+const BG_THEMES = window.BG_THEMES
 
 // ---------- BACKGORUND COLORS SELECTOR RENDERER - updater ----------
-let currentTheme = "Midnight Ocean";
-let currentMode  = "normal"; // "normal" | "dark"
+let currentTheme = window.DEFAULT_BG_THEME
+let currentMode  = window.DEFAULT_BG_MODE; // "normal" | "dark"
 
 const header = document.querySelector('.bacgorund_previsualizer_header p');
+header.textContent = currentTheme
 const bgPrevsualizer = document.getElementById('background_previsualizer')
 const selectorContainer = document.getElementById('background_selector');
+
+window.initGrainyBg({
+    target: document.getElementById('background_previsualizer'),
+});
 
 function applyTheme() {
     let colors = BG_THEMES[currentTheme][currentMode];
     window.setBgColors(colors);
     if (header) header.textContent = currentTheme;
 }
+
+// Preguntamos a main.js cuál es el tema actual real, en vez de asumir uno fijo
+ipcRenderer.invoke('get-background').then((bg) => {
+    console.log('DEBUG get-background devolvió:', JSON.stringify(bg))
+    if (bg && bg.theme && BG_THEMES[bg.theme]) {
+        currentTheme = bg.theme
+    }
+    applyTheme()
+
+    // Marcar visualmente la card correcta como seleccionada
+    document.querySelectorAll('.theme_card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.theme === currentTheme)
+    })
+})
 
 Object.entries(BG_THEMES).forEach(([name, theme]) => {
     const card = document.createElement('div');
@@ -83,6 +69,10 @@ Object.entries(BG_THEMES).forEach(([name, theme]) => {
         applyTheme();
         document.querySelectorAll('.theme_card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
+
+        ipcRenderer.send('background-changed', { 
+            colors: BG_THEMES[currentTheme][currentMode]
+        });
     });
 
     selectorContainer.appendChild(card);
@@ -121,5 +111,3 @@ Object.keys(buttons).forEach(btnId => {
 
 // Default tab
 selectTab('customization_settings_btn');
-// Apply initial theme (after grainy_bg has created window.setBgColors)
-applyTheme();

@@ -5,7 +5,7 @@ let pythonProcess
 let mainWindow
 let chatWindow
 let settingsWindow
-
+// ------------------------------------- WINDOWS -------------------------------------
 // ----------- MAIN WINDOW -----------
 function createMainWindow() {
     mainWindow = new BrowserWindow({
@@ -72,9 +72,11 @@ function createSettingsWindow() {
         event.preventDefault()
         settingsWindow.hide()
     })
+    settingsWindow.webContents.openDevTools()
+
 }
 
-// ----------- IPC — communication between windows -----------
+// ------------------------ IPC — communication between windows ------------------------
 // ------- TOGGLE WINDOWS LOGIC ---------
 ipcMain.on('toggle-chat', () => {
     if (chatWindow.isVisible()) {
@@ -110,7 +112,17 @@ ipcMain.on('close-chat', () => { chatWindow.hide() })
 ipcMain.on('close-settings', () => { settingsWindow.hide() })
 
 
-// WebSocket Message Router
+// ------- SETTINGS WINDOW LOGIC -------
+ipcMain.on('background-changed', (event, data) => {
+    currentBackground = data
+    mainWindow.webContents.send('background-changed', data)
+    chatWindow.webContents.send('background-changed', data)
+})
+
+ipcMain.handle('get-background', () => { return currentBackground })
+
+
+// ------- WebSocket Message Router -------
 ipcMain.on('backend-message', (event, message) => {
     // Messages -> Main Window
     handleMainMessages(message)
@@ -122,7 +134,7 @@ const mainEvents = ['LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVID
                     'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
                     'WW_PROVIDER_NAMES', 'ACTIVE_WW_PROVIDER', 'ALL_WW_PROVIDERS_DOWN',
                     'WAKE_DETECTED', 'IDLE'
-                ]
+                    ]
 function handleMainMessages(message) {
     if (mainEvents.includes(message.name)) mainWindow.webContents.send('backend-message', message)
 }

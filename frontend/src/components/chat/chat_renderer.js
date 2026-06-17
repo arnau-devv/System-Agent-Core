@@ -100,3 +100,21 @@ function sendMessage() {
     // TODO: send via WebSocket
     chatInput.value = ''
 }
+
+
+// -----------------------------------------------------------------------------
+//                                  BACKGROUND
+// -----------------------------------------------------------------------------
+// ----- Backgorund Innit ----- 
+window.initGrainyBg({
+    fullscreen: true,
+    colors:    window.BG_THEMES[window.DEFAULT_BG_THEME].dark,
+    speed:     1.2,
+    intensity: 0.08,
+    grainSize: 2.2,
+    amplitude: 0.06,
+})
+
+ipcRenderer.on('background-changed', (event, data) => {
+    if (window.setBgColors) window.setBgColors(data.colors)
+})

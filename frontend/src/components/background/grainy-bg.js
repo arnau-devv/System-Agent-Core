@@ -1,39 +1,76 @@
 // ============================================================
 //  GRAINY GRADIENT BACKGROUND
-// Adapted from a React Native / Skia implementation using GLSL simplex noise shaders.
-// Original source: [https://www.reacticx.com/docs/components/grainy-gradient]
+//  Adapted from a React Native / Skia implementation using GLSL simplex noise shaders.
+//  Original source: [https://www.reacticx.com/docs/components/grainy-gradient]
+//
+//  Usage:
+//    Main window (fullscreen, fixed paleta "Original Dark"):
+//      window.initGrainyBg({
+//        fullscreen: true,
+//        colors: ["#1a0336", "#2a0f6b", "#7a3a0a", "#5a0a2e"],
+//        speed: 2.3, intensity: 0.112, grainSize: 1.9, amplitude: 0.1,
+//      });
+//
+//    Chat window (fullscreen, otra paleta/velocidad):
+//      window.initGrainyBg({
+//        fullscreen: true,
+//        colors: ["#0d0a1a", "#1a0f2e", "#0a1628", "#150a20"],
+//        speed: 1.2, intensity: 0.08, grainSize: 2.2, amplitude: 0.06,
+//      });
+//
+//    Settings previsualizador (contenedor chico, colores dinámicos via setColors):
+//      const bg = window.initGrainyBg({
+//        target: document.getElementById('background_previsualizer'),
+//      });
+//      bg.setColors(["#0a0a2e", "#1a1a5e", "#0d3b6e", "#1a6b8a"]);
+//
+//  API devuelta por initGrainyBg (y también colgada en window para compatibilidad):
+//    setColors(colorsArray) — actualiza los colores del gradiente
+//    resize()               — fuerza un resize del canvas (ej: al mostrar un contenedor oculto)
 // ============================================================
 
-const BG_SPEED      = 2.3;    // velocidad de animación
-const BG_INTENSITY  = 0.112;  // intensidad del grano  (0 = sin grano)
-const BG_GRAIN_SIZE = 1.9;    // tamaño del grano
-const BG_AMPLITUDE  = 0.1;    // amplitud del movimiento de colores
-const BG_BRIGHTNESS = 0.0;    // brillo extra  (-1 … 1)
-// ============================================================
+window.initGrainyBg = function (options = {}) {
+  const fullscreen = options.fullscreen || false;
+  const target      = options.target || document.body;
 
-(function () {
+  const speed      = options.speed      ?? 2.3;
+  const intensity  = options.intensity  ?? 0.112;
+  const grainSize  = options.grainSize  ?? 1.9;
+  const amplitude  = options.amplitude  ?? 0.1;
+  const brightness = options.brightness ?? 0.0;
+  const colors     = options.colors     ?? ["#1a0336", "#2a0f6b", "#7a3a0a", "#5a0a2e"];
+
   // ---------- canvas setup ----------
   const canvas = document.createElement('canvas');
-  canvas.id = 'grainy_bg_canvas';
-  canvas.style.cssText = `
+  canvas.id = options.canvasId || 'grainy_bg_canvas';
+
+  if (fullscreen) {
+    canvas.style.cssText = `
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    `;
+    document.body.prepend(canvas);
+  } else {
+    canvas.style.cssText = `
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
-  `;
-  const target = document.getElementById('background_previsualizer');
-  target.appendChild(canvas);
+    `;
+    target.appendChild(canvas);
+  }
 
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  if (!gl) { console.warn('WebGL not supported'); return; }
+  if (!gl) { console.warn('WebGL not supported'); return null; }
 
   // ---------- helpers ----------
   function hexToVec4(hex) {
-    const c = hex.replace('#', '');
-    const full = c.length === 3
-      ? c.split('').map(x => x + x).join('')
-      : c;
+    const c    = hex.replace('#', '').trim();
+    const full = c.length === 3 ? c.split('').map(x => x + x).join('') : c;
     return [
       parseInt(full.slice(0, 2), 16) / 255,
       parseInt(full.slice(2, 4), 16) / 255,
@@ -121,7 +158,6 @@ const BG_BRIGHTNESS = 0.0;    // brillo extra  (-1 … 1)
       m = m*m;
       return 42. * dot(m*m, vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
     }
-    /* ------------------------- */
 
     vec4 getColor(int idx){
       if(idx==0) return uColor0;
@@ -133,7 +169,7 @@ const BG_BRIGHTNESS = 0.0;    // brillo extra  (-1 … 1)
 
     void addContrib(vec2 uv, float t, int idx, float count,
                     inout vec4 color, inout float total){
-      float fi = float(idx);
+      float fi    = float(idx);
       float angle = fi * 6.28318530718 / count;
       vec2 offset = vec2(
         sin(t + angle)*uAmplitude + snoise(vec3(t*0.3, fi, 0.))*uAmplitude*0.5,
@@ -171,8 +207,8 @@ const BG_BRIGHTNESS = 0.0;    // brillo extra  (-1 … 1)
         color.rgb  += grain * (1. - abs(2.*color.rgb - 1.));
       }
 
-      color.rgb = clamp(color.rgb, 0., 1.);
-      color.a   = 1.;
+      color.rgb    = clamp(color.rgb, 0., 1.);
+      color.a      = 1.;
       gl_FragColor = color;
     }
   `;
@@ -207,17 +243,26 @@ const BG_BRIGHTNESS = 0.0;    // brillo extra  (-1 … 1)
     brightness: uLoc('uBrightness'),
   };
 
-  // set static uniforms (colores se setean via window.setBgColors desde renderer)
-  gl.uniform1f(U.amp,        BG_AMPLITUDE);
-  gl.uniform1f(U.grain,      BG_INTENSITY);
-  gl.uniform1f(U.grainSize,  BG_GRAIN_SIZE);
+  // static uniforms — ahora SÍ vienen de options, con fallback a los defaults originales
+  gl.uniform1f(U.amp,        amplitude);
+  gl.uniform1f(U.grain,      intensity);
+  gl.uniform1f(U.grainSize,  grainSize);
   gl.uniform1f(U.grainOn,    1.0);
-  gl.uniform1f(U.brightness, BG_BRIGHTNESS);
+  gl.uniform1f(U.brightness, brightness);
+
+  // colores iniciales — vienen de options.colors, no de una constante fija
+  function applyColors(colorsArray) {
+    const padded = [...colorsArray];
+    while (padded.length < 5) padded.push('#000000');
+    padded.map(hexToVec4).forEach((v, i) => gl.uniform4fv(U.colors[i], v));
+    gl.uniform1i(U.count, Math.min(colorsArray.length, 5));
+  }
+  applyColors(colors);
 
   // ---------- resize ----------
   function resize() {
-    canvas.width  = target.clientWidth;
-    canvas.height = target.clientHeight;
+    canvas.width  = fullscreen ? window.innerWidth  : target.clientWidth;
+    canvas.height = fullscreen ? window.innerHeight : target.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.uniform2f(U.res, canvas.width, canvas.height);
   }
@@ -226,35 +271,31 @@ const BG_BRIGHTNESS = 0.0;    // brillo extra  (-1 … 1)
 
   // ---------- loop ----------
   let start = null;
+  let rafId = null;
   function frame(ts) {
     if (!start) start = ts;
-    const t = ((ts - start) / 1000) * BG_SPEED;
-    gl.uniform1f(U.time, t);
+    gl.uniform1f(U.time, ((ts - start) / 1000) * speed);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  rafId = requestAnimationFrame(frame);
 
-  // ---------- API pública ----------
-  function hexToVec4Local(hex) {
-    const c = hex.replace('#', '').trim();
-    const full = c.length === 3
-      ? c.split('').map(x => x + x).join('')
-      : c;
-    return [
-      parseInt(full.slice(0, 2), 16) / 255,
-      parseInt(full.slice(2, 4), 16) / 255,
-      parseInt(full.slice(4, 6), 16) / 255,
-      1.0,
-    ];
-  }
-
-  window.setBgColors = function(colorsArray) {
-    const padded = [...colorsArray];
-    while (padded.length < 5) padded.push('#000000');
-    padded.map(hexToVec4Local).forEach((v, i) => gl.uniform4fv(U.colors[i], v));
-    gl.uniform1i(U.count, Math.min(colorsArray.length, 5));
+  // ---------- instancia pública ----------
+  const instance = {
+    canvas,
+    setColors: applyColors,
+    resize,
+    destroy() {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', resize);
+      canvas.remove();
+    },
   };
-  window.resizeBgCanvas = function() { resize(); };
 
-})();
+  // Compatibilidad: settings_renderer.js (y código viejo) llama window.setBgColors /
+  // window.resizeBgCanvas directamente. Los dejamos apuntando a la última instancia creada.
+  window.setBgColors   = instance.setColors;
+  window.resizeBgCanvas = instance.resize;
+
+  return instance;
+};

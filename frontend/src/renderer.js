@@ -140,6 +140,28 @@ settingsButton.addEventListener('click', () => { ipcRenderer.send('toggle-settin
 
 
 
+
+// -----------------------------------------------------------------------------
+//                                  BACKGOUND
+// Background change logic -> settings.js 
+// -----------------------------------------------------------------------------
+ipcRenderer.on('background-changed', (event, data) => {
+   if (window.setBgColors) window.setBgColors(data.colors);
+});
+// -------------- BACKGROUND INIT --------------
+window.initGrainyBg({
+   fullscreen: true,
+   colors:    window.BG_THEMES[window.DEFAULT_BG_THEME].dark,
+   speed:     2.3,
+   intensity: 0.112,
+   grainSize: 1.9,
+   amplitude: 0.1,
+})
+
+
+
+
+
 // -----------------------------------------------------------------------------
 //                                  SPHERE 
 // -----------------------------------------------------------------------------
