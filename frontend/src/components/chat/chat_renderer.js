@@ -108,7 +108,7 @@ function sendMessage() {
 // ----- Backgorund Innit ----- 
 window.initGrainyBg({
     fullscreen: true,
-    colors:    window.BG_THEMES[window.DEFAULT_BG_THEME].dark,
+    colors:    window.DEFAULT_BG_THEME.DEFAULT_BG_MODE,
     speed:     1.2,
     intensity: 0.08,
     grainSize: 2.2,

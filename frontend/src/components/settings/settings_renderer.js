@@ -26,7 +26,7 @@ const BG_THEMES = window.BG_THEMES
 let currentTheme = window.DEFAULT_BG_THEME
 let currentMode  = window.DEFAULT_BG_MODE; // "normal" | "dark"
 
-const header = document.querySelector('.bacgorund_previsualizer_header p');
+const header = document.querySelector('.backgorund_previsualizer_header p');
 header.textContent = currentTheme
 const bgPrevsualizer = document.getElementById('background_previsualizer')
 const selectorContainer = document.getElementById('background_selector');
@@ -42,19 +42,51 @@ function applyTheme() {
 }
 
 // Preguntamos a main.js cuál es el tema actual real, en vez de asumir uno fijo
-ipcRenderer.invoke('get-background').then((bg) => {
-    console.log('DEBUG get-background devolvió:', JSON.stringify(bg))
-    if (bg && bg.theme && BG_THEMES[bg.theme]) {
-        currentTheme = bg.theme
-    }
-    applyTheme()
+if (ipcRenderer) {
+    ipcRenderer.invoke('get-background').then((bg) => {
+        console.log('DEBUG get-background devolvió:', JSON.stringify(bg))
+        if (bg && bg.theme && BG_THEMES[bg.theme]) {
+            currentTheme = bg.theme
+        }
+        applyTheme()
 
-    // Marcar visualmente la card correcta como seleccionada
-    document.querySelectorAll('.theme_card').forEach(c => {
-        c.classList.toggle('selected', c.dataset.theme === currentTheme)
+        // Marcar visualmente la card correcta como seleccionada
+        document.querySelectorAll('.theme_card').forEach(c => {
+            c.classList.toggle('selected', c.dataset.theme === currentTheme)
+        })
     })
-})
 
+}
+// -------- BACKGROUND MODE Normal/dark -------------
+const colorModeToggleInput = document.getElementById('color_mode_toggle_input');
+const colorToggleSwitch = document.getElementById('color_toggle_switch');
+let currentToggleColors = BG_THEMES[currentTheme].normal;
+
+function updateToggleBackground() {
+    const toggleSlider = colorToggleSwitch.querySelector('.toggle_slider');
+    toggleSlider.style.background = colorModeToggleInput.checked
+        ? `linear-gradient(135deg, ${currentToggleColors[0]}, ${currentToggleColors[2]})`
+        : `rgba(43, 27, 61, 0.35)`;
+}
+
+// Init
+colorModeToggleInput.checked = (currentMode === 'dark');
+updateToggleBackground();
+
+colorModeToggleInput.addEventListener('change', (event) => {
+    currentMode = event.target.checked ? 'dark' : 'normal';
+    updateToggleBackground();
+    applyTheme();
+    if (ipcRenderer) {
+        ipcRenderer.send('background-changed', {
+            theme:  currentTheme,
+            mode:   currentMode,
+            colors: window.BG_THEMES[currentTheme][currentMode]
+        });
+    }
+});
+
+//------------ RENDER COLOR SELECTOR & LOGIC -------------
 Object.entries(BG_THEMES).forEach(([name, theme]) => {
     const card = document.createElement('div');
     card.classList.add('theme_card');
@@ -66,18 +98,23 @@ Object.entries(BG_THEMES).forEach(([name, theme]) => {
 
     card.addEventListener('click', () => {
         currentTheme = name;
+        currentToggleColors = BG_THEMES[name].normal;
         applyTheme();
+        updateToggleBackground();
         document.querySelectorAll('.theme_card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
 
-        ipcRenderer.send('background-changed', { 
-            colors: BG_THEMES[currentTheme][currentMode]
-        });
+        if (ipcRenderer) {
+            ipcRenderer.send('background-changed', {
+                theme:  currentTheme,
+                mode:   currentMode,
+                colors: BG_THEMES[currentTheme][currentMode]
+            });
+        }
     });
 
     selectorContainer.appendChild(card);
 });
-
 
 
 

@@ -43,14 +43,26 @@
                         <!-- Main backround conteiner -->
                         <div class="background_settings_container">
                             <div class="background_previsualizer_container">
-                                <div class="bacgorund_previsualizer_header">
+                                <div class="backgorund_previsualizer_header">
                                     <p></p>
                                 </div>
                                 <div class="background_previsualizer" id="background_previsualizer"></div>
                             </div>
                             <!-- backround selector -->
                             <div class="bacground_selector_container">
-                                <p>Select a background: </p>
+
+                                <div class="background_selector_header">
+                                    <p>Select a background: </p>
+
+                                    <div class="background_mode_toggle_container">
+                                        <span>Dark Mode</span>
+                                        <label class="toggle_switch" id="color_toggle_switch">
+                                            <input type="checkbox" id="color_mode_toggle_input">
+                                            <span class="toggle_slider"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
                                 <div class="background_selector" id="background_selector">
                                 </div>
                             </div>

@@ -234,6 +234,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.06);
     height: 500px;
     border-radius: 5px;
+    height: auto;
     background:rgb(17, 17, 17);
     display: flex;
     flex-direction: column;
@@ -251,13 +252,13 @@ body {
     gap: 10px;
 
 }
-.bacgorund_previsualizer_header {
+.backgorund_previsualizer_header {
     border: 1px solid rgba(255, 255, 255, 0.06);
     background-color: rgb(22, 22, 22);
     border-radius: 5px;
     padding: 3px 5px;
 }
-.bacgorund_previsualizer_header > p {
+.backgorund_previsualizer_header > p {
     margin: 0;
     font-size: 10px;
     font-weight: 300;
@@ -270,8 +271,8 @@ body {
     width: 120px;
     border-radius: 5px;
     background: transparent;
-    position: relative;  /* ← necesario para contener el canvas absoluto */
-    overflow: hidden;    /* ← para respetar el border-radius */
+    position: relative;
+    overflow: hidden;
 }
 
 .bacground_selector_container {
@@ -279,17 +280,108 @@ body {
     padding: 20px;
     box-sizing: border-box;
 }
-.bacground_selector_container > p{
-    font-weight: 300;
+
+.background_selector_header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: 200;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    padding-left: 10px;
+    box-sizing: border-box;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
 }
+
+/* ================================================================
+               BACKGROUND MODE TOGGLE (SWITCH ESTILO APPLE)
+================================================================ */
+/* Contenedor principal alineado con tus otros selectores */
+.background_mode_toggle_container {
+    width: auto;
+    padding:0;
+    gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-sizing: border-box;
+}
+/* Estilo del texto "Dark Mode" para que combine con tus <p> */
+.background_mode_toggle_container > span {
+    font-weight: 200;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
+}
+/* El cuerpo/estructura del Switch */
+.toggle_switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 21px;
+}
+/* Ocultamos el checkbox por defecto del navegador */
+.toggle_switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+/* El fondo del Switch (Estado: Desactivado / Modo Normal) */
+.toggle_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(43, 27, 61, 0.35);
+    border: 1px solid rgb(61, 61, 61, 0.8);
+    border-radius: 30px;
+    transition: background-color 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                border-color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+/* El círculo interior deslizante (El botón blanco) */
+.toggle_slider::before {
+    position: absolute;
+    content: "";
+    width: 13px;
+    height: 13px;
+    left: 2px;
+    bottom: 3px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+    /* Transición combinada para el movimiento y el efecto elástico */
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                width 0.2s ease;
+}
+/* --- ESTADOS ACTIVOS (Cuando el checkbox es TRUE / Dark Mode) --- */
+/*Color de fondo al activarse (Verde iOS puro) */
+/* .toggle_switch input:checked + .toggle_slider {
+    background-color: #00f0ff;
+    border-color: transparent;
+} */
+/*Movimiento del círculo hacia la derecha */
+.toggle_switch input:checked + .toggle_slider::before {transform: translateX(23px);}
+/* --- DETALLES MICRO-INTERACTIVOS (Efecto Elástico al presionar) --- */
+/* Si mantienes el click pulsado, el círculo se "estira" sutilmente imitando hardware real */
+.toggle_switch input:active + .toggle_slider::before {width: 17px;}
+/* Si está activado y mantienes pulsado, se estira hacia el lado inverso */
+.toggle_switch input:text-transform:active:checked + .toggle_slider::before {
+    transform: translateX(14px); 
+    width: 22px;
+}
+
+/* ------------------------------------------------------------------------- */
+
 
 .background_selector {
     border: 1px solid rgba(255, 255, 255, 0.06);
     background-color: rgb(10, 10, 10);
     border-radius: 5px;
     height: auto;
+    max-height: 105px;
+    overflow-x: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -297,6 +389,11 @@ body {
     gap: 10px;
     padding: 15px;
 }
+/* Scrollbar */
+.background_selector::-webkit-scrollbar { width: 2px; }
+.background_selector::-webkit-scrollbar-track { background: transparent; }
+.background_selector::-webkit-scrollbar-thumb {background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+.background_selector::-webkit-scrollbar-thumb:hover {background: rgba(255, 255, 255, 0.25);}
 
 
 

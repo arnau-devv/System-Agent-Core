@@ -151,7 +151,7 @@ ipcRenderer.on('background-changed', (event, data) => {
 // -------------- BACKGROUND INIT --------------
 window.initGrainyBg({
    fullscreen: true,
-   colors:    window.BG_THEMES[window.DEFAULT_BG_THEME].dark,
+   colors:    window.DEFAULT_BG_THEME.DEFAULT_BG_MODE,
    speed:     2.3,
    intensity: 0.112,
    grainSize: 1.9,
@@ -165,15 +165,17 @@ window.initGrainyBg({
 // -----------------------------------------------------------------------------
 //                                  SPHERE 
 // -----------------------------------------------------------------------------
+// The backend processes events ahead of the UI needing to react visually,
+// delays compensate for that head start so the sphere transitions right on time.
 const sphereEvents = ['WAKE_DETECTED', 'IDLE']
+const sphereDelays = { WAKE_DETECTED: 250, IDLE: 250 }
+
 ipcRenderer.on('backend-message', (event, message) => {
    if (canHandleMessage(message, "sphere", sphereEvents)) {
       console.log('[Sphere]:', message.name, message.data)
-      if (message.name === 'WAKE_DETECTED') setTimeout(() => window.sphereSetState(message.name), 500)
-      else if (message.name === 'IDLE') window.sphereSetState(message.name)
+      setTimeout(() => window.sphereSetState(message.name), sphereDelays[message.name])
    }
 })
-
 
 
 // ---------------- NAVBAR ----------------

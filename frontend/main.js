@@ -5,6 +5,7 @@ let pythonProcess
 let mainWindow
 let chatWindow
 let settingsWindow
+let currentBackground = null
 // ------------------------------------- WINDOWS -------------------------------------
 // ----------- MAIN WINDOW -----------
 function createMainWindow() {
@@ -23,7 +24,7 @@ function createMainWindow() {
 
     Menu.setApplicationMenu(null)
     mainWindow.loadFile('src/index.html')
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 }
 
 // ----------- CHAT WINDOW -----------
@@ -55,7 +56,7 @@ function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 840,
         height: 525,
-        minWidth: 300,
+        minWidth: 450,
         minHeight: 400,
         backgroundColor: "#000000",
         frame: false,
@@ -72,7 +73,6 @@ function createSettingsWindow() {
         event.preventDefault()
         settingsWindow.hide()
     })
-    settingsWindow.webContents.openDevTools()
 
 }
 
@@ -143,7 +143,6 @@ function handleChatMessages(message) {
     if (message.name === 'STT_DONE' || message.name === 'AI_DONE') {
         chatWindow.webContents.send('backend-message', message)
 }}
-
 
 
 

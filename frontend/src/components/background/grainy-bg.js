@@ -38,7 +38,8 @@ window.initGrainyBg = function (options = {}) {
   const grainSize  = options.grainSize  ?? 1.9;
   const amplitude  = options.amplitude  ?? 0.1;
   const brightness = options.brightness ?? 0.0;
-  const colors     = options.colors     ?? ["#1a0336", "#2a0f6b", "#7a3a0a", "#5a0a2e"];
+  const colors = options.colors ?? window.BG_THEMES[window.DEFAULT_BG_THEME][window.DEFAULT_BG_MODE];
+  // const colors     = options.colors     ?? ["#1a0336", "#2a0f6b", "#7a3a0a", "#5a0a2e"];
 
   // ---------- canvas setup ----------
   const canvas = document.createElement('canvas');
