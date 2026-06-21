@@ -12,6 +12,8 @@ body {
     font-family: sans-serif;
     /*background: linear-gradient(135deg, #0a0a1f 0%, #1a0f3d 50%, #0d1b3d 100%);*/
 }
+img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
+
 
 /* ----------------------------------------------------------------
                         TITTLEBAR
@@ -196,12 +198,12 @@ body {
 }
 
 #settings_panel { transition: transform 0.2s ease-in; }
-#settings_panel:hover { transform: rotate(90deg); }
+#settings_panel:hover { transform: rotate(90deg) translateX(2px) translateY(-1px)}
 #settings_panel:active { transform: scale(0.99) rotate(30deg); }
 
-#customization_panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-#customization_panel:hover { transform: translateX(3px) rotate(15deg); }
-#customization_panel:active { transform: translateX(0px) translateY(-2px) rotate(-1deg); }
+#agent_settings_panel { transition: transform 0.2s ease-in; }
+#agent_settings_panel:hover { transform: scale(1.1); }
+#agent_settings_panel:active { transform: scale(1); }
 
 
 
@@ -220,6 +222,7 @@ body {
     cursor: pointer;
     -webkit-app-region: no-drag;
     transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-bottom: 5px;
 }
 #close_app_btn:hover { background-color: rgba(255, 107, 107, 0.555); }
 #close_app_btn:active {
@@ -348,9 +351,5 @@ body {
         opacity: 0.3;
     }
 }
-
-
-
-
 
 

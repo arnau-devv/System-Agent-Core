@@ -134,8 +134,12 @@ tooltip.addEventListener('mouseenter', () => {
 // --
 
 // ----------------------------- TOOLS -----------------------------
+// --- Settings
 const settingsButton = document.getElementById('settings_panel')
 settingsButton.addEventListener('click', () => { ipcRenderer.send('toggle-settings')})
+// --- Agent Settings
+const agentSettingsButton = document.getElementById('agent_settings_panel')
+agentSettingsButton.addEventListener('click', () => { ipcRenderer.send('toggle-agent-settings')})
 
 
 
@@ -148,14 +152,21 @@ settingsButton.addEventListener('click', () => { ipcRenderer.send('toggle-settin
 ipcRenderer.on('background-changed', (event, data) => {
    if (window.setBgColors) window.setBgColors(data.colors);
 });
-// -------------- BACKGROUND INIT --------------
-window.initGrainyBg({
-   fullscreen: true,
-   colors:    window.DEFAULT_BG_THEME.DEFAULT_BG_MODE,
-   speed:     2.3,
-   intensity: 0.112,
-   grainSize: 1.9,
-   amplitude: 0.1,
+
+// -------------- BACKGROUND INIT gets loaded json info from main)--------------
+ipcRenderer.invoke('get-background').then((bg) => {
+   const theme = (bg && bg.theme) ? bg.theme : window.DEFAULT_BG_THEME
+   const mode  = (bg && bg.mode)  ? bg.mode  : window.DEFAULT_BG_MODE
+   const colors = window.BG_THEMES[theme][mode]
+
+   window.initGrainyBg({
+      fullscreen: true,
+      colors:    colors,
+      speed:     2.3,
+      intensity: 0.112,
+      grainSize: 1.9,
+      amplitude: 0.1,
+   })
 })
 
 

@@ -87,6 +87,6 @@ window.BG_THEMES = {
     },
 };
 
-// Tema usado por defecto si nadie ha elegido nada todavía (primer arranque de la app)
+// FIRST BG BY DEFAULT (BEFORE CHANGING IT ON SETTINS FOR FIRST TIME)
 window.DEFAULT_BG_THEME = "Cosmic Sunset";
 window.DEFAULT_BG_MODE  = "dark";

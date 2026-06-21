@@ -1,9 +1,9 @@
 const { ipcRenderer } = require('electron')
 
-/* ================================================
-   MESSAGE STORE
-   Only "STT_DONE" and "AI_DONE" messages are stored.
-   ================================================ */
+// ----------------------------------------------------------
+//   MESSAGE STORE
+//   Only "STT_DONE" and "AI_DONE" messages are stored.
+// ----------------------------------------------------------
 
 const TRACKED_NAMES = ['STT_DONE', 'AI_DONE']
 
@@ -27,10 +27,11 @@ function handleMessage(message) {
 }
 
 
-/* ================================================
-   CHAT RENDERING
-   Appends only the latest message to the DOM.
-   ================================================ */
+// ----------------------------------------------------------
+//    CHAT RENDERING
+//    Appends only the latest message to the DOM.
+// ----------------------------------------------------------
+const chatMessages = document.getElementById('chat_messages')
 let messageSource = ""
 function renderMessages() {
     const entry = messageStore[messageStore.length - 1]
@@ -62,32 +63,25 @@ function renderMessages() {
 }
 
 
-/* ================================================
-   DOM REFERENCES
-   ================================================ */
 
-const chatMessages = document.getElementById('chat_messages')
-const chatInput    = document.getElementById('chat_input')
-const sendBtn      = document.getElementById('send_chat_btn')
+
+// ----------------------------------------------------------
+//    CHAT HEADER — close button
+//    Hides the window without destroying it (conversation is kept)
+// ----------------------------------------------------------
 const minimizeBtn  = document.getElementById('minimize_chat_panel_btn')
-
-
-/* ================================================
-   CHAT HEADER — close button
-   Hides the window without destroying it (conversation is kept)
-   ================================================ */
-
 minimizeBtn.addEventListener('click', () => {
     ipcRenderer.send('close-chat')
 })
 
 
-/* ================================================
-   CHAT INPUT — send on button click or Enter key
-   ================================================ */
+// ----------------------------------------------------------
+//    CHAT INPUT — send on button click or Enter key
+// ----------------------------------------------------------
+const chatInput    = document.getElementById('chat_input')
+const sendBtn      = document.getElementById('send_chat_btn')
 
 sendBtn.addEventListener('click', sendMessage)
-
 chatInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') sendMessage()
 })
@@ -105,15 +99,30 @@ function sendMessage() {
 // -----------------------------------------------------------------------------
 //                                  BACKGROUND
 // -----------------------------------------------------------------------------
-// ----- Backgorund Innit ----- 
-window.initGrainyBg({
-    fullscreen: true,
-    colors:    window.DEFAULT_BG_THEME.DEFAULT_BG_MODE,
-    speed:     1.2,
-    intensity: 0.08,
-    grainSize: 2.2,
-    amplitude: 0.06,
+// -------------- BACKGROUND INIT gets loaded json info from main)--------------
+ipcRenderer.invoke('get-background').then((bg) => {
+    const theme = (bg && bg.theme) ? bg.theme : window.DEFAULT_BG_THEME
+    const mode  = (bg && bg.mode)  ? bg.mode  : window.DEFAULT_BG_MODE
+    const colors = window.BG_THEMES[theme][mode]
+
+    window.initGrainyBg({
+        fullscreen: true,
+        colors:    window.BG_THEMES["Aurora"]["dark"],
+        speed:     1.2,
+        intensity: 0.08,
+        grainSize: 2.2,
+        amplitude: 0.06,
+    })
 })
+
+ipcRenderer.invoke('get-background').then((bg) => {
+    const theme = (bg && bg.theme) ? bg.theme : window.DEFAULT_BG_THEME;
+    const mode  = (bg && bg.mode)  ? bg.mode  : window.DEFAULT_BG_MODE;
+    const colors = window.BG_THEMES[theme][mode];
+    
+    window.setBgColors(colors);
+});
+
 
 ipcRenderer.on('background-changed', (event, data) => {
     if (window.setBgColors) window.setBgColors(data.colors)

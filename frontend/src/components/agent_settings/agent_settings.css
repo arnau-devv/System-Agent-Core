@@ -1,0 +1,722 @@
+/* ================================================================
+                        GLOBAL RESET
+================================================================ */
+body {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /* background: radial-gradient(ellipse 50% 55% at 0% 10%, rgb(35, 35, 35) 0%, rgb(20, 20, 20) 100%); */
+    background: rgb(15, 15, 15);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+/* Non-draggable images */
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+
+/* ================================================================
+                        TITLEBAR
+================================================================ */
+#draggable_header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 25px;
+    -webkit-app-region: drag;
+}
+
+/* ----------- Close button ----------- */
+.close_agent_settings_panel_btn_container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 50%;
+    background-color: rgb(15, 15, 15);
+    cursor: pointer;
+}
+.close_agent_settings_panel_btn_container:hover #close_agent_settings_panel_btn {
+    background-color: rgba(255, 107, 107, 0.555);
+}
+.close_agent_settings_panel_btn_container:active #close_agent_settings_panel_btn {
+    background-color: rgba(255, 50, 50, 0.664);
+    transform: scale(0.9);
+}
+#close_agent_settings_panel_btn {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+
+/* ================================================================
+                        MAIN CONTAINER
+================================================================ */
+.agent_settings_main_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px !important;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    /* border: 2px solid red; */
+}
+
+/* ----------------- HEADER ----------------- */
+.agent_settings_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 100px;
+    flex-shrink: 0;
+    padding: 15px 0px;
+    border: 1px solid rgba(247, 19, 19, 0.06);
+    border-radius: 5px;
+    background: rgb(22, 22, 22);
+}
+
+.agent_settings_header > img {
+    position: relative;
+    z-index: 2;
+    width: 60px;
+    height: 60px;
+    padding: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(15, 15, 15);
+}
+
+.agent_settings_header > h4 {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    width: auto;
+    height: 30px;
+    margin: 0;
+    padding: 0px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(15, 15, 15);
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    text-wrap: nowrap;
+}
+
+/* Re-declaration: adds the canvas positioning context on top of the base header rule above */
+.agent_settings_header {
+    position: relative; /* KEY: allows positioning the background canvas inside */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 0px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(22, 22, 22); /* Fallback color before the canvas loads */
+    overflow: hidden; /* KEY: prevents the animation from covering the rounded corners */
+}
+
+.agent_settings_header canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+}
+
+/* ----------------- Option/view selector ----------------- */
+.agent_settings_options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    gap: 3%;
+    width: 100%;
+    height: auto;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(10, 10, 10);
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.agent_settings_options > button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 10px;
+    min-height: 30px;
+    max-height: 30px;
+    padding: 0px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(22, 22, 22);
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.agent_settings_options > button:hover {
+    background: rgb(35, 35, 35);
+    color: rgba(255, 255, 255, 0.55);
+    transform: scale(1.05);
+}
+
+.agent_settings_options > button > img {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* Scrollbar styling */
+#agent_settings_options::-webkit-scrollbar { height: 4px; max-width: 40px; }
+#agent_settings_options::-webkit-scrollbar-track { background: transparent; }
+#agent_settings_options::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+#agent_settings_options::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+.agent_settings_options > button.active {
+    background-color: rgba(54, 54, 54, 0.5);
+    color: white;
+    font-weight: 300;
+    transform: scale(1.05);
+    /* remove transform: scale(2) */
+}
+
+
+/* ================================================================
+                        CONTENT AREA
+    Height chain: body(100vh) > bg_container(100%) >
+    content_inner_container(100%) > settings_panel_content(100%)
+    All of them need a defined height and overflow:hidden, except the view.
+================================================================ */
+.agent_settings_panel_content {
+    flex: 1; /* takes up the remaining space in the main container */
+    min-height: 0; /* required so flex doesn't overflow */
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(22, 22, 22);
+}
+
+/* --------------------------- VIEWS --------------------------- */
+/* Hidden by default */
+.agent_settings_view {
+    display: none;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 0px solid red;
+}
+/* The active view fills the entire container with flex,
+   allowing its inner content to scroll */
+.agent_settings_view.active {
+    display: flex;
+    flex-direction: column;
+}
+/* Scrollbar styling */
+#view_agent_entity::-webkit-scrollbar { width: 2px; }
+#view_agent_entity::-webkit-scrollbar-track { background: transparent; }
+#view_agent_entity::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+#view_agent_entity::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+
+/* ================================================================
+                    VIEW: IDENTITY
+================================================================ */
+/* ----------------- Name & behavior ----------------- */
+#view_agent_entity {
+    padding: 0 15px 15px 15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 0px solid yellow; /* debug */
+}
+
+.identity_behavior_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+    width: 100%;
+    padding: 0px 0px;
+    box-sizing: border-box;
+    /* border: 1px solid red; */
+}
+
+/* ----------------- NAME ----------------- */
+/* Wraps the header + the name/wake word fields as a single section,
+   matching the same pattern used by .agent_behavior_container below */
+.agent_name_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-sizing: border-box;
+
+}
+
+/* ----- HEADER ----- */
+.identity_behavior_header {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 25px 0px 20px 2px;
+}
+
+.identity_behavior_header > h2 {
+    margin: 0 0 4px 0;
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+.identity_behavior_header > h3 {
+    margin: 0 0 4px 0;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+.identity_behavior_header > p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Name & wake word fields ----------- */
+.agent_name_selection_container {
+    display: flex;
+    flex-direction: row;
+    margin-left: 2px;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 20px 15px;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 4px solid rgba(255, 255, 255, 0.06);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    background-color: rgb(35, 35, 35);
+}
+
+.agent_name_select option {
+    background: rgb(10, 10, 10);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.agent_name_field,
+.agent_wake_word_field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+}
+
+.agent_name_field > p,
+.agent_wake_word_field > p:first-child {
+    margin: 0;
+    font-weight: 300;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.agent_name_select,
+#wake_word_display {
+    width: 100%;
+    margin: 0;
+    padding: 7px 10px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(10, 10, 10);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Custom dropdown arrow for the native <select> */
+.agent_name_select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+    padding-right: 35px;
+}
+
+.spacer {
+    flex-shrink: 0;
+    width: 1px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 400px) {
+    .agent_name_selection_container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .agent_name_field,
+    .agent_wake_word_field,
+    .spacer {
+        width: 100%;
+    }
+
+    .spacer {
+        flex-shrink: 0;
+        width: 100%;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.06);
+    }
+}
+
+/* ----------------- BEHAVIOR OPTIONS --------------- */
+.agent_behavior_container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    padding-top: 0px;
+    box-sizing: border-box;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.agent_behavior_options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.behavior_option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(10, 10, 10);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.behavior_option:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgb(20, 20, 20);
+}
+.behavior_option.selected {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgb(25, 25, 25);
+}
+
+/* ---- Behavior option dot: selected / not selected ---- */
+.behavior_option_dot {
+    position: relative;
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: border-color 0.3s ease;
+}
+
+/* Green fill that GROWS from the center when selected */
+.behavior_option_dot::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #4ade80;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Ring that pulses CONTINUOUSLY while selected */
+.behavior_option_dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #4ade80;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.behavior_option.selected .behavior_option_dot {
+    border-color: #4ade80;
+}
+
+.behavior_option.selected .behavior_option_dot::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Infinite pulse */
+.behavior_option.selected .behavior_option_dot::after {
+    animation: dot_pulse_loop 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dot_pulse_loop {
+    0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.60; }
+    100% { transform: translate(-50%, -50%) scale(2.8);  opacity: 0; }
+}
+
+/* Re-declaration: refines the selected-option border/background colors above */
+.behavior_option.selected {
+    border-color: rgba(74, 222, 128, 0.35);
+    background: rgb(25, 25, 25);
+}
+/* ------------------------------------------------------- */
+
+.behavior_option_text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.behavior_option_title {
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.behavior_option_desc {
+    margin: 0;
+    min-width: 0;
+}
+
+@media (max-width: 350px) {
+    .behavior_option {
+        text-overflow: ellipsis;
+        text-wrap: nowrap;
+    }
+
+    .behavior_option {
+        flex-shrink: 0;
+    }
+}
+
+.agent_behavior_header {
+    padding: 2px;
+    padding-top: 40px;
+}
+
+.agent_behavior_header > h2 {
+    margin: 0 0 4px 0;
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+.agent_behavior_header > h3 {
+    margin: 0 0 4px 0;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+.agent_behavior_header > p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+
+/* ---- CUSTOM BEHAVIOR ---- */
+.agent_custom_behavior_container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 15px 0px 10px 0px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.agent_custom_behavior_header {
+    padding: 20px 5px 0px 5px;
+}
+
+/* First declaration: base field-sublabel style (overridden further down) */
+.field_sublabel {
+    margin: 4px 0 0 0;
+    font-weight: 300;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+#agent_custom_behavior_input {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    background: rgb(10, 10, 10);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+#agent_custom_behavior_input:focus { border-color: rgba(255, 255, 255, 0.15); }
+#agent_custom_behavior_input::placeholder { color: rgba(255, 255, 255, 0.15); }
+
+.field_label {
+    margin: 0 0 4px 0;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Second declaration: this one wins for .field_sublabel (defined later in the cascade) */
+.field_sublabel {
+    margin: 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* ---- CONFIRM ---- */
+.agent_settings_confirm_container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px 0px px 15px;
+    margin-top: 10px;
+}
+
+#agent_settings_confirm_btn {
+    padding: 8px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    background: rgb(10, 10, 10);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+#agent_settings_confirm_btn:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgb(25, 25, 25);
+    color: white;
+}
+#agent_settings_confirm_btn:active {
+    transform: scale(0.97);
+}
+
+
+
+
+/* ----------------- SPHERE SELECTOR --------------- */
+.agent_sphere_selector_container {
+    padding-top: 40px;
+}
+.sphere_selector_header {
+    padding: 0px 2px;
+    margin-bottom: 12px;
+}
+.sphere_selector_header > h2 {
+    margin: 0 0 4px 0;
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+.sphere_selector_header > h3 {
+    margin: 0 0 4px 0;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+.sphere_selector_header > p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.sphere_selector {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(10, 10, 10);
+    border-radius: 5px;
+    height: 50px;
+    max-height: 105px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+}
+/* Scrollbar */
+.background_selector::-webkit-scrollbar { width: 2px; }
+.background_selector::-webkit-scrollbar-track { background: transparent; }
+.background_selector::-webkit-scrollbar-thumb {background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+.background_selector::-webkit-scrollbar-thumb:hover {background: rgba(255, 255, 255, 0.25);}

@@ -1,11 +1,32 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { spawn } = require('child_process')
 
+
+// --------------------------------- JSON STYLES PERSISTANCE --------------------------
+const fs   = require('fs')
+const path = require('path')
+
+const stylesPath = path.join(app.getPath('appData'), '..', 'Local', app.getName(), 'ui', 'styles.json')
+
+function readStyles() {
+    if (!fs.existsSync(stylesPath)) return null
+    return JSON.parse(fs.readFileSync(stylesPath, 'utf-8'))
+}
+
+function writeStyles(data) {
+    fs.mkdirSync(path.dirname(stylesPath), { recursive: true })
+    fs.writeFileSync(stylesPath, JSON.stringify(data, null, 2))
+}
+// ------------------------------------------------------------------------------------
+
+
 let pythonProcess
 let mainWindow
 let chatWindow
 let settingsWindow
-let currentBackground = null
+let currentBackground = readStyles()
+
+
 // ------------------------------------- WINDOWS -------------------------------------
 // ----------- MAIN WINDOW -----------
 function createMainWindow() {
@@ -56,7 +77,7 @@ function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 840,
         height: 525,
-        minWidth: 450,
+        minWidth: 570,
         minHeight: 400,
         backgroundColor: "#000000",
         frame: false,
@@ -72,6 +93,31 @@ function createSettingsWindow() {
     settingsWindow.on('close', (event) => {
         event.preventDefault()
         settingsWindow.hide()
+    })
+
+}
+
+// ----------- AGENT SETTINGS WINDOW -----------
+function createAgentSettingsWindow() {
+    agentSettingsWindow = new BrowserWindow({
+        width: 440,
+        height: 625,
+        minWidth: 300,
+        minHeight: 400,
+        backgroundColor: "#000000",
+        frame: false,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    })
+
+    agentSettingsWindow.loadFile('src/components/agent_settings/agent_settings.html')
+    // When the user closes the chat window, just hide it instead of destroying it
+    agentSettingsWindow.on('close', (event) => {
+        event.preventDefault()
+        agentSettingsWindow.hide()
     })
 
 }
@@ -94,6 +140,14 @@ ipcMain.on('toggle-settings', () => {
         settingsWindow.focus()
     }
 })
+ipcMain.on('toggle-agent-settings', () => {
+    if (agentSettingsWindow.isVisible()) {
+        agentSettingsWindow.hide()
+    } else {
+        agentSettingsWindow.show()
+        agentSettingsWindow.focus()
+    }
+})
 
 // ------- CLOSE WINDOWS LOGIC ---------
 // Kill the Python process when all windows are closed
@@ -110,13 +164,20 @@ ipcMain.on('close-app', () => {
 
 ipcMain.on('close-chat', () => { chatWindow.hide() })
 ipcMain.on('close-settings', () => { settingsWindow.hide() })
+ipcMain.on('close-agent-settings', () => {agentSettingsWindow.hide()})
 
 
 // ------- SETTINGS WINDOW LOGIC -------
 ipcMain.on('background-changed', (event, data) => {
     currentBackground = data
+    writeStyles(data)
     mainWindow.webContents.send('background-changed', data)
-    chatWindow.webContents.send('background-changed', data)
+    if (chatWindow && !chatWindow.isDestroyed()) {
+        chatWindow.webContents.send('background-changed', data);
+    }
+    if (agentSettingsWindow && !agentSettingsWindow.isDestroyed()) {
+        agentSettingsWindow.webContents.send('background-changed', data);
+    }
 })
 
 ipcMain.handle('get-background', () => { return currentBackground })
@@ -157,4 +218,5 @@ app.whenReady().then(() => {
     createMainWindow()
     createChatWindow()
     createSettingsWindow()
+    createAgentSettingsWindow()
 })

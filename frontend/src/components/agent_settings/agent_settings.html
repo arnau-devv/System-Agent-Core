@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agent settings</title>
+  <link rel="stylesheet" href="agent_settings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+    <body id="agent_settings_body">
+        <!-- draggable area + close btn -->
+        <div id="draggable_header"></div>
+        <div class="close_agent_settings_panel_btn_container" id="close_agent_settings_panel_btn_container">
+            <button id="close_agent_settings_panel_btn"></button>
+        </div>
+        
+        <!-- Main content -->
+        <div class="agent_settings_main_container">
+            <!-- settings panel header -->
+            <div class="agent_settings_header">
+                <img src="../../../assets/ai_sphere.png">
+                <h4>Jarvis Ai</h4>
+            </div>
+
+            <!-- settings options/views selector -->
+            <div class="agent_settings_options" id="agent_settings_options">
+                <!-- add all buttons agent_settings_renderer.js to const "buttons"-->
+                <button id="agent_settings_general_btn"><img src="../../../assets/settings2.webp">General</button>
+                <button id="agent_settings_entity_btn"><img src="../../../assets/entity.png">Entity</button>
+                <button id="agent_settings_account_btn"><img src="../../../assets/account.webp">Account</button>
+                <button id="agent_settings_notifications_btn"><img src="../../../assets/notifications.png">Notifications</button>
+            </div>
+
+            <!-- settings panel content -->
+            <div class="agent_settings_panel_content" id="agent_settings_panel_content">
+                    
+                <!-- General Settings View -->
+                <div class="agent_settings_view" id="view_agent_general">
+                <!-- contenido de General -->
+                </div>
+                    
+                <!------------- Entity Settings View ----------------->
+                <div class="agent_settings_view" id="view_agent_entity">
+                    <div class="identity_behavior_container">
+
+                        <!-- NAME -->
+                        <div class="agent_name_container">
+                            <!-- HEADER -->
+                            <div class="identity_behavior_header">
+                                <h2>Name</h2>
+                                <h3>Pick your agent's identity</h3>
+                                <p>Choosing a name automatically assigns its matching wake word, so you don't need to configure it manually.</p>
+                            </div>
+
+                            <!-- NAME & WAKE WORD -->
+                            <div class="agent_name_selection_container">
+                                <div class="agent_name_field">
+                                    <p class="field_label">Name</p>
+                                    <select id="agent_name_select" class="agent_name_select">
+                                        <option value="jarvis">Jarvis</option>
+                                        <option value="cortana">Cortana</option>
+                                        <option value="pixie">Pixie</option>
+                                    </select>
+                                </div>
+                                <div class="spacer"></div>
+                                <div class="agent_wake_word_field">
+                                    <p class="field_label">Wake word</p>
+                                    <p id="wake_word_display">"Hey Jarvis"</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BEHAVIOR -->
+                        <div class="agent_behavior_container">
+                            <!-- HEADER -->
+                            <div class="agent_behavior_header">
+                                <h2>Behavior</h2>
+                                <h3>Choose a behavior preset or define your own</h3>
+                                <p> Select a preset that defines your agent's tone and personality, or switch to Custom to write your own rules below.</p>
+                            </div>
+                            <div class="agent_behavior_options">
+                                <div class="behavior_option" data-value="assistant">
+                                    <div class="behavior_option_dot"></div>
+                                    <div class="behavior_option_text">
+                                        <p class="behavior_option_title">Assistant</p>
+                                        <p class="behavior_option_desc">Efficient, direct and professional. Focused on getting things done.</p>
+                                    </div>
+                                </div>
+                                <div class="behavior_option" data-value="companion">
+                                    <div class="behavior_option_dot"></div>
+                                    <div class="behavior_option_text">
+                                        <p class="behavior_option_title">Companion</p>
+                                        <p class="behavior_option_desc">Casual, warm and conversational. Feels like talking to a person.</p>
+                                    </div>
+                                </div>
+                                <div class="behavior_option" data-value="custom">
+                                    <div class="behavior_option_dot"></div>
+                                    <div class="behavior_option_text">
+                                        <p class="behavior_option_title">Custom</p>
+                                        <p class="behavior_option_desc">Uses your own instructions defined below.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CUSTOM BEHAVIOR -->
+                        <div class="agent_custom_behavior_container">
+                            <div class="agent_custom_behavior_header">
+                                <h3 class="field_label">Write your own rules</h3>
+                                <p class="field_sublabel"> Define in detail the role, tone, and rules the AI must follow. Your instructions will override the preset selected above.</p>
+                            </div>
+                            <textarea id="agent_custom_behavior_input" placeholder="e.g. You are my personal assistant. You call me 'boss' naturally. You are chill, intelligent and speak in a casual tone..."></textarea>
+                            <!-- CONFIRM -->
+                            <div class="agent_settings_confirm_container">
+                                <button id="agent_settings_confirm_btn">Save changes</button>
+                            </div>
+                        </div>
+
+                        <!-- SPHERE -->
+                        <div class="agent_sphere_selector_container">
+                            <!-- HEADER -->
+                            <div class="sphere_selector_header">
+                                <h2>Sphere</h2>
+                                <h3>Choose your agent's visual core</h3>
+                                <p>This is the 3D sphere your agent uses to represent itself. Pick a style, it will animate and react in real time based on its state.</p>
+                            </div>
+                            <div class="sphere_selector" id="sphere_selector">
+                                <!-- sphere options will be dynamically generated here -->
+                        </div>
+
+                    </div>
+                </div>
+
+                <!------------- Account Settings View ----------------->
+                <div class="agent_settings_view" id="view_agent_account">
+                    <!-- contenido de Account -->
+                </div>
+
+                <!------------- Notifications Settings View ----------------->
+                <div class="agent_settings_view" id="view_agent_notifications">
+                    <!-- contenido de Notifications -->
+                </div>
+            </div>
+        </div>
+
+        <script src="../background/bg-themes.js"></script>
+        <script src="../background/grainy-bg.js"></script>
+        <script src="agent_settings_renderer.js"></script>
+    </body>
+</html>

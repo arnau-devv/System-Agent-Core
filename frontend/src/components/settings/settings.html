@@ -6,7 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
-    <body id="body">
+    <body id="settings_body">
         <!-- draggable area + close btn van DENTRO del content -->
         <div id="draggable_header"></div>
         <div class="close_settings_panel_btn_container" id="close_settings_panel_btn_container">
@@ -16,7 +16,9 @@
 
             <!-- settings panel header -->
             <div class="settings_panel_header">
+                <!-- ¡¡ add some tittle here !! -->
                 <div class="settings_panel_options">
+                    <!-- add all buttons settings_renderer.js to const "buttons"-->
                     <button id="general_settings_btn"><img src="../../../assets/settings2.webp">General</button>
                     <button id="customization_settings_btn"><img src="../../../assets/brush.png">Customization</button>
                     <button id="account_settings_btn"><img src="../../../assets/account.webp">Account</button>
@@ -28,12 +30,12 @@
             <div class="settings_panel_content_inner_container">
                 <div class="settings_panel_content" id="settings_panel_content">
                     
-                    <!-- General Settings -->
+                    <!-- General Settings View -->
                     <div class="settings_view" id="view_general">
                         <!-- contenido de General -->
                     </div>
                     
-                    <!-- Backgorund Settings View-->
+                    <!------------- Backgorund Settings View ----------------->
                     <div class="settings_view" id="view_customization">
                         <div class="background_settings_header">
                             <h2>Background</h2>
@@ -46,7 +48,8 @@
                                 <div class="backgorund_previsualizer_header">
                                     <p></p>
                                 </div>
-                                <div class="background_previsualizer" id="background_previsualizer"></div>
+                                <div class="background_previsualizer" id="background_previsualizer">
+                                </div>
                             </div>
                             <!-- backround selector -->
                             <div class="bacground_selector_container">
@@ -55,7 +58,7 @@
                                     <p>Select a background: </p>
 
                                     <div class="background_mode_toggle_container">
-                                        <span>Dark Mode</span>
+                                        <span id="background_mode_label"><span class="mode_word_viewport"><span class="mode_word_track" id="background_mode_track"><span class="mode_word">Normal</span><span class="mode_word">Dark</span></span></span> Tone</span>
                                         <label class="toggle_switch" id="color_toggle_switch">
                                             <input type="checkbox" id="color_mode_toggle_input">
                                             <span class="toggle_slider"></span>
@@ -66,9 +69,10 @@
                                 <div class="background_selector" id="background_selector">
                                 </div>
                             </div>
-                        
                         </div>
                     </div>
+                    <!-------------------------------------------------------------->
+                    
                     <!-- Backgorund Settings -->
                     <div class="settings_view" id="view_account">
                         <!-- contenido de Account -->

@@ -48,7 +48,16 @@ if (ipcRenderer) {
         if (bg && bg.theme && BG_THEMES[bg.theme]) {
             currentTheme = bg.theme
         }
+        if (bg && bg.mode) {
+            currentMode = bg.mode
+        }
         applyTheme()
+
+        // Ahora sí sincroniza el toggle con el modo real
+        currentToggleColors = BG_THEMES[currentTheme].normal
+        colorModeToggleInput.checked = (currentMode === 'dark')
+        updateToggleBackground()
+        updateModeLabel()
 
         // Marcar visualmente la card correcta como seleccionada
         document.querySelectorAll('.theme_card').forEach(c => {
@@ -60,6 +69,7 @@ if (ipcRenderer) {
 // -------- BACKGROUND MODE Normal/dark -------------
 const colorModeToggleInput = document.getElementById('color_mode_toggle_input');
 const colorToggleSwitch = document.getElementById('color_toggle_switch');
+const colorModeTrack = document.getElementById('background_mode_track');
 let currentToggleColors = BG_THEMES[currentTheme].normal;
 
 function updateToggleBackground() {
@@ -69,13 +79,16 @@ function updateToggleBackground() {
         : `rgba(43, 27, 61, 0.35)`;
 }
 
-// Init
-colorModeToggleInput.checked = (currentMode === 'dark');
-updateToggleBackground();
+function updateModeLabel() {
+    // Pure state -> class mapping, no timers involved, so there's nothing to desync
+    colorModeTrack.classList.toggle('show_dark', currentMode === 'dark');
+}
+
 
 colorModeToggleInput.addEventListener('change', (event) => {
     currentMode = event.target.checked ? 'dark' : 'normal';
     updateToggleBackground();
+    updateModeLabel();
     applyTheme();
     if (ipcRenderer) {
         ipcRenderer.send('background-changed', {
