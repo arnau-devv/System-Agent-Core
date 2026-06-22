@@ -24,4 +24,4 @@ window.SPHERE_THEMES = {
 }
 
 // Sphere usado por defecto si nadie ha elegido nada todavía (primer arranque)
-window.DEFAULT_SPHERE = "rings"
+window.DEFAULT_SPHERE = "ion"

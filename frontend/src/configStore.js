@@ -9,25 +9,21 @@ class ConfigStore {
         this.data = this.read();
     }
 
-    // Lee el archivo del disco
-    read() {
-        if (!fs.existsSync(this.path)) {
-            // Valores por defecto si el archivo no existe en el primer arranque
-            return {
-                background: {
-                    theme: "Aurora",
-                    mode: "normal",
-                    colors: null
-                },
-                sphere: "rings",
-                language: "es"
-            };
+    _defaults() {
+        return {
+            background: { theme: "Aurora", mode: "normal", colors: null },
+            sphere: "rings",
+            language: "es"
         }
+    }
+
+    read() {
+        if (!fs.existsSync(this.path)) return this._defaults()
         try {
-            return JSON.parse(fs.readFileSync(this.path, 'utf-8'));
+            return JSON.parse(fs.readFileSync(this.path, 'utf-8'))
         } catch (e) {
-            console.error("Error al leer el archivo de configuración:", e);
-            return {};
+            console.error("Error al leer el archivo de configuración:", e)
+            return this._defaults()
         }
     }
 

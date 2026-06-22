@@ -1,13 +1,14 @@
 const { ipcRenderer } = require('electron')
 
-// ----------------------------------------------------------
-//   MESSAGE STORE
-//   Only "STT_DONE" and "AI_DONE" messages are stored.
-// ----------------------------------------------------------
 
+// =============================================================================
+//  MESSAGE STORE
+//  Holds the full conversation history for this session.
+//  Only STT_DONE (user speech) and AI_DONE (agent response) are tracked.
+//  The window is never destroyed, so history persists across hide/show cycles.
+// =============================================================================
 const TRACKED_NAMES = ['STT_DONE', 'AI_DONE']
-
-const messageStore = []
+const messageStore  = []
 
 ipcRenderer.on('backend-message', (event, message) => {
     console.log('[ChatRenderer]:', message.name, message.data)
@@ -17,69 +18,65 @@ ipcRenderer.on('backend-message', (event, message) => {
 function handleMessage(message) {
     if (!TRACKED_NAMES.includes(message.name)) return
 
+    // STT_DONE carries 'user_input', AI_DONE carries 'response'
     const entry = {
         name: message.name,
         text: message.data.user_input || message.data.response || '',
     }
 
     messageStore.push(entry)
-    renderMessages()
+    renderMessage(entry)
 }
 
 
-// ----------------------------------------------------------
-//    CHAT RENDERING
-//    Appends only the latest message to the DOM.
-// ----------------------------------------------------------
+// =============================================================================
+//  CHAT RENDERING
+//  Appends one message bubble at a time with a fade+slide-up entrance.
+//  Reading from messageStore directly instead of passing entry would
+//  re-render the full list on every message — intentionally avoided.
+// =============================================================================
 const chatMessages = document.getElementById('chat_messages')
-let messageSource = ""
-function renderMessages() {
-    const entry = messageStore[messageStore.length - 1]
-    if (entry.name == 'AI_DONE') messageSource = "agent"
-    else messageSource = "user"
+
+function renderMessage(entry) {
+    const source = entry.name === 'AI_DONE' ? 'agent' : 'user'
 
     const div = document.createElement('div')
     div.classList.add('chat_message')
+    div.innerHTML = `<h3>${source}</h3><p>${entry.text}</p>`
 
-    div.innerHTML = `
-        <h3>${messageSource}</h3>
-        <p>${entry.text}</p>
-    `
-    // Start invisible and shifted down
-    div.style.opacity = '0'
-    div.style.transform = 'translateY(10px)'
+    // Set initial hidden state before inserting so the transition has a from-state
+    div.style.opacity    = '0'
+    div.style.transform  = 'translateY(10px)'
     div.style.transition = 'opacity 0.3s ease, transform 0.3s ease'
 
     chatMessages.appendChild(div)
 
-    // Force reflow so the transition has a starting state to animate from
+    // Reading offsetHeight forces a reflow — required for CSS transitions to
+    // fire correctly when styles change immediately after insertion
     div.offsetHeight
 
-    div.style.opacity = '1'
+    div.style.opacity   = '1'
     div.style.transform = 'translateY(0)'
 
-    // Auto-scroll to the latest message
     chatMessages.scrollTop = chatMessages.scrollHeight
 }
 
 
-
-
-// ----------------------------------------------------------
-//    CHAT HEADER — close button
-//    Hides the window without destroying it (conversation is kept)
-// ----------------------------------------------------------
-const minimizeBtn  = document.getElementById('minimize_chat_panel_btn')
-minimizeBtn.addEventListener('click', () => {
+// =============================================================================
+//  HEADER
+// =============================================================================
+// Hides the window instead of destroying it — conversation history is kept
+document.getElementById('minimize_chat_panel_btn').addEventListener('click', () => {
     ipcRenderer.send('close-chat')
 })
 
 
-// ----------------------------------------------------------
-//    CHAT INPUT — send on button click or Enter key
-// ----------------------------------------------------------
-const chatInput    = document.getElementById('chat_input')
-const sendBtn      = document.getElementById('send_chat_btn')
+// =============================================================================
+//  CHAT INPUT
+//  Sends on button click or Enter key. WebSocket send is not yet implemented.
+// =============================================================================
+const chatInput = document.getElementById('chat_input')
+const sendBtn   = document.getElementById('send_chat_btn')
 
 sendBtn.addEventListener('click', sendMessage)
 chatInput.addEventListener('keydown', (e) => {
@@ -91,38 +88,33 @@ function sendMessage() {
     if (!text) return
 
     console.log('User sent:', text)
-    // TODO: send via WebSocket
+    // TODO: forward to backend via WebSocket
     chatInput.value = ''
 }
 
 
-// -----------------------------------------------------------------------------
-//                                  BACKGROUND
-// -----------------------------------------------------------------------------
-// -------------- BACKGROUND INIT gets loaded json info from main)--------------
+// =============================================================================
+//  BACKGROUND
+//  Initialized on load using the persisted config. The 'background-changed'
+//  event keeps the color in sync when the user changes it in settings.
+// =============================================================================
 ipcRenderer.invoke('get-background').then((bg) => {
-    const theme = (bg && bg.theme) ? bg.theme : window.DEFAULT_BG_THEME
-    const mode  = (bg && bg.mode)  ? bg.mode  : window.DEFAULT_BG_MODE
+    const theme  = bg?.theme ?? window.DEFAULT_BG_THEME
+    const mode   = bg?.mode  ?? window.DEFAULT_BG_MODE
     const colors = window.BG_THEMES[theme][mode]
 
     window.initGrainyBg({
         fullscreen: true,
-        colors:    colors,
+        colors,
         speed:     1.2,
         intensity: 0.08,
         grainSize: 2.2,
         amplitude: 0.06,
     })
+
+    // Apply colors to any elements that use CSS variables (e.g. accents, borders)
+    window.setBgColors(colors)
 })
-
-ipcRenderer.invoke('get-background').then((bg) => {
-    const theme = (bg && bg.theme) ? bg.theme : window.DEFAULT_BG_THEME;
-    const mode  = (bg && bg.mode)  ? bg.mode  : window.DEFAULT_BG_MODE;
-    const colors = window.BG_THEMES[theme][mode];
-    
-    window.setBgColors(colors);
-});
-
 
 ipcRenderer.on('background-changed', (event, data) => {
     if (window.setBgColors) window.setBgColors(data.colors)

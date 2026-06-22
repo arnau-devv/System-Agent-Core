@@ -476,15 +476,14 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
 }
 .theme_card:hover    { transform: scale(1.1); }
 .theme_card:active    { transform: scale(1); }
-.theme_card.selected { border: 2px solid rgba(255, 255, 255, 0.8); }
+.theme_card.selected {
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    animation: card_border_pulse 2.8s ease-out infinite;
+}
 
-
-/*
-backgound
-
-color selector
-dark/bright mode background color button
-
-actual bg / slected bg - preview
-*/
+@keyframes card_border_pulse {
+    0%   { box-shadow: 0 0 0 0px  rgba(255, 255, 255, 0.45); }
+    50%  { box-shadow: 0 0 0 8px  rgba(255, 255, 255, 0);    }
+    100% { box-shadow: 0 0 0 8px  rgba(255, 255, 255, 0);    }
+}
 
