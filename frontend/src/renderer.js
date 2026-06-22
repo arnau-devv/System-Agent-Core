@@ -159,7 +159,7 @@ ipcRenderer.on('background-changed', (event, data) => {
 ipcRenderer.invoke('get-background').then((bg) => {
    const theme = (bg && bg.theme) ? bg.theme : window.DEFAULT_BG_THEME
    const mode  = (bg && bg.mode)  ? bg.mode  : window.DEFAULT_BG_MODE
-   const colors = window.BG_THEMES[theme][mode]
+   const colors = (bg && bg.colors) ? bg.colors : window.BG_THEMES[theme][mode]
 
    window.initGrainyBg({
       fullscreen: true,

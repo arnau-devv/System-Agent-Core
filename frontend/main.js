@@ -1,23 +1,24 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { spawn } = require('child_process')
+const configStore = require('./src/configStore');
 
 
-// --------------------------------- JSON STYLES PERSISTANCE --------------------------
-const fs   = require('fs')
-const path = require('path')
+// // --------------------------------- JSON STYLES PERSISTANCE --------------------------
+// const fs   = require('fs')
+// const path = require('path')
 
-const stylesPath = path.join(app.getPath('appData'), '..', 'Local', app.getName(), 'ui', 'styles.json')
+// const stylesPath = path.join(app.getPath('appData'), '..', 'Local', app.getName(), 'ui', 'styles.json')
 
-function readStyles() {
-    if (!fs.existsSync(stylesPath)) return null
-    return JSON.parse(fs.readFileSync(stylesPath, 'utf-8'))
-}
+// function readStyles() {
+//     if (!fs.existsSync(stylesPath)) return null
+//     return JSON.parse(fs.readFileSync(stylesPath, 'utf-8'))
+// }
 
-function writeStyles(data) {
-    fs.mkdirSync(path.dirname(stylesPath), { recursive: true })
-    fs.writeFileSync(stylesPath, JSON.stringify(data, null, 2))
-}
-// ------------------------------------------------------------------------------------
+// function writeStyles(data) {
+//     fs.mkdirSync(path.dirname(stylesPath), { recursive: true })
+//     fs.writeFileSync(stylesPath, JSON.stringify(data, null, 2))
+// }
+// // ------------------------------------------------------------------------------------
 
 
 let pythonProcess
@@ -25,7 +26,6 @@ let mainWindow
 let chatWindow
 let settingsWindow
 let agentSettingsWindow
-let currentBackground = readStyles()
 
 
 // ------------------------------------- WINDOWS -------------------------------------
@@ -174,8 +174,7 @@ ipcMain.on('close-agent-settings', () => { agentSettingsWindow?.destroy(); agent
 
 // -------------------- SETTINGS WINDOW LOGIC -------------------------------------
 ipcMain.on('background-changed', (event, data) => {
-    currentBackground = data
-    writeStyles(data)
+    configStore.write('background', data);
     mainWindow.webContents.send('background-changed', data)
     if (chatWindow && !chatWindow.isDestroyed()) {
         chatWindow.webContents.send('background-changed', data);
@@ -185,7 +184,7 @@ ipcMain.on('background-changed', (event, data) => {
     }
 })
 
-ipcMain.handle('get-background', () => { return currentBackground })
+ipcMain.handle('get-background', () => { return configStore.get('background') })
 
 
 // ----------------------------------- WebSocket Message Router ------------------------
