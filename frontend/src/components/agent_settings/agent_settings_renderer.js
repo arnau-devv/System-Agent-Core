@@ -71,7 +71,7 @@ if (ipcRenderer) {
     });
 }
 
-// ------- 
+// --- OPTIONS SCROLL EFECT ---
 const scrollContainer = document.querySelector('.agent_settings_options');
 
 let targetScrollLeft = scrollContainer.scrollLeft;
@@ -114,5 +114,46 @@ function selectBehavior(option) {
 behaviorOptions.forEach(option => {
     option.addEventListener('click', () => selectBehavior(option));
 });
+
+
+
+// -----------------------------------------------------------------------------
+//  SPHERE LOGIC 
+// -----------------------------------------------------------------------------
+// On Agent Settings style
+const spherePreviewContainer = document.getElementById('agent_sphere_preview')
+let sphereInstance = window.createRingsSphere(spherePreviewContainer)
+
+//------------ RENDER SPHERE SELECTOR & LOGIC -------------
+const sphereSelectorContainer = document.getElementById('sphere_selector')
+let currentSphere = window.DEFAULT_SPHERE
+
+Object.entries(window.SPHERE_THEMES).forEach(([key, theme]) => {
+    const card = document.createElement('div')
+    card.classList.add('sphere_card')
+    card.style.backgroundImage = `url(${theme.thumbnail})`
+    card.dataset.sphere = key
+    card.title = theme.label
+
+    if (key === currentSphere) card.classList.add('selected')
+
+    card.addEventListener('click', () => {
+        currentSphere = key
+
+        // Destruye la esfera previa y crea la nueva en el preview
+        if (sphereInstance) {sphereInstance.destroy() }
+        sphereInstance = theme.create(spherePreviewContainer)
+
+        document.querySelectorAll('.sphere_card').forEach(c => c.classList.remove('selected'))
+        card.classList.add('selected')
+
+        if (ipcRenderer) {
+            ipcRenderer.send('sphere-changed', { sphere: currentSphere })
+        }
+    })
+
+    sphereSelectorContainer.appendChild(card)
+})
+
 
 

@@ -245,6 +245,22 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
 }
 
 /* ================= SPHERE CONTAINER ================= */
+.sphere_wrapper {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 8px 60px rgba(0, 0, 0, 0.4);
+} 
+
 .principal_content {
     flex: 1;
     display: flex;
@@ -351,5 +367,3 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
         opacity: 0.3;
     }
 }
-
-

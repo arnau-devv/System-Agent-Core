@@ -1,57 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>System Agent Core</title>
-  <link rel="stylesheet" href="style.css">
+    <title>System Agent Core</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-------- TITLEBAR -------->
-  <div class="titlebar">
-    <!-- Titlebar content -->
-    <div class="titlebar_content">
-      <!-- connection status -->
-      <div class="conection_status connecting" id="connection_status">
-        <p id="connection_status_text">connecting...</p>
-        <div class="conection_status_tooltip">
-          <p id="tooltip_llm_container" class="connecting">llm: <span id="tooltip_llm">not connected</span></p>
-          <p id="tooltip_tts_container" class="connecting">tts: <span id="tooltip_tts">not connected</span></p>
-          <p id="tooltip_ww_container" class="connecting">ww: <span id="tooltip_ww">not connected</span></p>
+    <!-------- TITLEBAR -------->
+    <div class="titlebar">
+        <!-- Titlebar content -->
+        <div class="titlebar_content">
+        <!-- connection status -->
+        <div class="conection_status connecting" id="connection_status">
+            <p id="connection_status_text">connecting...</p>
+            <div class="conection_status_tooltip">
+            <p id="tooltip_llm_container" class="connecting">llm: <span id="tooltip_llm">not connected</span></p>
+            <p id="tooltip_tts_container" class="connecting">tts: <span id="tooltip_tts">not connected</span></p>
+            <p id="tooltip_ww_container" class="connecting">ww: <span id="tooltip_ww">not connected</span></p>
+            </div>
         </div>
-      </div>
-      <!-- basic Tools -->
-      <div class="basic_tools">
-        <button id="tools_toggle"><img src="../assets/arrow.png" id="tools_arrow"></button>
-        <button id="settings_panel"><img src="../assets/settings2.webp"></button>
-        <button id="agent_settings_panel"><img src="../assets/ai_sphere.png"></button>
-      </div>
-      
+        <!-- basic Tools -->
+        <div class="basic_tools">
+            <button id="tools_toggle"><img src="../assets/images/arrow.png" id="tools_arrow"></button>
+            <button id="settings_panel"><img src="../assets/images/settings2.webp"></button>
+            <button id="agent_settings_panel"><img src="../assets/images/ai_sphere.png"></button>
+        </div>
+        
+        </div>
+        <!-- close app -->
+        <button id="close_app_btn"></button>
     </div>
-    <!-- close app -->
-    <button id="close_app_btn"></button>
-  </div>
 
-  <!--------  PRINCIPAL INTERFACE --------->
-  <div class="principal_content">
-    <div id="sphere_container"></div>
-  </div>
+    <!--------  PRINCIPAL INTERFACE --------->
+    <div class="principal_content">
+        <div class="sphere_wrapper">
+            <div id="sphere_container"></div>
+        </div>
+    </div>
 
-  <!-- NAVBAR -->
-  <div class="navbar" id="navbar">
-    <button id="btn1"></button>
-    <button id="btn2"></button>
-    <button id="btn3"></button>
-    <button id="open_chat_btn" class="open_chat_btn"><img class="open_chat_icon" src="../assets/open_chat.png"></button>
-    <button id="btn4"></button>
-    <button id="btn5"></button>
-    <button id="btn6"></button>
-  </div>
+    <!-- NAVBAR -->
+    <div class="navbar" id="navbar">
+        <button id="btn1"></button>
+        <button id="btn2"></button>
+        <button id="btn3"></button>
+        <button id="open_chat_btn" class="open_chat_btn"><img class="open_chat_icon" src="../assets/images/open_chat.png"></button>
+        <button id="btn4"></button>
+        <button id="btn5"></button>
+        <button id="btn6"></button>
+    </div>
 
-  <script src="components/background/bg-themes.js"></script>
-  <script src="components/background/grainy-bg.js"></script>
-  <script src="renderer.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-  <script src="sphere2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="components/sphere/sphere-ion.js"></script>
+    <script src="components/sphere/sphere-rings.js"></script>
+    
+    <script src="components/sphere/sphere-themes.js"></script>
+    <script src="components/background/bg-themes.js"></script>
+    <script src="components/background/grainy-bg.js"></script>
+    <script src="renderer.js"></script>
 </body>
 </html>

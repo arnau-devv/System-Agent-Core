@@ -13,6 +13,34 @@ minimizeBtn.addEventListener('click', () => {
 });
 
 
+// ================================================================
+//  VIEW NAVIGATION
+// ================================================================
+const buttons = {
+    general_settings_btn:       'view_general',
+    customization_settings_btn: 'view_customization',
+    account_settings_btn:       'view_account',
+    notifications_settings_btn: 'view_notifications',
+};
+
+function selectTab(btnId) {
+    document.querySelectorAll('.settings_panel_options > button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.settings_view').forEach(v => v.classList.remove('active'));
+    document.getElementById(btnId).classList.add('active');
+    document.getElementById(buttons[btnId]).classList.add('active');
+
+    // Resize canvas now that the view is visible and has real dimensions
+    if (window.resizeBgCanvas) window.resizeBgCanvas();
+}
+
+Object.keys(buttons).forEach(btnId => {
+    document.getElementById(btnId).addEventListener('click', () => selectTab(btnId));
+});
+
+// Default tab
+selectTab('customization_settings_btn');
+
+
 
 // ====================================================================
 //                            CUSTOMIZATION
@@ -75,7 +103,7 @@ let currentToggleColors = BG_THEMES[currentTheme].normal;
 function updateToggleBackground() {
     const toggleSlider = colorToggleSwitch.querySelector('.toggle_slider');
     toggleSlider.style.background = colorModeToggleInput.checked
-        ? `linear-gradient(135deg, ${currentToggleColors[0]}, ${currentToggleColors[2]})`
+        ? `linear-gradient(135deg, ${currentToggleColors[1]}, ${currentToggleColors[3]})`
         : `rgba(43, 27, 61, 0.35)`;
 }
 
@@ -100,12 +128,40 @@ colorModeToggleInput.addEventListener('change', (event) => {
 });
 
 //------------ RENDER COLOR SELECTOR & LOGIC -------------
-Object.entries(BG_THEMES).forEach(([name, theme]) => {
+
+// 1. Crear un contenedor temporal y oculto de 50x50 para generar los snapshots
+const tempTarget = document.createElement('div');
+tempTarget.style.cssText = 'width: 50px; height: 50px; position: absolute; visibility: hidden; pointer-events: none; z-index: -9999;';
+document.body.appendChild(tempTarget);
+
+// 2. Inicializar el generador de fondos en modo estático
+const snapshotGenerator = window.initGrainyBg({
+    target: tempTarget,
+    animate: false,               
+    preserveDrawingBuffer: true,  
+    isSnapshot: true,
+    grainSize: 1.0,               
+});
+
+Object.entries(BG_THEMES).forEach(([name, theme], index) => {
     const card = document.createElement('div');
     card.classList.add('theme_card');
-    card.style.background = `linear-gradient(135deg, ${theme.normal[0]}, ${theme.normal[2]})`;
     card.dataset.theme = name;
     card.title = name;
+
+    // 3. Generar el snapshot y aplicarlo
+    if (snapshotGenerator) { //If only for debug
+        snapshotGenerator.setColors(theme.normal);
+        // Desfasamos el renderizado de cada tarjeta para que el grano y las curvas no sean idénticas
+        snapshotGenerator.drawFrame(1000 + (index * 800));
+        
+        const snapshotUrl = snapshotGenerator.canvas.toDataURL('image/jpeg', 0.9);
+        card.style.backgroundImage = `url(${snapshotUrl})`;
+        card.style.backgroundSize = 'cover';
+        card.style.backgroundPosition = 'center';
+    } else {
+        card.style.background = `linear-gradient(135deg, ${theme.normal[1]}, ${theme.normal[3]})`;
+    }
 
     if (name === currentTheme) card.classList.add('selected');
 
@@ -129,35 +185,44 @@ Object.entries(BG_THEMES).forEach(([name, theme]) => {
     selectorContainer.appendChild(card);
 });
 
+// 4. Limpiar el generador de la memoria
+if (snapshotGenerator) snapshotGenerator.destroy();
+tempTarget.remove();
+
+
+// [!!!] Render without icon grainy snapshot ->
+// [!!!] Change isSnapshot from griny-bg to redo this
+// //------------ RENDER COLOR SELECTOR & LOGIC -------------
+// Object.entries(BG_THEMES).forEach(([name, theme]) => {
+//     const card = document.createElement('div');
+//     card.classList.add('theme_card');
+//     card.style.background = `linear-gradient(135deg, ${theme.normal[0]}, ${theme.normal[2]})`;
+//     card.dataset.theme = name;
+//     card.title = name;
+
+//     if (name === currentTheme) card.classList.add('selected');
+
+//     card.addEventListener('click', () => {
+//         currentTheme = name;
+//         currentToggleColors = BG_THEMES[name].normal;
+//         applyTheme();
+//         updateToggleBackground();
+//         document.querySelectorAll('.theme_card').forEach(c => c.classList.remove('selected'));
+//         card.classList.add('selected');
+
+//         if (ipcRenderer) {
+//             ipcRenderer.send('background-changed', {
+//                 theme:  currentTheme,
+//                 mode:   currentMode,
+//                 colors: BG_THEMES[currentTheme][currentMode]
+//             });
+//         }
+//     });
+
+//     selectorContainer.appendChild(card);
+// });
 
 
 
 
 
-
-// ================================================================
-//  VIEW NAVIGATION
-// ================================================================
-const buttons = {
-    general_settings_btn:       'view_general',
-    customization_settings_btn: 'view_customization',
-    account_settings_btn:       'view_account',
-    notifications_settings_btn: 'view_notifications',
-};
-
-function selectTab(btnId) {
-    document.querySelectorAll('.settings_panel_options > button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.settings_view').forEach(v => v.classList.remove('active'));
-    document.getElementById(btnId).classList.add('active');
-    document.getElementById(buttons[btnId]).classList.add('active');
-
-    // Resize canvas now that the view is visible and has real dimensions
-    if (window.resizeBgCanvas) window.resizeBgCanvas();
-}
-
-Object.keys(buttons).forEach(btnId => {
-    document.getElementById(btnId).addEventListener('click', () => selectTab(btnId));
-});
-
-// Default tab
-selectTab('customization_settings_btn');

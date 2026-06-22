@@ -1,4 +1,6 @@
 const { ipcRenderer, ipcMain } = require('electron')
+const { playSound, setVolume } = require('./audioEngine')
+
 
 // ------------ WEBSOCKET CONNECTION ------------
 function connectWebSocket() {
@@ -20,7 +22,7 @@ function connectWebSocket() {
 connectWebSocket()
 
 //Filters messages by intern modules (titlebar, ...) to use them
-function canHandleMessage(message, module_name, module_events) {
+function canHandleBackendMessage(message, module_name, module_events) {
    if (module_name === 'titlebar' && module_events.includes(message.name)) return true
    if (module_name === 'sphere' && sphereEvents.includes(message.name)) return true
    return false
@@ -35,7 +37,7 @@ const closeAppBtn = document.getElementById('close_app_btn')
 //                                  TITLEBAR 
 // -----------------------------------------------------------------------------
 ipcRenderer.on('backend-message', (event, message) => {
-   if (canHandleMessage(message, "titlebar", titlebarEvents)) {
+   if (canHandleBackendMessage(message, "titlebar", titlebarEvents)) {
       console.log('[Titlebar]:', message.name, message.data)
       titlebar_event_router(message)
    }
@@ -182,11 +184,19 @@ const sphereEvents = ['WAKE_DETECTED', 'IDLE']
 const sphereDelays = { WAKE_DETECTED: 250, IDLE: 250 }
 
 ipcRenderer.on('backend-message', (event, message) => {
-   if (canHandleMessage(message, "sphere", sphereEvents)) {
+   if (canHandleBackendMessage(message, "sphere", sphereEvents)) {
       console.log('[Sphere]:', message.name, message.data)
-      setTimeout(() => window.sphereSetState(message.name), sphereDelays[message.name])
+      setTimeout(() => sphereInstance.setState(message.name), sphereDelays[message.name])
    }
 })
+
+// -----------------------------------------------------------------------------
+//  SPHERE LOGIC 
+// -----------------------------------------------------------------------------
+// On Agent Settings style
+const sphereContainer = document.getElementById('sphere_container')
+const sphereInstance = window.createIonSphere(sphereContainer)
+
 
 
 // ---------------- NAVBAR ----------------

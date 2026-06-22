@@ -107,7 +107,7 @@ ipcRenderer.invoke('get-background').then((bg) => {
 
     window.initGrainyBg({
         fullscreen: true,
-        colors:    window.BG_THEMES["Aurora"]["dark"],
+        colors:    colors,
         speed:     1.2,
         intensity: 0.08,
         grainSize: 2.2,

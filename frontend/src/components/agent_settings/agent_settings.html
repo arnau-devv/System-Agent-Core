@@ -17,17 +17,19 @@
         <div class="agent_settings_main_container">
             <!-- settings panel header -->
             <div class="agent_settings_header">
-                <img src="../../../assets/ai_sphere.png">
-                <h4>Jarvis Ai</h4>
+                <div class="agent_sphere_margin_container">
+                    <div class="agent_sphere_preview" id="agent_sphere_preview"></div>
+                </div>
+                <!-- <h4>Jarvis Ai</h4> -->
             </div>
 
             <!-- settings options/views selector -->
             <div class="agent_settings_options" id="agent_settings_options">
                 <!-- add all buttons agent_settings_renderer.js to const "buttons"-->
-                <button id="agent_settings_general_btn"><img src="../../../assets/settings2.webp">General</button>
-                <button id="agent_settings_entity_btn"><img src="../../../assets/entity.png">Entity</button>
-                <button id="agent_settings_account_btn"><img src="../../../assets/account.webp">Account</button>
-                <button id="agent_settings_notifications_btn"><img src="../../../assets/notifications.png">Notifications</button>
+                <button id="agent_settings_general_btn"><img src="../../../assets/images/settings2.webp">General</button>
+                <button id="agent_settings_entity_btn"><img src="../../../assets/images/entity.png">Entity</button>
+                <button id="agent_settings_account_btn"><img src="../../../assets/images/account.webp">Account</button>
+                <button id="agent_settings_notifications_btn"><img src="../../../assets/images/notifications.png">Notifications</button>
             </div>
 
             <!-- settings panel content -->
@@ -125,6 +127,7 @@
                             </div>
                             <div class="sphere_selector" id="sphere_selector">
                                 <!-- sphere options will be dynamically generated here -->
+                            </div>
                         </div>
 
                     </div>
@@ -142,8 +145,13 @@
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+        <script src="../sphere/sphere-rings.js"></script>
+        <script src="../sphere/sphere-ion.js"></script>
+        <script src="../sphere/sphere-themes.js"></script>
+
         <script src="../background/bg-themes.js"></script>
         <script src="../background/grainy-bg.js"></script>
-        <script src="agent_settings_renderer.js"></script>
+        <script src="agent_settings_renderer.js"></script>     <!-- usa todo lo anterior, va el último -->
     </body>
 </html>

@@ -39,7 +39,11 @@ window.initGrainyBg = function (options = {}) {
   const amplitude  = options.amplitude  ?? 0.1;
   const brightness = options.brightness ?? 0.0;
   const colors = options.colors ?? window.BG_THEMES[window.DEFAULT_BG_THEME][window.DEFAULT_BG_MODE];
-  // const colors     = options.colors     ?? ["#1a0336", "#2a0f6b", "#7a3a0a", "#5a0a2e"];
+
+  // --- NUEVOS PARÁMETROS DE CONTROL ---
+  const animate               = options.animate ?? true;
+  const preserveDrawingBuffer = options.preserveDrawingBuffer ?? false;
+  const isSnapshot            = options.isSnapshot ?? false;
 
   // ---------- canvas setup ----------
   const canvas = document.createElement('canvas');
@@ -65,7 +69,9 @@ window.initGrainyBg = function (options = {}) {
     target.appendChild(canvas);
   }
 
-  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  // MODIFICADO: Pasamos el parámetro preserveDrawingBuffer al contexto WebGL
+  const gl = canvas.getContext('webgl', { preserveDrawingBuffer }) || 
+             canvas.getContext('experimental-webgl', { preserveDrawingBuffer });
   if (!gl) { console.warn('WebGL not supported'); return null; }
 
   // ---------- helpers ----------
@@ -244,14 +250,12 @@ window.initGrainyBg = function (options = {}) {
     brightness: uLoc('uBrightness'),
   };
 
-  // static uniforms — ahora SÍ vienen de options, con fallback a los defaults originales
   gl.uniform1f(U.amp,        amplitude);
   gl.uniform1f(U.grain,      intensity);
   gl.uniform1f(U.grainSize,  grainSize);
   gl.uniform1f(U.grainOn,    1.0);
   gl.uniform1f(U.brightness, brightness);
 
-  // colores iniciales — vienen de options.colors, no de una constante fija
   function applyColors(colorsArray) {
     const padded = [...colorsArray];
     while (padded.length < 5) padded.push('#000000');
@@ -270,33 +274,49 @@ window.initGrainyBg = function (options = {}) {
   window.addEventListener('resize', resize);
   resize();
 
-  // ---------- loop ----------
+  // ---------- loop / single frame ----------
   let start = null;
   let rafId = null;
+
+  function drawFrame(ts) {
+    gl.uniform1f(U.time, (ts / 1000) * speed);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
   function frame(ts) {
     if (!start) start = ts;
-    gl.uniform1f(U.time, ((ts - start) / 1000) * speed);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    rafId = requestAnimationFrame(frame);
+    drawFrame(ts - start);
+    if (animate) {
+      rafId = requestAnimationFrame(frame);
+    }
   }
-  rafId = requestAnimationFrame(frame);
+
+  if (animate) {
+    rafId = requestAnimationFrame(frame);
+  } else {
+    // Si es estático, renderizamos un frame inicial inmediatamente
+    drawFrame(1000);
+  }
 
   // ---------- instancia pública ----------
   const instance = {
     canvas,
     setColors: applyColors,
+    drawFrame, // Exponemos esto para poder variar el frame del snapshot manualmente
     resize,
     destroy() {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener('resize', resize);
       canvas.remove();
     },
   };
 
-  // Compatibilidad: settings_renderer.js (y código viejo) llama window.setBgColors /
-  // window.resizeBgCanvas directamente. Los dejamos apuntando a la última instancia creada.
-  window.setBgColors   = instance.setColors;
-  window.resizeBgCanvas = instance.resize;
+  // MODIFICADO: Solo guardamos en window si NO es un snapshot temporal.
+  // De esta manera no rompemos el previsualizador principal.
+  if (!isSnapshot) {
+    window.setBgColors   = instance.setColors;
+    window.resizeBgCanvas = instance.resize;
+  }
 
   return instance;
 };

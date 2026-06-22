@@ -24,6 +24,7 @@ let pythonProcess
 let mainWindow
 let chatWindow
 let settingsWindow
+let agentSettingsWindow
 let currentBackground = readStyles()
 
 
@@ -45,7 +46,7 @@ function createMainWindow() {
 
     Menu.setApplicationMenu(null)
     mainWindow.loadFile('src/index.html')
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 }
 
 // ----------- CHAT WINDOW -----------
@@ -66,10 +67,10 @@ function createChatWindow() {
 
     chatWindow.loadFile('src/components/chat/chat.html')
     // When the user closes the chat window, just hide it instead of destroying it
-    chatWindow.on('close', (event) => {
-        event.preventDefault()
-        chatWindow.hide()
-    })
+//     chatWindow.on('close', (event) => {
+//         event.preventDefault()
+//         chatWindow.hide()
+//     })
 }
 
 // ----------- SETTINGS WINDOW -----------
@@ -81,7 +82,7 @@ function createSettingsWindow() {
         minHeight: 400,
         backgroundColor: "#000000",
         frame: false,
-        show: false,
+        // show: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -90,10 +91,10 @@ function createSettingsWindow() {
 
     settingsWindow.loadFile('src/components/settings/settings.html')
     // When the user closes the chat window, just hide it instead of destroying it
-    settingsWindow.on('close', (event) => {
-        event.preventDefault()
-        settingsWindow.hide()
-    })
+    // settingsWindow.on('close', (event) => {
+    //     event.preventDefault()
+    //     settingsWindow.hide()
+    // })
 
 }
 
@@ -106,7 +107,7 @@ function createAgentSettingsWindow() {
         minHeight: 400,
         backgroundColor: "#000000",
         frame: false,
-        show: false,
+        // show: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -115,10 +116,10 @@ function createAgentSettingsWindow() {
 
     agentSettingsWindow.loadFile('src/components/agent_settings/agent_settings.html')
     // When the user closes the chat window, just hide it instead of destroying it
-    agentSettingsWindow.on('close', (event) => {
-        event.preventDefault()
-        agentSettingsWindow.hide()
-    })
+    // agentSettingsWindow.on('close', (event) => {
+    //     event.preventDefault()
+    //     agentSettingsWindow.hide()
+    // })
 
 }
 
@@ -133,17 +134,21 @@ ipcMain.on('toggle-chat', () => {
     }
 })
 ipcMain.on('toggle-settings', () => {
-    if (settingsWindow.isVisible()) {
-        settingsWindow.hide()
+    if (settingsWindow) {
+        settingsWindow.destroy()
+        settingsWindow = null
     } else {
+        createSettingsWindow()
         settingsWindow.show()
         settingsWindow.focus()
     }
 })
 ipcMain.on('toggle-agent-settings', () => {
-    if (agentSettingsWindow.isVisible()) {
-        agentSettingsWindow.hide()
+    if (agentSettingsWindow) {
+        agentSettingsWindow.destroy()
+        agentSettingsWindow = null
     } else {
+        createAgentSettingsWindow()
         agentSettingsWindow.show()
         agentSettingsWindow.focus()
     }
@@ -163,11 +168,11 @@ ipcMain.on('close-app', () => {
 })
 
 ipcMain.on('close-chat', () => { chatWindow.hide() })
-ipcMain.on('close-settings', () => { settingsWindow.hide() })
-ipcMain.on('close-agent-settings', () => {agentSettingsWindow.hide()})
+ipcMain.on('close-settings', () => { settingsWindow?.destroy(); settingsWindow = null })
+ipcMain.on('close-agent-settings', () => { agentSettingsWindow?.destroy(); agentSettingsWindow = null })
 
 
-// ------- SETTINGS WINDOW LOGIC -------
+// -------------------- SETTINGS WINDOW LOGIC -------------------------------------
 ipcMain.on('background-changed', (event, data) => {
     currentBackground = data
     writeStyles(data)
@@ -183,7 +188,7 @@ ipcMain.on('background-changed', (event, data) => {
 ipcMain.handle('get-background', () => { return currentBackground })
 
 
-// ------- WebSocket Message Router -------
+// ----------------------------------- WebSocket Message Router ------------------------
 ipcMain.on('backend-message', (event, message) => {
     // Messages -> Main Window
     handleMainMessages(message)
@@ -217,6 +222,4 @@ app.whenReady().then(() => {
 
     createMainWindow()
     createChatWindow()
-    createSettingsWindow()
-    createAgentSettingsWindow()
 })
