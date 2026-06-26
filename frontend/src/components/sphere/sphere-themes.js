@@ -12,7 +12,7 @@
 window.SPHERE_THEMES = {
     "ion": {
         label: "Ion",
-        thumbnail: "../../../assets/images/spheres/rings.png",
+        thumbnail: "../../../assets/images/spheres/ion.png",
         create: (container) => typeof createIonSphere !== 'undefined' ? createIonSphere(container) : null,
     },
 

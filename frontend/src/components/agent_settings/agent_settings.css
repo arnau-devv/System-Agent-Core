@@ -736,7 +736,7 @@ img {
     flex-shrink: 0;
     cursor: pointer;
     box-sizing: border-box;
-    border: 1px solid rgb(88, 88, 88);
+    border: 0px solid rgb(88, 88, 88);
     transition: border 0.2s ease, transform 0.15s ease;
     background-size: cover;
     background-position: center;

@@ -27,6 +27,8 @@ function connectWebSocket() {
 connectWebSocket()
 
 
+
+
 // =============================================================================
 //  TITLEBAR
 // =============================================================================
@@ -205,4 +207,4 @@ ipcRenderer.on('sphere-changed', (event, data) => {
 //  NAVBAR
 // =============================================================================
 closeAppBtn.addEventListener('click', () => { ipcRenderer.send('close-app') })
-openChatBtn.addEventListener('click', () => { ipcRenderer.send('toggle-chat') })
+// openChatBtn.addEventListener('click', () => { ipcRenderer.send('toggle-chat') })

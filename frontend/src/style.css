@@ -279,6 +279,16 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
 }
 
 /* ================= NAVBAR ================= */
+.navbar_container {
+    box-sizing: border-box;
+    width: 350px;
+    overflow: visible;
+    display: flex;
+    justify-content: center;
+}
+.navbar_container:hover .navbar {
+    transform: translateY(0px);
+}
 .navbar {
     height: 48px;
     box-sizing: border-box;
@@ -286,15 +296,18 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    flex-shrink: none;
     gap: 4px;
     padding: 25px 5px;
-    width: auto;
+    width: max-content;
+    transform: translateY(70px);
 
     background: rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 10px;
     margin-bottom: 15px;
+    transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* -- Navbar buttons -- */
@@ -367,3 +380,55 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
         opacity: 0.3;
     }
 }
+
+
+
+.navbar_marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 26px;
+    opacity: 1;
+    transition: opacity 0.25s ease;
+    flex-shrink: 0;
+    z-index: 1;
+    cursor: pointer;
+    position: absolute;
+    margin-top: 20px;
+}
+
+.navbar_marker_arrow {
+    position: relative;
+    width: 30px;
+    height: 14px;
+    transition: width 0.2s ease;
+}
+
+.arrow_left, .arrow_right {
+    position: absolute;
+    width: 17px;
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px);
+    top: 50%;
+    transition: transform 0.2s ease;
+}
+
+.arrow_left {
+    left: 0;
+    transform: rotate(-45deg);
+    transform-origin: left center;
+}
+
+.arrow_right {
+    right: 0;
+    transform: rotate(45deg);
+    transform-origin: right center;
+}
+
+.navbar_container:hover .navbar_marker {opacity: 0;}
+.navbar_container:hover .arrow_left { transform: rotate(0deg);}
+.navbar_container:hover .arrow_right { transform: rotate(0deg);}
+.navbar_container:hover .navbar_marker_arrow { width: 70px;}

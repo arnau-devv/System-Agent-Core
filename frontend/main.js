@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { spawn } = require('child_process')
 const configStore = require('./src/configStore')
-
+const path = require('path');
 
 // =============================================================================
 //  WINDOW REFERENCES
@@ -31,6 +31,7 @@ function createMainWindow() {
         minWidth: 300,
         minHeight: 400,
         frame: false,
+        icon: path.join(__dirname, 'assets', 'images', 'ai_sphere.png'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -105,10 +106,10 @@ function createAgentSettingsWindow() {
 // ----------- Toggle visibility -----------
 // Chat is hidden/shown to preserve conversation history across opens.
 // Settings windows are destroyed and recreated — no state needs to persist.
-ipcMain.on('toggle-chat', () => {
-    if (chatWindow.isVisible()) { chatWindow.hide() }
-    else { chatWindow.show(); chatWindow.focus() }
-})
+// ipcMain.on('toggle-chat', () => {
+//     if (chatWindow.isVisible()) { chatWindow.hide() }
+//     else { chatWindow.show(); chatWindow.focus() }
+// })
 
 ipcMain.on('toggle-settings', () => {
     if (settingsWindow) { settingsWindow.destroy(); settingsWindow = null }
@@ -217,5 +218,5 @@ app.whenReady().then(() => {
     pythonProcess.stderr.on('data', (data) => console.error(`Python error: ${data}`))
 
     createMainWindow()
-    createChatWindow()
+    // createChatWindow()
 })
