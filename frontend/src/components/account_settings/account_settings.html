@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account settings</title>
+    <link rel="stylesheet" href="account_settings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+    <body id="account_settings_body">
+        <!-- draggable area + close btn -->
+        <div id="draggable_header"></div>
+        <div class="close_account_settings_panel_btn_container" id="close_account_settings_panel_btn_container">
+            <button id="close_account_settings_panel_btn"></button>
+        </div>
+
+        <!-- Main content -->
+        <div class="account_settings_main_container">
+            <!-- settings panel header -->
+            <div class="account_settings_header_container">
+                <div class="account_settings_header"></div>
+                <div class="account_header_image_profile_container"><img class="account_header_image_profile" src="../../../assets/images/pfp_example.png"></div>
+                <div class="account_header_name_container">
+                    <div class="name_conatiner">
+                        <h2>Sienna Hewiit</h2>
+                        <p>sienna</p>
+                    </div>
+                    <p>example.example@gmail.com</p>
+                </div>
+                <!-- Añadir justo después del .account_header_name_container -->
+                <div class="account_header_stats">
+                    <div class="account_stat">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Jan 2024
+                    </div>
+                    <div class="account_stat">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        142 conversations
+                    </div>
+                    <div class="account_stat">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+                        MacBook Pro
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <script src="../background/bg-themes.js"></script>
+        <script src="../background/grainy-bg.js"></script>
+        <script src="account_settings_renderer.js"></script>
+    </body>
+</html>

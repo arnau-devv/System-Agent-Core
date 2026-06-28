@@ -14,19 +14,10 @@ body {
     font-size: 15px;
     color: white;
     letter-spacing: 0.5px;
-    /* background: radial-gradient(ellipse 50% 55% at 0% 10%, rgb(35, 35, 35) 0%, rgb(20, 20, 20) 100%); */
-    background: rgb(15, 15, 15);
-}
-img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
+    background: rgb(34, 38, 41);
 
-
-.bg_container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    /* background-color: rgba(15, 15, 30, 0.9); */
 }
+img { -webkit-user-drag: none; user-select: none; }
 
 /* ================================================================
                         TITLEBAR
@@ -42,18 +33,19 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
 /* ----------- Close button ----------- */
 .close_settings_panel_btn_container {
     z-index: 10;
-    width: 20px;
-    height: 20px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background-color: rgb(15, 15, 15);
+    background-color: rgb(34, 38, 41);
+    background-color: transparent;
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 15px;
-    right: 15px;
+    top: 20px;
+    right: 20px;
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    /* border: 1px solid rgba(255, 255, 255, 0.06); */
 }
 .close_settings_panel_btn_container:hover #close_settings_panel_btn {
     background-color: rgba(255, 107, 107, 0.555);
@@ -77,93 +69,235 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     -webkit-app-region: no-drag;
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
 /* ================================================================
-                        SIDEBAR
+                        SIDEBAR — settings_panel_header
 ================================================================ */
+
 .settings_panel_header {
     height: 100%;
     min-width: 0;
-    width: 200px;
-    max-width: 200px;
+    width: 250px;
+    max-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     flex-shrink: 0;
+    padding: 20px 12px 15px 12px;
+    gap: 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.settings_panel_options {
+/* Scrollbar del sidebar */
+.settings_panel_header::-webkit-scrollbar { width: 2px; }
+.settings_panel_header::-webkit-scrollbar-track { background: transparent; }
+.settings_panel_header::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+
+/* ── Section label (Account / General / My Team) ───────────────── */
+.settings_section_p {
+    margin: 0 0 6px 8px;
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.6px;
+}
+
+
+/* ── Account block ─────────────────────────────────────────────── */
+.account_settings_container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 90%;
-    margin-left: 15px;
-    margin-top: 50px;
-    gap: 5px;
+    margin-bottom: 0px;
+    /* border: 1px solid red; */
 }
 
-.settings_panel_options > button {
+.account_settings_subcontainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0px 6px 8px;
+    border-radius: 8px;
+    border: none;                /* quita el border: yellow de debug */
+    box-sizing: border-box;
+    /* background: rgba(255, 255, 255, 0.04); */
+}
+
+/* Avatar circular */
+.account_settings_profile_image {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user_names {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    flex: 1;
+}
+
+.user_name {
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user_alias {
+    font-weight: 300;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Edit button */
+.account_settings_edit_btn {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.account_settings_edit_btn:hover {
+    color: rgba(255, 255, 255, 0.82);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.3),
+        0 2px 6px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.account_settings_edit_btn:active {
+    transform: scale(0.96) translateY(1px);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ── Nav groups (General / My Team) ───────────────────────────── */
+.general_settings_panel_options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 18px;
+    gap: 2px;
+    /* border: 1px solid yellow; */
+}
+
+/* Nav buttons */
+.general_settings_panel_options > button {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     background-color: transparent;
     border: none;
-    border-radius: 5px;
-    height: 30px;
+    border-radius: 6px;
+    height: 32px;
     width: 100%;
-    gap: 7px;
-    padding-left: 10px;
+    gap: 9px;
+    padding: 0 10px;
     font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-    color: gray;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.settings_panel_options > button > img {
-    height: 50%;
-    aspect-ratio: 1 / 1;
-}
-.settings_panel_options > button:hover  { background-color: rgba(54, 54, 54, 0.5); }
-.settings_panel_options > button:active { transform: scale(0.95); }
-.settings_panel_options > button.active {
-    background-color: rgba(54, 54, 54, 0.5);
-    color: white;
     font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.general_settings_panel_options > button > svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+}
+
+.general_settings_panel_options > button:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.75);
+}
+.general_settings_panel_options > button:hover > svg { opacity: 1; }
+
+.general_settings_panel_options > button:active {
+    transform: scale(0.97);
+}
+
+.general_settings_panel_options > button.active {
+    background-color: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 400;
+}
+.general_settings_panel_options > button.active > svg { opacity: 1; }
+
+.general_settings_panel_options > button > svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
 }
 
 /* ================================================================
                         CONTENT AREA
-    La cadena de altura: body(100vh) > bg_container(100%) >
-    content_inner_container(100%) > settings_panel_content(100%)
-    Todos necesitan altura definida y overflow:hidden excepto el view.
 ================================================================ */
 .settings_panel_content_inner_container {
     min-width: 0;
     width: 100%;
     height: 100%;
-    padding: 7px;
-    padding-bottom: 10px;
+    padding: 7px 7px 9px 7px;
     box-sizing: border-box;
     display: flex;
     align-items: stretch;
+    /* border: 1px solid red; */
 }
 
 .settings_panel_content {
     width: 100%;
     height: 100%;
     border-radius: 5px;
-    background: rgb(22, 22, 22);
+    background: rgb(44, 51, 53);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    overflow: hidden; /* contiene los views, sin esto se rompe todo */
+    overflow: hidden;
     position: relative;
 }
 
-/* --------------------------- VIEWS --------------------------- */
-/* Por defecto ocultos */
+
+/* ======================================================================================
+---------------------------------------- VIEWS ------------------------------------------
+========================================================================================= */
 .settings_view {
     display: none;
     width: 100%;
@@ -171,24 +305,20 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     box-sizing: border-box;
 }
 
-/* El view activo ocupa todo el contenedor con flex,
-   permitiendo que su contenido interno haga scroll */
 .settings_view.active {
     display: flex;
     flex-direction: column;
 }
 
 /* ================================================================
-                    VIEW: CUSTOMIZATION
+--------------------- VIEW: CUSTOMIZATION
 ================================================================ */
 #view_customization {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0 15px 15px 15px;
-    border: 0px solid yellow; /* debug */
 }
 
-/* Scrollbar */
 #view_customization::-webkit-scrollbar { width: 2px; }
 #view_customization::-webkit-scrollbar-track { background: transparent; }
 #view_customization::-webkit-scrollbar-thumb {
@@ -199,13 +329,11 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     background: rgba(255, 255, 255, 0.25);
 }
 
-/* ----- HEADER ----- */
 .background_settings_header {
     padding: 25px 15px 20px 15px;
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
-    border: 0px solid blue; /* debug */
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     margin-bottom: 20px;
 }
@@ -228,16 +356,14 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     margin: 0;
 }
 
-/* ----- CONTENT ----- */
 .background_settings_container {
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.06);
-    height: 500px;
     border-radius: 5px;
     height: auto;
-    background:rgb(17, 17, 17);
+    background: rgb(40, 46, 49);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -252,11 +378,10 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     align-items: center;
     justify-content: center;
     gap: 10px;
-
 }
 .backgorund_previsualizer_header {
     border: 1px solid rgba(255, 255, 255, 0.06);
-    background-color: rgb(22, 22, 22);
+    background-color: rgb(44, 51, 53);
     border-radius: 5px;
     padding: 3px 5px;
 }
@@ -288,8 +413,8 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap; /* AÑADIDO: permite que los elementos salten de línea */
-    gap: 10px; /* AÑADIDO: espacio si caen en dos líneas */
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
     font-weight: 200;
     font-size: 12px;
@@ -299,11 +424,6 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     letter-spacing: 0.3px;
 }
 
-/* ============================================================
-   BACKGROUND MODE TOGGLE (APPLE-STYLE SWITCH)
-============================================================ */
-
-/* --- Container --- */
 .background_mode_toggle_container {
     width: auto;
     padding: 0;
@@ -314,21 +434,17 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     box-sizing: border-box;
     flex-shrink: 0;
 }
-
 .background_mode_toggle_container > span {
     font-weight: 200;
     font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
     letter-spacing: 0.3px;
 }
-
 #background_mode_label {
     display: inline-flex;
     align-items: center;
     gap: 4px;
 }
-
-/* Fixed-height window: only one stacked word is ever visible at a time */
 .mode_word_viewport {
     display: inline-block;
     height: 14px;
@@ -336,72 +452,47 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     overflow: hidden;
     vertical-align: middle;
 }
-
-/* Holds both words stacked vertically; sliding this up/down swaps which one shows */
 .mode_word_track {
     display: flex;
     align-items: flex-end;
     flex-direction: column;
     transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
-
 .mode_word {
     height: 14px;
     line-height: 14px;
     display: block;
 }
-
-/* Dark mode: slide the track up by one word-height to reveal "Dark" */
 .mode_word_track.show_dark {
     transform: translateY(-14px);
 }
-
 @media (max-width: 570px) {
-    .background_mode_toggle_container > span{
-        display: none !important;
-    }
+    .background_mode_toggle_container > span { display: none !important; }
 }
 
-
-/* --- Switch base (size variables: edit these to resize) --- */
 .toggle_switch {
     --track-width: 40px;
     --track-height: 21px;
     --track-border: 1px;
     --thumb-size: 15px;
     --thumb-offset: 2px;
-
     position: relative;
     display: inline-block;
     width: var(--track-width);
     height: var(--track-height);
     flex-shrink: 0;
 }
-
-.toggle_switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-
-/* --- Track --- */
+.toggle_switch input { opacity: 0; width: 0; height: 0; }
 .toggle_slider {
     position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(43, 27, 61, 0.35);
-    border: 1px solid rgb(61, 61, 61, 0.8);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(50, 57, 63, 0.45);
+    border: 1px solid rgba(95, 105, 113, 0.6);
     border-radius: 6px;
     transition: background-color 0.3s cubic-bezier(0.25, 1, 0.5, 1),
                 border-color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
-
-
-/* --- Thumb --- */
 .toggle_slider::before {
     position: absolute;
     content: "";
@@ -412,38 +503,22 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     background-color: #ffffff;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-                width 0.2s ease;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s ease;
 }
-
-
-/* --- Checked state --- */
-/* .toggle_switch input:checked + .toggle_slider {
-    background-color: #00f0ff;
-    border-color: transparent;
-} */
-
-/* travel = inner width (track - borders) - thumb size - (2 * offset) -> always edge to edge */
 .toggle_switch input:checked + .toggle_slider::before {
     transform: translateX(calc(var(--track-width) - (2 * var(--track-border)) - var(--thumb-size) - (2 * var(--thumb-offset))));
 }
-
-
-/* --- Pressed micro-interaction --- */
 .toggle_switch input:active + .toggle_slider::before {
     width: calc(var(--thumb-size) + 4px);
 }
-
 .toggle_switch input:active:checked + .toggle_slider::before {
     transform: translateX(calc(var(--track-width) - (2 * var(--track-border)) - var(--thumb-size) - 2 * var(--thumb-offset) - 4px));
     width: calc(var(--thumb-size) + 4px);
 }
-/* ------------------------------------------------------------------------- */
-
 
 .background_selector {
     border: 1px solid rgba(255, 255, 255, 0.06);
-    background-color: rgb(10, 10, 10);
+    background-color: rgb(28, 32, 35);
     border-radius: 5px;
     height: auto;
     max-height: 105px;
@@ -456,13 +531,10 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     gap: 10px;
     padding: 15px;
 }
-/* Scrollbar */
 .background_selector::-webkit-scrollbar { width: 2px; }
 .background_selector::-webkit-scrollbar-track { background: transparent; }
-.background_selector::-webkit-scrollbar-thumb {background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
-.background_selector::-webkit-scrollbar-thumb:hover {background: rgba(255, 255, 255, 0.25);}
-
-
+.background_selector::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+.background_selector::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
 
 .theme_card {
     width: 50px;
@@ -474,16 +546,455 @@ img { -webkit-user-drag: none; user-select: none; } /* Non-draggable images */
     border: 1px solid rgb(88, 88, 88);
     transition: border 0.2s ease, transform 0.3s ease;
 }
-.theme_card:hover    { transform: scale(1.1); }
-.theme_card:active    { transform: scale(1); }
+.theme_card:hover  { transform: scale(1.1); }
+.theme_card:active { transform: scale(1); }
 .theme_card.selected {
     border: 2px solid rgba(255, 255, 255, 0.85);
     animation: card_border_pulse 2.8s ease-out infinite;
 }
-
 @keyframes card_border_pulse {
     0%   { box-shadow: 0 0 0 0px  rgba(255, 255, 255, 0.45); }
     50%  { box-shadow: 0 0 0 8px  rgba(255, 255, 255, 0);    }
     100% { box-shadow: 0 0 0 8px  rgba(255, 255, 255, 0);    }
 }
 
+
+/* ================================================================
+--------------------- VIEW: ACCOUNT
+================================================================ */
+
+/* El settings_view#view_account hace el papel de account_settings_main_container:
+   flex-column, padding 7px, gap 10px. Ya lo tiene casi todo por herencia de
+   .settings_view.active — solo añadimos padding y gap aquí. */
+#view_account {
+    padding: 5px 5px 5px 5px;
+    gap: 10px;
+}
+
+/* ---------- Header container ---------- */
+/* En el standalone era width:100% dentro del main_container.
+   Aquí es igual, solo nos aseguramos de que no crezca. */
+.account_settings_header_container {
+    width: 100%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+/* ---------- Banner canvas (grainy-bg) ---------- */
+.account_settings_header {
+    position: relative;
+    width: 100%;
+    height: 90px;          /* misma altura visual que el standalone */
+    flex-shrink: 0;
+    border-radius: 5px;
+    background: rgb(44, 51, 53);
+    background: red !important;
+    overflow: hidden;
+}
+
+/* ---------- Avatar ---------- */
+.account_header_image_profile_container {
+    /* Sale del flujo para solaparse sobre el banner, igual que en standalone */
+    position: relative;
+    top: -40px;            /* sube la mitad de su altura para quedar a caballo */
+    left: 13px;
+    margin-bottom: -40px;  /* compensa el espacio que robó al flujo */
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: rgb(44, 51, 53);
+    padding: 5px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+
+.account_header_image_profile {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/*----------------------- account settings content container -------------- */
+.account_settings_content_container {
+    /* border: 1px solid blue; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    gap: 20px;
+}
+
+/* ---------- Name + email ---------- */
+.account_header_name_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    /* padding: 6px 0 0 20px; */
+    flex-shrink: 0;
+    /* border: 1px solid yellow; */
+}
+
+.name_conatiner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.name_conatiner > h2 {
+    margin: 0 0 4px 0;
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* username badge */
+.name_conatiner > p {
+    margin: 0 0 3px 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(28, 32, 35);
+    border-radius: 5px;
+    padding: 3px 5px;
+}
+
+/* email */
+.account_header_name_container > p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* -------- USER PLAN -------------------*/
+.user_plan {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: rgb(52, 60, 65);
+    gap: 12px;
+    box-shadow:
+        0 0 0 1px rgba(43, 43, 43, 0.35),
+        0 4px 12px rgba(26, 26, 26, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+.user_plan_header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+.user_plan_header > h2 {
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.user_plan_header > p {
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.28);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.user_plan_update_btn {
+    flex-shrink: 0;
+    border: none;
+    font-weight: 500;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgb(14, 118, 220);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    position: relative;
+    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 3px 8px rgba(0, 80, 200, 0.25),
+        0 0 0 1px rgba(80, 160, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.user_plan_update_btn:hover {
+    filter: brightness(1.12);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.45),
+        0 5px 14px rgba(0, 80, 200, 0.35),
+        0 0 0 1px rgba(80, 160, 255, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.user_plan_update_btn:active {
+    transform: translateY(1px) scale(0.98);
+    filter: brightness(0.95);
+    box-shadow:
+        0 0px 1px rgba(0, 0, 0, 0.4),
+        0 1px 4px rgba(0, 80, 200, 0.2),
+        0 0 0 1px rgba(80, 160, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 400px) {
+    .user_plan { padding: 12px 13px; }
+    .user_plan_header > h2 { font-size: 11px; }
+    .user_plan_header > p {font-size: 10px; }
+    .user_plan_update_btn { padding: 6px 11px; font-size: 10px; }
+}
+
+/* Ancho pequeño: apila verticalmente */
+@media (max-width: 300px) {
+    .user_plan {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 13px;
+    }
+    .user_plan_header > h2 { white-space: normal; font-size: 11px; }
+    .user_plan_header > p { white-space: normal; font-size: 10px; }
+    .user_plan_update_btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px;
+    }
+}
+
+
+/* -------------------- User Information --------------- */
+
+.user_information_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+}
+
+.user_name_alias {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    gap: 20px;
+}
+
+.user_name_input_header {
+    flex-shrink: 0;
+    width: 170px;
+}
+.user_name_input_header > h3 {
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+}
+.user_name_input_header > p {
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.28);
+    margin: 0;
+}
+
+.user_name_input_content {
+    flex: 1;
+    min-width: 0;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 3px;
+    box-sizing: border-box;
+}
+
+/* Input surfaces */
+.name_textarea_div,
+.input_with_prefix,
+.country_select_div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 35px;
+    border-radius: 6px;
+    background: rgb(28, 32, 35);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+}
+.name_textarea_div,
+.input_with_prefix {
+    overflow: hidden;
+}
+.country_select_div {
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.name_textarea_div:focus-within,
+.input_with_prefix:focus-within,
+.country_select_div.open {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Input fields */
+#name_input,
+.input_suffix {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 10px;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 35px;
+}
+#name_input::placeholder,
+.input_suffix::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* Prefix label */
+.input_prefix {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 100%;
+    padding: 0 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.25);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* Country dropdown */
+.country_selected {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+.country_selected.has_value {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.country_chevron {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    color: rgba(255, 255, 255, 0.25);
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+.country_select_div.open .country_chevron {
+    transform: rotate(180deg);
+}
+
+.country_options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: rgb(28, 32, 35);
+    border-radius: 6px;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    z-index: 100;
+    overflow-y: auto;
+    max-height: 180px;
+}
+.country_options::-webkit-scrollbar { width: 2px; }
+.country_options::-webkit-scrollbar-track { background: transparent; }
+.country_options::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+.country_select_div.open .country_options {
+    display: block;
+}
+
+.country_option {
+    padding: 7px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    transition: background 0.1s ease, color 0.1s ease;
+    user-select: none;
+}
+.country_option:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+}
+.country_option.selected {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .user_name_alias {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .user_name_input_header {
+        flex-shrink: 1;
+    }
+    .user_name_input_content {
+        max-width: 100%;
+        width: 100%;
+        margin-top: 0;
+    }
+}

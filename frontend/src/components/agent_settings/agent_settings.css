@@ -39,17 +39,18 @@ img {
 /* ----------- Close button ----------- */
 .close_agent_settings_panel_btn_container {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 5px;
+    right: 5px;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 20px;
     height: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    /* border: 1px solid rgba(255, 255, 255, 0.06); */
     border-radius: 50%;
     background-color: rgb(15, 15, 15);
+    background-color: transparent;
     cursor: pointer;
 }
 .close_agent_settings_panel_btn_container:hover #close_agent_settings_panel_btn {
@@ -246,7 +247,10 @@ img {
     background: rgb(22, 22, 22);
 }
 
-/* --------------------------- VIEWS --------------------------- */
+/* ======================================================================================
+---------------------------------------- VIEWS ------------------------------------------
+========================================================================================= *
+
 /* Hidden by default */
 .agent_settings_view {
     display: none;
@@ -727,8 +731,6 @@ img {
 .background_selector::-webkit-scrollbar-thumb {background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
 .background_selector::-webkit-scrollbar-thumb:hover {background: rgba(255, 255, 255, 0.25);}
 
-
-
 .sphere_card {
     width: 50px;
     height: 50px;
@@ -752,3 +754,4 @@ img {
     top: 0;
     left: 0;
 }
+

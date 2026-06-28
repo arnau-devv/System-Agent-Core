@@ -13,45 +13,6 @@ document.getElementById('close_settings_panel_btn_container').addEventListener('
 
 
 // =============================================================================
-//  VIEW NAVIGATION
-//  Maps each sidebar button ID to the view panel ID it should reveal.
-// =============================================================================
-const buttons = {
-    general_settings_btn:       'view_general',
-    customization_settings_btn: 'view_customization',
-    notifications_settings_btn: 'view_notifications',
-    connections_settings_btn:   'view_connections',
-    storage_settings_btn:       'view_storage',
-    about_settings_btn:         'view_about',
-}
-
-function selectTab(btnId) {
-    document.querySelectorAll('.general_settings_panel_options > button').forEach(b => b.classList.remove('active'))
-    document.querySelectorAll('.settings_view').forEach(v => v.classList.remove('active'))
-    document.getElementById(btnId).classList.add('active')
-    document.getElementById(buttons[btnId]).classList.add('active')
-    // Canvas may have been sized while hidden (0x0) — resize now that the view is visible
-    if (window.resizeBgCanvas) window.resizeBgCanvas()
-}
-
-Object.keys(buttons).forEach(btnId => {
-    document.getElementById(btnId).addEventListener('click', () => selectTab(btnId))
-})
-
-// Edit abre la vista de account sin marcar ningún nav como activo
-document.getElementById('account_settings_edit_btn').addEventListener('click', () => {
-    document.querySelectorAll('.general_settings_panel_options > button').forEach(b => b.classList.remove('active'))
-    document.querySelectorAll('.settings_view').forEach(v => v.classList.remove('active'))
-    document.getElementById('view_account').classList.add('active')
-    if (window.resizeBgCanvas) window.resizeBgCanvas()
-    if (window.initCountryDropdown) window.initCountryDropdown()
-})
-
-selectTab('customization_settings_btn')
-
-
-
-// =============================================================================
 //  BACKGROUND CUSTOMIZATION
 // =============================================================================
 const BG_THEMES = window.BG_THEMES
@@ -67,10 +28,10 @@ const selectorContainer = document.getElementById('background_selector')
 header.textContent = currentTheme
 
 // The previewer runs its own grainy-bg instance, separate from the fullscreen one
-const previewInstance = window.initGrainyBg({ target: document.getElementById('background_previsualizer') })
+window.initGrainyBg({ target: document.getElementById('background_previsualizer') })
 
 function applyTheme() {
-    previewInstance.setColors(BG_THEMES[currentTheme][currentMode])  // antes: window.setBgColors(...)
+    window.setBgColors(BG_THEMES[currentTheme][currentMode])
     header.textContent = currentTheme
 }
 
@@ -196,20 +157,3 @@ Object.entries(BG_THEMES).forEach(([name, theme], index) => {
 // -- Clean up the off-screen generator --
 if (snapshotGenerator) snapshotGenerator.destroy()
 tempTarget.remove()
-
-
-
-
-data = {
-    "cuenta": {
-        "Nombre": "",
-        "Pais": "", //Sirve para idioma de habla del agente y franja horaria
-        "Nivel de conocimiento en X aspectos": ["apreniz, aficionado, experto"],
-        "Habilidades" : {
-
-        }
-    }
-}
-
-
-

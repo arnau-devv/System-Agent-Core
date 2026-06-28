@@ -65,8 +65,8 @@ function createChatWindow() {
 // ----------- Settings window -----------
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
-        width: 840,
-        height: 525,
+        width: 1040,
+        height: 680,
         minWidth: 570,
         minHeight: 400,
         backgroundColor: '#000000',

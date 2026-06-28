@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Settings</title>
-  <link rel="stylesheet" href="settings.css">
+    <title>Settings</title>
+    <link rel="stylesheet" href="settings.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
@@ -12,18 +12,79 @@
         <div class="close_settings_panel_btn_container" id="close_settings_panel_btn_container">
             <button id="close_settings_panel_btn"></button>
         </div>
-        <div class="bg_container">
-
             <!-- settings panel header -->
             <div class="settings_panel_header">
-                <!-- ¡¡ add some tittle here !! -->
-                <div class="settings_panel_options">
-                    <!-- add all buttons settings_renderer.js to const "buttons"-->
-                    <button id="general_settings_btn"><img src="../../../assets/images/settings2.webp">General</button>
-                    <button id="customization_settings_btn"><img src="../../../assets/images/brush.png">Customization</button>
-                    <button id="account_settings_btn"><img src="../../../assets/images/account.webp">Account</button>
-                    <button id="notifications_settings_btn"><img src="../../../assets/images/notifications.png">Notifications</button>
+                <!-- account settings -->
+                <div class="account_settings_container">
+                    <p class="settings_section_p">Account</p>
+                    <div class="account_settings_subcontainer">
+                        <img class="account_settings_profile_image" src="../../../assets/images/pfp_example.png">
+                        <div class="user_names">
+                            <p class="user_name">Sienna Hewiit</p>
+                            <p class="user_alias">Sienna</p>
+                        </div>
+                        <button class="account_settings_edit_btn" id="account_settings_edit_btn">Edit</button>
+                    </div>
+                </div> 
+
+                <!-- general panel header -->
+                <div class="general_settings_panel_options">
+                    <!-- General Settings-->
+                    <p class="settings_section_p">General</p>
+                    <button id="general_settings_btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path>
+                        </svg>
+                        General
+                    </button>
+                    <button id="customization_settings_btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        Appearance
+                    </button>
+
+                    <button id="notifications_settings_btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 4-2 5-2 6h16c0-1-2-2-2-6"></path>
+                            <path d="M10 21a2 2 0 0 0 4 0"></path>
+                        </svg>
+                        Notifications
+                    </button>
                 </div>
+
+                <!-- System settings -->
+                <div class="general_settings_panel_options">
+                    <p class="settings_section_p">Workspace</p>
+
+                    <button id="connections_settings_btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        Connections
+                    </button>
+
+                    <button id="storage_settings_btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                            <path d="M3 5v14a9 3 0 0 0 18 0V5"></path>
+                            <path d="M3 12a9 3 0 0 0 18 0"></path>
+                        </svg>
+                        Storage
+                    </button>
+
+                    <button id="about_settings_btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        About
+                    </button>
+                </div>
+
             </div>
 
             <!-- settings panel content -->
@@ -73,15 +134,108 @@
                     </div>
                     <!-------------------------------------------------------------->
                     
-                    <!-- Backgorund Settings -->
                     <div class="settings_view" id="view_account">
-                        <!-- contenido de Account -->
+                        <!-- settings panel header -->
+                        <div class="account_settings_header_container">
+                            <div class="account_settings_header"></div>
+                            <div class="account_header_image_profile_container"><img class="account_header_image_profile" src="../../../assets/images/pfp_example.png"></div>
+                        </div>
+                        <div class="account_settings_content_container">
+                            <!-- Name header container -->
+                            <div class="account_header_name_container">
+                                <div class="name_conatiner">
+                                    <h2>Sienna Hewiit</h2>
+                                    <p>sienna</p>
+                                </div>
+                                <p>example.example@gmail.com</p>
+                            </div>
+
+                            <!-- plan saas (provisional)-->
+                            <div class="user_plan">
+                                <div class="user_plan_header">
+                                    <h2>Your application is currently on the free plan</h2>
+                                    <p>Paid plans offer higher usage limits, additional branches, and much more.</p>
+                                </div>
+                                <button class="user_plan_update_btn" id="user_plan_update_btn">Update</button>
+                            </div>
+
+                            <!-- User Information -->
+                            <div class="user_information_container">
+                                
+                                <!-- Naming Input -->
+                                <div class="user_name_alias">
+                                    <div class="user_name_input_header">
+                                        <h3>Name</h3>
+                                        <p>Let your agent know you</p>
+                                    </div>
+                                    <div class="user_name_input_content">
+                                        <div class="name_textarea_div"><textarea id="name_input"  spellcheck="false" placeholder="username"></textarea></div>
+                                        <div class="input_with_prefix">
+                                            <span class="input_prefix">alias/</span>
+                                            <input type="text" class="input_suffix" spellcheck="false" placeholder="alias"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Location Input -->
+                                <div class="user_name_alias">
+                                    <div class="user_name_input_header">
+                                        <h3>Location</h3>
+                                        <p>Where are you based</p>
+                                    </div>
+                                    <div class="user_name_input_content">
+                                        <div class="name_textarea_div country_select_div" id="country_dropdown">
+                                            <span class="country_selected" id="country_selected">
+                                                <span id="country_flag"></span>
+                                                <span id="country_label">Select your country</span>
+                                            </span>
+                                            <span class="country_chevron">
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </span>
+                                            <div class="country_options" id="country_options">
+                                                <div class="country_option" data-value="es" data-flag="🇪🇸">🇪🇸 Spain</div>
+                                                <div class="country_option" data-value="us" data-flag="🇺🇸">🇺🇸 United States</div>
+                                                <div class="country_option" data-value="gb" data-flag="🇬🇧">🇬🇧 United Kingdom</div>
+                                                <div class="country_option" data-value="fr" data-flag="🇫🇷">🇫🇷 France</div>
+                                                <div class="country_option" data-value="de" data-flag="🇩🇪">🇩🇪 Germany</div>
+                                                <div class="country_option" data-value="it" data-flag="🇮🇹">🇮🇹 Italy</div>
+                                                <div class="country_option" data-value="pt" data-flag="🇵🇹">🇵🇹 Portugal</div>
+                                                <div class="country_option" data-value="nl" data-flag="🇳🇱">🇳🇱 Netherlands</div>
+                                                <div class="country_option" data-value="be" data-flag="🇧🇪">🇧🇪 Belgium</div>
+                                                <div class="country_option" data-value="ch" data-flag="🇨🇭">🇨🇭 Switzerland</div>
+                                                <div class="country_option" data-value="se" data-flag="🇸🇪">🇸🇪 Sweden</div>
+                                                <div class="country_option" data-value="no" data-flag="🇳🇴">🇳🇴 Norway</div>
+                                                <div class="country_option" data-value="dk" data-flag="🇩🇰">🇩🇰 Denmark</div>
+                                                <div class="country_option" data-value="pl" data-flag="🇵🇱">🇵🇱 Poland</div>
+                                                <div class="country_option" data-value="mx" data-flag="🇲🇽">🇲🇽 Mexico</div>
+                                                <div class="country_option" data-value="ar" data-flag="🇦🇷">🇦🇷 Argentina</div>
+                                                <div class="country_option" data-value="br" data-flag="🇧🇷">🇧🇷 Brazil</div>
+                                                <div class="country_option" data-value="co" data-flag="🇨🇴">🇨🇴 Colombia</div>
+                                                <div class="country_option" data-value="cl" data-flag="🇨🇱">🇨🇱 Chile</div>
+                                                <div class="country_option" data-value="jp" data-flag="🇯🇵">🇯🇵 Japan</div>
+                                                <div class="country_option" data-value="kr" data-flag="🇰🇷">🇰🇷 South Korea</div>
+                                                <div class="country_option" data-value="cn" data-flag="🇨🇳">🇨🇳 China</div>
+                                                <div class="country_option" data-value="in" data-flag="🇮🇳">🇮🇳 India</div>
+                                                <div class="country_option" data-value="au" data-flag="🇦🇺">🇦🇺 Australia</div>
+                                                <div class="country_option" data-value="ca" data-flag="🇨🇦">🇨🇦 Canada</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Backgorund Settings -->
                     <div class="settings_view" id="view_notifications">
                         <!-- contenido de Notifications -->
                     </div>
+
+                    <div class="settings_view" id="view_connections"></div>
+                    <div class="settings_view" id="view_storage"></div>
+                    <div class="settings_view" id="view_about"></div>
 
                 </div>
             </div>
@@ -90,5 +244,6 @@
     <script src="../background/bg-themes.js"></script>
     <script src="../background/grainy-bg.js"></script>
     <script src="settings_renderer.js"></script>
+    <script src="../account_settings/account_settings_renderer.js"></script>
     </body>
 </html>

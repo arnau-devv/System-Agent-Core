@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Settings</title>
+  <link rel="stylesheet" href="background_settings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+    <body id="settings_body">
+        <!-- draggable area + close btn van DENTRO del content -->
+        <div id="draggable_header"></div>
+        <div class="close_settings_panel_btn_container" id="close_settings_panel_btn_container">
+            <button id="close_settings_panel_btn"></button>
+        </div>
+        <div class="bg_container">
+
+            <!-- settings panel content -->
+            <div class="settings_panel_content_inner_container">
+                <div class="settings_panel_content" id="settings_panel_content">
+
+                    <!------------- Backgorund Settings View ----------------->
+                    <div class="settings_view active" id="view_customization">
+                        <div class="background_settings_header">
+                            <h2>Background</h2>
+                            <h3>Customize the appearance of your workspace</h3>
+                            <p>Choose a background style that matches your preferences and enhances your experience.</p>
+                        </div>
+                        <!-- Main backround conteiner -->
+                        <div class="background_settings_container">
+                            <div class="background_previsualizer_container">
+                                <div class="backgorund_previsualizer_header">
+                                    <p></p>
+                                </div>
+                                <div class="background_previsualizer" id="background_previsualizer">
+                                </div>
+                            </div>
+                            <!-- backround selector -->
+                            <div class="background_selector_container">
+
+                                <div class="background_selector_header">
+                                    <p>Select a background: </p>
+
+                                    <div class="background_mode_toggle_container">
+                                        <span id="background_mode_label"><span class="mode_word_viewport"><span class="mode_word_track" id="background_mode_track"><span class="mode_word">Normal</span><span class="mode_word">Dark</span></span></span> Tone</span>
+                                        <label class="toggle_switch" id="color_toggle_switch">
+                                            <input type="checkbox" id="color_mode_toggle_input">
+                                            <span class="toggle_slider"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div class="background_selector" id="background_selector">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-------------------------------------------------------------->
+
+                </div>
+            </div>
+        </div>
+    
+    <script src="../background/bg-themes.js"></script>
+    <script src="../background/grainy-bg.js"></script>
+    <script src="background_settings_renderer.js"></script>
+    </body>
+</html>
