@@ -1,8 +1,8 @@
 // =============================================================================
 //  BACKGROUND SETTINGS — background_settings/background_settings_renderer.js
-//  Toda la lógica del selector de temas y el toggle normal/dark.
-//  Depende de: ipcRenderer (declarado en settings_renderer.js), BG_THEMES,
-//              initGrainyBg (cargados antes en settings.html).
+//  All logic for the theme selector and the normal/dark toggle.
+//  Depends on: ipcRenderer (declared in settings_renderer.js), BG_THEMES,
+//              initGrainyBg (loaded previously in settings.html).
 // =============================================================================
 
 const BG_THEMES = window.BG_THEMES

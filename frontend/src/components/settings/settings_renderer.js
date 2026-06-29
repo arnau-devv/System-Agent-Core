@@ -18,12 +18,13 @@ document.getElementById('close_settings_panel_btn_container').addEventListener('
 //  Add new entries here whenever a new view is created.
 // =============================================================================
 const buttons = {
-    general_settings_btn:       'view_general',
-    customization_settings_btn: 'view_customization',
-    notifications_settings_btn: 'view_notifications',
-    connections_settings_btn:   'view_connections',
-    storage_settings_btn:       'view_storage',
-    about_settings_btn:         'view_about',
+    general_settings_btn:           'view_general',
+    customization_settings_btn:     'view_customization',
+    notifications_settings_btn:     'view_notifications',
+    agent_identity_settings_btn:    'view_agent_identity',
+    connections_settings_btn:       'view_connections',
+    storage_settings_btn:           'view_storage',
+    about_settings_btn:             'view_about',
 }
 
 function selectTab(btnId) {
@@ -31,7 +32,9 @@ function selectTab(btnId) {
     document.querySelectorAll('.settings_view').forEach(v => v.classList.remove('active'))
     document.getElementById(btnId).classList.add('active')
     document.getElementById(buttons[btnId]).classList.add('active')
+    
     if (window.resizeBgCanvas) window.resizeBgCanvas()
+    if (btnId === 'agent_identity_settings_btn' && window.initAgentIdentity) window.initAgentIdentity()
 }
 
 Object.keys(buttons).forEach(btnId => {
@@ -44,10 +47,9 @@ document.getElementById('account_settings_edit_btn').addEventListener('click', (
     document.querySelectorAll('.settings_view').forEach(v => v.classList.remove('active'))
     document.getElementById('view_account').classList.add('active')
     if (window.resizeBgCanvas) window.resizeBgCanvas()
+    if (window.initAccountSettings) window.initAccountSettings()
     if (window.initCountryDropdown) window.initCountryDropdown()
 })
 
 // Default tab on open
 selectTab('customization_settings_btn')
-
-

@@ -9,7 +9,7 @@ const { playSound, setVolume } = require('./audioEngine')
 //  Reconnects automatically every second on drop.
 // =============================================================================
 function connectWebSocket() {
-   const socket = new WebSocket('ws://localhost:8000/ws')
+   socket = new WebSocket('ws://localhost:8000/ws')
 
    socket.onopen  = () => console.log('Connected to backend')
    socket.onerror = () => socket.close()
@@ -26,20 +26,42 @@ function connectWebSocket() {
 connectWebSocket()
 
 
+// ---------------------------- AGENT BEHAVIOR DATA ----------------------------
+
 // Listens for user profile updates from account_settings_renderer.js -> main.js 
 // and sends them to the backend via WebSocket
 // data -> {user_name: name, user_alias: alias, user_country: selectedCountry}
 ipcRenderer.on('user-data', (event, message) => {
-   // if (socket && socket.readyState === WebSocket.OPEN) {
-   //    socket.send(JSON.stringify(message))
-   // }
+   if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+         name: 'user-data',
+         data: message
+      }))
+   }
+   
    console.log({
-      name: message.user_name,
+      user_name: message.user_name,
       alias: message.user_alias,
       country: message.user_country
       });
 })
 
+// Listens for agent identiry updates from agent_settings_renderer.js -> main.js 
+// and sends them to the backend via WebSocket
+// data -> {agent_name: name, wake_word: currentWakeWord, agent_behavior: behavior}
+ipcRenderer.on('agent-identity-data', (event, message) => {
+   if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+         name: 'agent-identity-data',
+         data: message
+      }))
+   }
+   console.log({
+      agent_name: message.agent_name,
+      wake_word: message.wake_word,
+      behavior: message.agent_behavior
+      });
+})
 
 
 // =============================================================================

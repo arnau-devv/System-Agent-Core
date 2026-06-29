@@ -15,7 +15,7 @@ let pythonProcess
 let mainWindow
 let chatWindow
 let settingsWindow
-let agentSettingsWindow
+// let agentSettingsWindow
 
 
 // =============================================================================
@@ -65,7 +65,7 @@ function createChatWindow() {
 // ----------- Settings window -----------
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
-        width: 1040,
+        width: 1108,
         height: 680,
         minWidth: 570,
         minHeight: 400,
@@ -81,22 +81,22 @@ function createSettingsWindow() {
 }
 
 // ----------- Agent settings window -----------
-function createAgentSettingsWindow() {
-    agentSettingsWindow = new BrowserWindow({
-        width: 440,
-        height: 625,
-        minWidth: 300,
-        minHeight: 400,
-        backgroundColor: '#000000',
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        }
-    })
+// function createAgentSettingsWindow() {
+//     agentSettingsWindow = new BrowserWindow({
+//         width: 440,
+//         height: 625,
+//         minWidth: 300,
+//         minHeight: 400,
+//         backgroundColor: '#000000',
+//         frame: false,
+//         webPreferences: {
+//             nodeIntegration: true,
+//             contextIsolation: false
+//         }
+//     })
 
-    agentSettingsWindow.loadFile('src/components/agent_settings/agent_settings.html')
-}
+//     agentSettingsWindow.loadFile('src/components/agent_settings/agent_settings.html')
+// }
 
 
 // ===============================================================================================================
@@ -116,10 +116,10 @@ ipcMain.on('toggle-settings', () => {
     else { createSettingsWindow(); settingsWindow.show(); settingsWindow.focus() }
 })
 
-ipcMain.on('toggle-agent-settings', () => {
-    if (agentSettingsWindow) { agentSettingsWindow.destroy(); agentSettingsWindow = null }
-    else { createAgentSettingsWindow(); agentSettingsWindow.show(); agentSettingsWindow.focus() }
-})
+// ipcMain.on('toggle-agent-settings', () => {
+//     if (agentSettingsWindow) { agentSettingsWindow.destroy(); agentSettingsWindow = null }
+//     else { createAgentSettingsWindow(); agentSettingsWindow.show(); agentSettingsWindow.focus() }
+// })
 
 // ----------- Close handlers -----------
 ipcMain.on('close-app', () => {
@@ -136,7 +136,7 @@ ipcMain.on('close-app', () => {
 
 ipcMain.on('close-chat',           () => { chatWindow.hide() })
 ipcMain.on('close-settings',       () => { settingsWindow?.destroy();      settingsWindow = null })
-ipcMain.on('close-agent-settings', () => { agentSettingsWindow?.destroy(); agentSettingsWindow = null })
+// ipcMain.on('close-agent-settings', () => { agentSettingsWindow?.destroy(); agentSettingsWindow = null })
 
 
 // =============================================================================
@@ -153,8 +153,8 @@ ipcMain.on('background-changed', (event, data) => {
         settingsWindow.webContents.send('background-changed', data)
     if (chatWindow && !chatWindow.isDestroyed())
         chatWindow.webContents.send('background-changed', data)
-    if (agentSettingsWindow && !agentSettingsWindow.isDestroyed())
-        agentSettingsWindow.webContents.send('background-changed', data)
+    // if (agentSettingsWindow && !agentSettingsWindow.isDestroyed())
+    //     agentSettingsWindow.webContents.send('background-changed', data)
 })
 
 // Renderer windows invoke this on load to get the persisted background
@@ -180,15 +180,19 @@ ipcMain.handle('get-sphere', () => configStore.get('sphere'))
 
 // =============================================================================
 //  IPC — USER INFORMATION
-//  Account settings sends 'user-data' with {user_name: name, user_alias: alias, user_country: selectedCountry}
-//  main saves the data to disk and forwards to mainWindow so it can be
-//  send to backend via websocket by renderer
+//  Account settings sends 'user-data' with 
+//      {user_name: name, user_alias: alias, user_country: selectedCountry}
+//  Agent identity settings sends 'agent-identity-data' with 
+//      {agent_name: name, wake_word: currentWakeWord, agent_behavior: behavior}
 // =============================================================================
 ipcMain.on('user-data', (event, data) => {
-    // Write data to json (pendent to apply)
-
     if (mainWindow && !mainWindow.isDestroyed())
         mainWindow.webContents.send('user-data', data)
+})
+
+ipcMain.on('agent-identity-data', (event, data) => {
+    if (mainWindow && !mainWindow.isDestroyed())
+        mainWindow.webContents.send('agent-identity-data', data)
 })
 
 

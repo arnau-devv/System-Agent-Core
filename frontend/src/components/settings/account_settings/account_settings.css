@@ -217,6 +217,7 @@
 .user_name_input_header {
     flex-shrink: 0;
     width: 170px;
+    overflow: hidden;
 }
 .user_name_input_header > h3 {
     font-weight: 500;

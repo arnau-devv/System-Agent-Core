@@ -1,35 +1,48 @@
 // =============================================================================
 //  ACCOUNT SETTINGS — account_settings/account_settings_renderer.js
-//  Toda la lógica de la vista de cuenta.
-//  Depende de: ipcRenderer (declarado en settings_renderer.js),
-//              BG_THEMES e initGrainyBg (cargados antes en settings.html).
+//  All logic for the account view.
+//  Depends on: ipcRenderer (declared in settings_renderer.js),
+//              BG_THEMES and initGrainyBg (loaded previously in settings.html).
 // =============================================================================
 
 
 // =============================================================================
 //  BACKGROUND BANNER
-//  El header de la vista de cuenta tiene su propio grainy-bg (no fullscreen).
-//  Se sincroniza con el tema global al abrir y en tiempo real vía IPC.
+//  The account view header has its own grainy-bg (not fullscreen).
+//  It synchronizes with the global theme upon opening and in real-time via IPC.
 // =============================================================================
-const accountHeaderInstance = window.initGrainyBg({
-    target:    document.querySelector('.account_settings_header'),
-    speed:     2.3,
-    intensity: 0.112,
-    grainSize: 1.9,
-    amplitude: 0.1,
-})
+let accountHeaderInstance = null
+
+function initAccountSettings() {
+    if (accountHeaderInstance) {
+        accountHeaderInstance.resize()
+        return
+    }
+
+    accountHeaderInstance = window.initGrainyBg({
+        target:    document.querySelector('.account_settings_header'),
+        speed:     2.3,
+        intensity: 0.112,
+        grainSize: 1.9,
+        amplitude: 0.1,
+    })
+
+    if (ipcRenderer) {
+        ipcRenderer.invoke('get-background').then((bg) => {
+            const theme = bg?.theme ?? window.DEFAULT_BG_THEME
+            const mode  = bg?.mode  ?? window.DEFAULT_BG_MODE
+            accountHeaderInstance.setColors(window.BG_THEMES[theme][mode])
+        })
+    }
+}
 
 if (ipcRenderer) {
-    ipcRenderer.invoke('get-background').then((bg) => {
-        const theme = bg?.theme ?? window.DEFAULT_BG_THEME
-        const mode  = bg?.mode  ?? window.DEFAULT_BG_MODE
-        accountHeaderInstance.setColors(window.BG_THEMES[theme][mode])
-    })
-
     ipcRenderer.on('background-changed', (event, data) => {
-        if (data?.colors) accountHeaderInstance.setColors(data.colors)
+        if (accountHeaderInstance && data?.colors) accountHeaderInstance.setColors(data.colors)
     })
 }
+
+window.initAccountSettings = initAccountSettings
 
 
 // =============================================================================
@@ -50,10 +63,13 @@ dropdown.addEventListener('click', (e) => {
 function initCountryDropdown() {
     document.querySelectorAll('.country_option').forEach(option => {
         option.addEventListener('click', (e) => {
-            const flag  = option.dataset.flag
-            const label = option.textContent.trim().split(' ').slice(1).join(' ')
+            selectedCountry  = option.dataset.flag //data-value -> ['es', 'fr', 'us', etc...]
+            const label = option.textContent.trim() //Country Name -> ['Spain', 'France', etc...]
+            //Flag (class > fi fi-[..])
+            const spanElement = option.querySelector('span');
+            const flagClassName = spanElement.className;
 
-            selectedFlag.textContent        = flag
+            selectedFlag.className        = flagClassName
             selectedLabel.textContent       = label
             countrySelectedEl.classList.add('has_value')
 
@@ -62,8 +78,6 @@ function initCountryDropdown() {
 
             dropdown.classList.remove('open')
             e.stopPropagation()
-
-            selectedCountry = option.dataset.value
         })
     })
 

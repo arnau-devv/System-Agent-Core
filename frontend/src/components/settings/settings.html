@@ -3,8 +3,9 @@
 <head>
     <title>Settings</title>
     <link rel="stylesheet" href="settings.css">
-    <link rel="stylesheet" href="background_settings/background_settings.css">
+    <link rel="stylesheet" href="customization_settings/customization_settings.css">
     <link rel="stylesheet" href="account_settings/account_settings.css">
+    <link rel="stylesheet" href="agent_identity_settings/agent_identity_settings.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -94,7 +95,6 @@
                     </svg>
                     About
                 </button>
-                
             </div>
         </div>
 
@@ -139,7 +139,7 @@
                     </div>
                 </div>
 
-                <!-- Account -->
+                <!----------------------- Account ----------------------->
                 <div class="settings_view" id="view_account">
                     <div class="account_settings_header_container">
                         <div class="account_settings_header"></div>
@@ -172,7 +172,7 @@
                                 </div>
                                 <div class="user_name_input_content">
                                     <div class="name_textarea_div">
-                                        <textarea id="name_input" spellcheck="false" placeholder="username"></textarea>
+                                        <input type="text" id="name_input" spellcheck="false" placeholder="username"/>
                                     </div>
                                     <div class="input_with_prefix">
                                         <span class="input_prefix">alias/</span>
@@ -232,7 +232,147 @@
                     <button class="account_settings_save_btn" id="account_settings_save_btn">Save changes</button>
                 </div>
 
-                <div class="settings_view" id="agent_identity"></div>
+                <!----------------------- Agent Identity ----------------------->
+                <div class="settings_view" id="view_agent_identity">
+                    <!-- Header banner con grainy-bg -->
+                    <div class="agent_identity_header_container">
+                        <div class="agent_identity_header">
+                            <div class="agent_identity_sphere_container">
+                                <div id="agent_identity_sphere_preview"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="agent_identity_content_container">
+
+                        <!-- NAME -->
+                        <div class="agent_identity_section">
+                            <div class="agent_identity_section_header">
+                                <h3>Name</h3>
+                                <p>Pick your agent's identity.</p>
+                            </div>
+                            <div class="agent_identity_section_content">
+                                <div class="agent_identity_select_div agent_name_select_div" id="agent_name_dropdown">
+                                    <span class="agent_name_selected has_value" id="agent_name_selected">
+                                        <span class="agent_name_avatar" id="agent_name_avatar">J</span>
+                                        <span id="agent_name_label">Jarvis</span>
+                                    </span>
+                                    <span class="agent_name_chevron">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </span>
+                                    <div class="agent_name_options">
+                                        <div class="agent_name_option selected" data-value="jarvis"><span class="agent_name_avatar">J</span> Jarvis</div>
+                                        <div class="agent_name_option" data-value="cortana"><span class="agent_name_avatar">C</span> Cortana</div>
+                                        <div class="agent_name_option" data-value="pixie"><span class="agent_name_avatar">P</span> Pixie</div>
+                                    </div>
+                                </div>
+                                <div class="agent_wake_word_display" id="agent_identity_wake_word">"Hey Jarvis"</div>
+                            </div>
+                        </div>
+
+                        <!-- BEHAVIOR -->
+                        <div class="agent_identity_section">
+                            <div class="agent_identity_section_header">
+                                <h3>Behavior</h3>
+                                <p>Choose a preset or switch to Custom to write your own rules.</p>
+                            </div>
+                            <div class="agent_identity_section_content">
+                                
+                                <div class="agent_behavior_options">
+                                    <div class="behavior_option" data-value="assistant">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12.8 1.6 4.6 13.4h6.2l-1.6 9 9.2-12.6h-6.4l0.8-8.2z"/>
+                                            </svg>
+                                        </span>
+                                        <p class="behavior_option_title">Assistant</p>
+                                    </div>
+                                    <div class="behavior_option" data-value="companion">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 20.3c-.3 0-.6-.1-.8-.3-2-1.7-3.9-3.4-5.4-5.1C4 13 3 11.2 3 9.3 3 6.9 4.9 5 7.3 5c1.4 0 2.7.7 3.5 1.8.1.1.2.1.4.1s.3 0 .4-.1C12.4 5.7 13.7 5 15.1 5c2.4 0 4.3 1.9 4.3 4.3 0 1.9-1 3.7-2.8 5.6-1.5 1.7-3.4 3.4-5.4 5.1-.2.2-.5.3-.8.3z"/>
+                                            </svg>
+                                        </span>
+                                        <p class="behavior_option_title">Companion</p>
+                                    </div>
+                                    <!-- <div class="behavior_option" data-value="custom">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M4 16.4 14.1 6.3l2.4 2.4L6.4 18.8H4v-2.4zM16.9 5.5l1.4-1.4c.5-.5 1.4-.5 1.9 0l1.1 1.1c.5.5.5 1.4 0 1.9l-1.4 1.4-3-3z"/>
+                                            </svg>
+                                        </span>
+                                        <div class="behavior_option_text">
+                                            <p class="behavior_option_title">Custom</p>
+                                        </div>
+                                    </div> -->
+                                    <div class="behavior_option" data-value="analyst">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M4 20h3v-6H4v6zM10.5 20h3v-11h-3v11zM17 20h3v-15h-3v15z"/>
+                                            </svg>
+                                        </span>
+                                        <p class="behavior_option_title">Analyst</p>
+                                    </div>
+                                    <div class="behavior_option" data-value="guardian">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3z"/>
+                                            </svg>
+                                        </span>
+                                        <p class="behavior_option_title">Guardian</p>
+                                    </div>
+                                    <div class="behavior_option" data-value="tutor">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 2L1 7l11 5 11-5-11-5z"/>
+                                                <path d="M4.5 11.5v4c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-4l-7.5 3.5-7.5-3.5zm15.5-1.92v4.84c.61-.27 1-.78 1-1.42v-2c0-.64-.39-1.15-1-1.42z"/>
+                                            </svg>
+                                        </span>
+                                        <p class="behavior_option_title">Tutor</p>
+                                    </div>
+                                    <div class="behavior_option" data-value="partner">
+                                        <span class="behavior_option_icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2z"/>
+                                            </svg>
+                                        </span>
+                                        <p class="behavior_option_title">Partner</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CUSTOM BEHAVIOR -->
+                        <!-- <div class="agent_identity_section">
+                            <div class="agent_identity_section_header">
+                                <h3>Custom rules</h3>
+                                <p>Define the role, tone and rules the AI must follow.</p>
+                            </div>
+                            <div class="agent_identity_section_content">
+                                <textarea id="agent_identity_custom_input" placeholder="e.g. You are my personal assistant. You call me 'boss' naturally. You are chill, intelligent and speak in a casual tone..."></textarea>
+                            </div>
+                        </div> -->
+
+                        <!-- SPHERE -->
+                        <div class="agent_identity_section">
+                            <div class="agent_identity_section_header">
+                                <h3>Sphere</h3>
+                                <p>Choose your agent's visual core. It animates in real time based on its state.</p>
+                            </div>
+                            <div class="agent_identity_section_content">
+                                <div class="agent_identity_sphere_selector" id="agent_identity_sphere_selector"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button class="agent_identity_save_btn" id="agent_identity_save_btn">Save changes</button>
+                </div>
+
                 <div class="settings_view" id="view_notifications"></div>
                 <div class="settings_view" id="view_connections"></div>
                 <div class="settings_view" id="view_storage"></div>
@@ -241,10 +381,15 @@
             </div>
         </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="../sphere/sphere-rings.js"></script>
+    <script src="../sphere/sphere-ion.js"></script>
+    <script src="../sphere/sphere-themes.js"></script>
     <script src="../background/bg-themes.js"></script>
     <script src="../background/grainy-bg.js"></script>
     <script src="settings_renderer.js"></script>
-    <script src="background_settings/background_settings_renderer.js"></script>
+    <script src="customization_settings/customization_settings_renderer.js"></script>
     <script src="account_settings/account_settings_renderer.js"></script>
+    <script src="agent_identity_settings/agent_identity_settings_renderer.js"></script>
     </body>
 </html>
