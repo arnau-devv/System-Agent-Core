@@ -214,4 +214,4 @@ window.BG_THEMES = {
 
 // FIRST BG BY DEFAULT (BEFORE CHANGING IT ON SETTINS FOR FIRST TIME)
 window.DEFAULT_BG_THEME = "Cosmic Sunset";
-window.DEFAULT_BG_MODE  = "dark";
+window.DEFAULT_BG_MODE  = "normal";

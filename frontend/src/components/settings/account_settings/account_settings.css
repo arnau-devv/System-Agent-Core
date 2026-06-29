@@ -1,0 +1,474 @@
+/* ================================================================
+   ACCOUNT SETTINGS — account_settings/account_settings.css
+   Estilos exclusivos de #view_account y sus componentes internos.
+   No tocar settings.css para cambios visuales de esta vista.
+================================================================ */
+
+#view_account {
+    padding: 5px;
+    align-items: flex-end;
+    gap: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+#view_account::-webkit-scrollbar { width: 2px; }
+#view_account::-webkit-scrollbar-track { background: transparent; }
+#view_account::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+#view_account::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+/* ── Banner + avatar ── */
+.account_settings_header_container {
+    width: 100%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.account_settings_header {
+    position: relative;
+    width: 100%;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 5px;
+    background: rgb(44, 51, 53);
+    overflow: hidden;
+}
+.account_header_image_profile_container {
+    position: relative;
+    top: -40px;
+    left: 13px;
+    margin-bottom: -40px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: rgb(44, 51, 53);
+    padding: 5px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+.account_header_image_profile {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ── Content container ── */
+.account_settings_content_container {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    gap: 20px;
+}
+
+/* ── Name + email ── */
+.account_header_name_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
+.name_conatiner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+.name_conatiner > h2 {
+    margin: 0 0 4px 0;
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+.name_conatiner > p {
+    margin: 0 0 3px 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(28, 32, 35);
+    border-radius: 5px;
+    padding: 3px 5px;
+}
+.account_header_name_container > p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── User plan ── */
+.user_plan {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: rgb(52, 60, 65);
+    gap: 12px;
+    box-shadow:
+        0 0 0 1px rgba(43, 43, 43, 0.35),
+        0 4px 12px rgba(26, 26, 26, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+.user_plan_header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+.user_plan_header > h2 {
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.user_plan_header > p {
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.28);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.user_plan_update_btn {
+    flex-shrink: 0;
+    border: none;
+    font-weight: 500;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgb(14, 118, 220);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 3px 8px rgba(0, 80, 200, 0.25),
+        0 0 0 1px rgba(80, 160, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.user_plan_update_btn:hover {
+    filter: brightness(1.12);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.45),
+        0 5px 14px rgba(0, 80, 200, 0.35),
+        0 0 0 1px rgba(80, 160, 255, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.user_plan_update_btn:active {
+    transform: translateY(1px) scale(0.98);
+    filter: brightness(0.95);
+    box-shadow:
+        0 0px 1px rgba(0, 0, 0, 0.4),
+        0 1px 4px rgba(0, 80, 200, 0.2),
+        0 0 0 1px rgba(80, 160, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+@media (max-width: 400px) {
+    .user_plan { padding: 12px 13px; }
+    .user_plan_header > h2 { font-size: 11px; }
+    .user_plan_header > p  { font-size: 10px; }
+    .user_plan_update_btn  { padding: 6px 11px; font-size: 10px; }
+}
+@media (max-width: 300px) {
+    .user_plan { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px 13px; }
+    .user_plan_header > h2 { white-space: normal; font-size: 11px; }
+    .user_plan_header > p  { white-space: normal; font-size: 10px; }
+    .user_plan_update_btn  { width: 100%; justify-content: center; padding: 8px; }
+}
+
+/* ── User information fields ── */
+.user_information_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+}
+.user_name_alias {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    gap: 20px;
+}
+.user_name_input_header {
+    flex-shrink: 0;
+    width: 170px;
+}
+.user_name_input_header > h3 {
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+}
+.user_name_input_header > p {
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.28);
+    margin: 0;
+}
+.user_name_input_content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 3px;
+    box-sizing: border-box;
+}
+
+/* Input surfaces */
+.name_textarea_div,
+.input_with_prefix,
+.country_select_div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 35px;
+    border-radius: 6px;
+    background: rgb(28, 32, 35);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+}
+.name_textarea_div,
+.input_with_prefix { overflow: hidden; }
+.country_select_div { position: relative; overflow: visible; cursor: pointer; }
+
+.name_textarea_div:focus-within,
+.input_with_prefix:focus-within,
+.country_select_div.open {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+#name_input,
+.input_suffix {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 10px;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 35px;
+}
+#name_input::placeholder,
+.input_suffix::placeholder { color: rgba(255, 255, 255, 0.2); }
+
+.input_prefix {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 100%;
+    padding: 0 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.25);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ── Country dropdown ── */
+.country_selected {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+.country_selected.has_value { color: rgba(255, 255, 255, 0.75); }
+
+.country_chevron {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    color: rgba(255, 255, 255, 0.25);
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+.country_select_div.open .country_chevron { transform: rotate(180deg); }
+
+.country_options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: rgb(28, 32, 35);
+    border-radius: 6px;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    z-index: 100;
+    overflow-y: auto;
+    max-height: 180px;
+}
+.country_options::-webkit-scrollbar { width: 2px; }
+.country_options::-webkit-scrollbar-track { background: transparent; }
+.country_options::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+.country_select_div.open .country_options { display: block; }
+
+.country_option {
+    padding: 7px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    transition: background 0.1s ease, color 0.1s ease;
+    user-select: none;
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+}
+.country_option:hover  { background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.9); }
+.country_option.selected { background: rgba(255, 255, 255, 0.04); color: rgba(255, 255, 255, 0.9); }
+
+@media (max-width: 700px) {
+    .user_name_alias { flex-direction: column; gap: 6px; }
+    .user_name_input_header { flex-shrink: 1; }
+    .user_name_input_content { max-width: 100%; width: 100%; margin-top: 0; }
+}
+
+
+/* FOR ACTIVATION MODE WITH JS (FUTURE ) */
+/* .account_settings_save_btn {
+    margin-right: 20px;
+    flex-shrink: 0;
+    border: none;
+    font-weight: 500;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    cursor: not-allowed;
+    letter-spacing: 0.3px;
+    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, background 0.2s ease, color 0.2s ease;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.account_settings_save_btn.activated {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgb(22, 163, 74);
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 3px 8px rgba(0, 100, 40, 0.3),
+        0 0 0 1px rgba(40, 200, 90, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.account_settings_save_btn.activated:hover {
+    filter: brightness(1.12);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.45),
+        0 5px 14px rgba(0, 100, 40, 0.4),
+        0 0 0 1px rgba(40, 200, 90, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.account_settings_save_btn.activated:active {
+    transform: translateY(1px) scale(0.98);
+    filter: brightness(0.95);
+    box-shadow:
+        0 0px 1px rgba(0, 0, 0, 0.4),
+        0 1px 4px rgba(0, 100, 40, 0.2),
+        0 0 0 1px rgba(40, 200, 90, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+} */
+.account_settings_save_btn {
+    margin-right: 20px;
+    flex-shrink: 0;
+    border: none;
+    font-weight: 500;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgb(22, 163, 74);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 3px 8px rgba(0, 100, 40, 0.3),
+        0 0 0 1px rgba(40, 200, 90, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.account_settings_save_btn:hover {
+    filter: brightness(1.12);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.45),
+        0 5px 14px rgba(0, 100, 40, 0.4),
+        0 0 0 1px rgba(40, 200, 90, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.account_settings_save_btn:active {
+    transform: translateY(1px) scale(0.98);
+    filter: brightness(0.95);
+    box-shadow:
+        0 0px 1px rgba(0, 0, 0, 0.4),
+        0 1px 4px rgba(0, 100, 40, 0.2),
+        0 0 0 1px rgba(40, 200, 90, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}

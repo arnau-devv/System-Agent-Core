@@ -40,7 +40,7 @@ function createMainWindow() {
 
     Menu.setApplicationMenu(null)
     mainWindow.loadFile('src/index.html')
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 }
 
 // ----------- Chat window -----------
@@ -99,9 +99,9 @@ function createAgentSettingsWindow() {
 }
 
 
-// =============================================================================
-//  IPC — WINDOW MANAGEMENT
-// =============================================================================
+// ===============================================================================================================
+//                                              IPC — WINDOW MANAGEMENT
+// ===============================================================================================================
 
 // ----------- Toggle visibility -----------
 // Chat is hidden/shown to preserve conversation history across opens.
@@ -149,6 +149,8 @@ ipcMain.on('background-changed', (event, data) => {
     configStore.write('background', data)
 
     mainWindow.webContents.send('background-changed', data)
+    if (settingsWindow && !settingsWindow.isDestroyed())
+        settingsWindow.webContents.send('background-changed', data)
     if (chatWindow && !chatWindow.isDestroyed())
         chatWindow.webContents.send('background-changed', data)
     if (agentSettingsWindow && !agentSettingsWindow.isDestroyed())
@@ -177,7 +179,23 @@ ipcMain.handle('get-sphere', () => configStore.get('sphere'))
 
 
 // =============================================================================
-//  IPC — WEBSOCKET MESSAGE ROUTER
+//  IPC — USER INFORMATION
+//  Account settings sends 'user-data' with {user_name: name, user_alias: alias, user_country: selectedCountry}
+//  main saves the data to disk and forwards to mainWindow so it can be
+//  send to backend via websocket by renderer
+// =============================================================================
+ipcMain.on('user-data', (event, data) => {
+    // Write data to json (pendent to apply)
+
+    if (mainWindow && !mainWindow.isDestroyed())
+        mainWindow.webContents.send('user-data', data)
+})
+
+
+
+
+// =============================================================================
+//  IPC — WEBSOCKET MESSAGE (from backend) ROUTER
 //  Messages arrive from the Python backend via WebSocket → renderer.js
 //  forwards them here as 'backend-message'. main then fans them out to
 //  whichever windows care about each event type.

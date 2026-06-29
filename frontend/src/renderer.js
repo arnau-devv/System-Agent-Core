@@ -23,9 +23,22 @@ function connectWebSocket() {
       ipcRenderer.send('backend-message', message)    // forward to main.js for routing
    }
 }
-
 connectWebSocket()
 
+
+// Listens for user profile updates from account_settings_renderer.js -> main.js 
+// and sends them to the backend via WebSocket
+// data -> {user_name: name, user_alias: alias, user_country: selectedCountry}
+ipcRenderer.on('user-data', (event, message) => {
+   // if (socket && socket.readyState === WebSocket.OPEN) {
+   //    socket.send(JSON.stringify(message))
+   // }
+   console.log({
+      name: message.user_name,
+      alias: message.user_alias,
+      country: message.user_country
+      });
+})
 
 
 

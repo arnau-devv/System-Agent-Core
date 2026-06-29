@@ -1,0 +1,249 @@
+/* ================================================================
+   BACKGROUND SETTINGS — background_settings/background_settings.css
+   Estilos exclusivos de #view_customization y sus componentes internos.
+   No tocar settings.css para cambios visuales de esta vista.
+================================================================ */
+
+#view_customization {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 15px 15px 15px;
+}
+#view_customization::-webkit-scrollbar { width: 2px; }
+#view_customization::-webkit-scrollbar-track { background: transparent; }
+#view_customization::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+#view_customization::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+/* ── Section header ── */
+.background_settings_header {
+    padding: 25px 15px 20px 15px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 20px;
+}
+.background_settings_header > h2 {
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 4px 0;
+}
+.background_settings_header > h3 {
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 4px 0;
+}
+.background_settings_header > p {
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+    margin: 0;
+}
+
+/* ── Main container ── */
+.background_settings_container {
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    height: auto;
+    background: rgb(40, 46, 49);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* ── Previewer ── */
+.background_previsualizer_container {
+    width: 90%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.backgorund_previsualizer_header {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(44, 51, 53);
+    border-radius: 5px;
+    padding: 3px 5px;
+}
+.backgorund_previsualizer_header > p {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 300;
+    color: rgb(172, 172, 172);
+}
+.background_previsualizer {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    height: 80px;
+    width: 120px;
+    border-radius: 5px;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Selector area ── */
+.bacground_selector_container {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.background_selector_header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    font-weight: 200;
+    font-size: 12px;
+    padding-left: 10px;
+    box-sizing: border-box;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
+}
+
+/* ── Mode toggle ── */
+.background_mode_toggle_container {
+    width: auto;
+    padding: 0;
+    gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+.background_mode_toggle_container > span {
+    font-weight: 200;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
+}
+#background_mode_label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.mode_word_viewport {
+    display: inline-block;
+    height: 14px;
+    line-height: 14px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+.mode_word_track {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.mode_word {
+    height: 14px;
+    line-height: 14px;
+    display: block;
+}
+.mode_word_track.show_dark { transform: translateY(-14px); }
+
+@media (max-width: 570px) {
+    .background_mode_toggle_container > span { display: none !important; }
+}
+
+/* ── Toggle switch ── */
+.toggle_switch {
+    --track-width: 40px;
+    --track-height: 21px;
+    --track-border: 1px;
+    --thumb-size: 15px;
+    --thumb-offset: 2px;
+    position: relative;
+    display: inline-block;
+    width: var(--track-width);
+    height: var(--track-height);
+    flex-shrink: 0;
+}
+.toggle_switch input { opacity: 0; width: 0; height: 0; }
+.toggle_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(50, 57, 63, 0.45);
+    border: 1px solid rgba(95, 105, 113, 0.6);
+    border-radius: 6px;
+    transition: background-color 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                border-color    0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.toggle_slider::before {
+    position: absolute;
+    content: "";
+    width: var(--thumb-size);
+    height: 13px;
+    left: var(--thumb-offset);
+    bottom: 3px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s ease;
+}
+.toggle_switch input:checked + .toggle_slider::before {
+    transform: translateX(calc(var(--track-width) - (2 * var(--track-border)) - var(--thumb-size) - (2 * var(--thumb-offset))));
+}
+.toggle_switch input:active + .toggle_slider::before {
+    width: calc(var(--thumb-size) + 4px);
+}
+.toggle_switch input:active:checked + .toggle_slider::before {
+    transform: translateX(calc(var(--track-width) - (2 * var(--track-border)) - var(--thumb-size) - 2 * var(--thumb-offset) - 4px));
+    width: calc(var(--thumb-size) + 4px);
+}
+
+/* ── Theme cards ── */
+.background_selector {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgb(28, 32, 35);
+    border-radius: 5px;
+    height: auto;
+    max-height: 105px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+}
+.background_selector::-webkit-scrollbar { width: 2px; }
+.background_selector::-webkit-scrollbar-track { background: transparent; }
+.background_selector::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+.background_selector::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+.theme_card {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 1px solid rgb(88, 88, 88);
+    transition: border 0.2s ease, transform 0.3s ease;
+}
+.theme_card:hover  { transform: scale(1.1); }
+.theme_card:active { transform: scale(1); }
+.theme_card.selected {
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    animation: card_border_pulse 2.8s ease-out infinite;
+}
+@keyframes card_border_pulse {
+    0%   { box-shadow: 0 0 0 0px rgba(255, 255, 255, 0.45); }
+    50%  { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);    }
+    100% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);    }
+}

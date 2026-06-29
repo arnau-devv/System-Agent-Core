@@ -9,8 +9,8 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    /* background: radial-gradient(ellipse 50% 55% at 0% 10%, rgb(35, 35, 35) 0%, rgb(20, 20, 20) 100%); */
-    background: rgb(15, 15, 15);
+    /* background: radial-gradient(ellipse 50% 55% at 0% 10%, rgb(52, 60, 65) 0%, rgb(40, 46, 49) 100%); */
+    background: rgb(34, 38, 41);
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     font-size: 15px;
@@ -49,7 +49,7 @@ img {
     height: 20px;
     /* border: 1px solid rgba(255, 255, 255, 0.06); */
     border-radius: 50%;
-    background-color: rgb(15, 15, 15);
+    background-color: rgb(34, 38, 41);
     background-color: transparent;
     cursor: pointer;
 }
@@ -98,9 +98,9 @@ img {
 .agent_sphere_margin_container {
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 0px;
-    background: rgb(15, 15, 15);
+    background: rgb(34, 38, 41);
     background: transparent;
-    background: rgb(15, 15, 15, 0.85);
+    background: rgba(34, 38, 41, 0.85);
     backdrop-filter: blur(20px) saturate(180%);
     aspect-ratio: 1 / 1;
     height: 100%;
@@ -129,7 +129,7 @@ img {
     padding: 0px 10px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(15, 15, 15);
+    background: rgb(34, 38, 41);
     font-weight: 300;
     font-size: 11px;
     color: rgba(255, 255, 255, 0.45);
@@ -150,7 +150,7 @@ img {
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(22, 22, 22); /* Fallback color before the canvas loads */
+    background: rgb(44, 51, 53); /* Fallback color before the canvas loads */
     overflow: hidden; /* KEY: prevents the animation from covering the rounded corners */
     padding: 0;
 }
@@ -179,7 +179,7 @@ img {
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(10, 10, 10);
+    background: rgb(28, 32, 35);
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -196,7 +196,7 @@ img {
     padding: 0px 8px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(22, 22, 22);
+    background: rgb(44, 51, 53);
     font-weight: 300;
     font-size: 12px;
     color: rgba(255, 255, 255, 0.5);
@@ -204,7 +204,7 @@ img {
     transition: all 0.2s ease;
 }
 .agent_settings_options > button:hover {
-    background: rgb(35, 35, 35);
+    background: rgb(52, 60, 65);
     color: rgba(255, 255, 255, 0.55);
     transform: scale(1.05);
 }
@@ -244,7 +244,7 @@ img {
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(22, 22, 22);
+    background: rgb(44, 51, 53);
 }
 
 /* ======================================================================================
@@ -348,11 +348,11 @@ img {
     border-bottom: 4px solid rgba(255, 255, 255, 0.06);
     border-left: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 10px;
-    background-color: rgb(35, 35, 35);
+    background-color: rgb(52, 60, 65);
 }
 
 .agent_name_select option {
-    background: rgb(10, 10, 10);
+    background: rgb(28, 32, 35);
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -382,7 +382,7 @@ img {
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(10, 10, 10);
+    background: rgb(28, 32, 35);
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
     font-size: 12px;
@@ -457,18 +457,18 @@ img {
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(10, 10, 10);
+    background: rgb(28, 32, 35);
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 .behavior_option:hover {
     border-color: rgba(255, 255, 255, 0.1);
-    background: rgb(20, 20, 20);
+    background: rgb(40, 46, 49);
 }
 .behavior_option.selected {
     border-color: rgba(255, 255, 255, 0.25);
-    background: rgb(25, 25, 25);
+    background: rgb(44, 51, 53);
 }
 
 /* ---- Behavior option dot: selected / not selected ---- */
@@ -534,7 +534,7 @@ img {
 /* Re-declaration: refines the selected-option border/background colors above */
 .behavior_option.selected {
     border-color: rgba(74, 222, 128, 0.35);
-    background: rgb(25, 25, 25);
+    background: rgb(44, 51, 53);
 }
 /* ------------------------------------------------------- */
 
@@ -621,7 +621,7 @@ img {
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 5px;
-    background: rgb(10, 10, 10);
+    background: rgb(28, 32, 35);
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
     font-size: 12px;
@@ -660,7 +660,7 @@ img {
     padding: 8px 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 5px;
-    background: rgb(10, 10, 10);
+    background: rgb(28, 32, 35);
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
     font-size: 12px;
@@ -670,7 +670,7 @@ img {
 }
 #agent_settings_confirm_btn:hover {
     border-color: rgba(255, 255, 255, 0.2);
-    background: rgb(25, 25, 25);
+    background: rgb(44, 51, 53);
     color: white;
 }
 #agent_settings_confirm_btn:active {
@@ -711,7 +711,7 @@ img {
 
 .sphere_selector {
     border: 1px solid rgba(255, 255, 255, 0.06);
-    background-color: rgb(10, 10, 10);
+    background-color: rgb(28, 32, 35);
     border-radius: 5px;
         max-height: 105px;
     overflow-x: hidden;
@@ -754,4 +754,3 @@ img {
     top: 0;
     left: 0;
 }
-
