@@ -64,7 +64,7 @@ document.querySelectorAll('#agent_name_dropdown .agent_name_option').forEach(opt
         agentNameAvatar.textContent = label.charAt(0).toUpperCase()
         agentNameLabel.textContent  = label
         agentNameSelected.classList.add('has_value')
-        
+
         currentAgentName = agentName
         currentWakeWord = wakeWords[agentName] ?? ''
         wakeWordDisplay.textContent = currentWakeWord
@@ -74,36 +74,98 @@ document.querySelectorAll('#agent_name_dropdown .agent_name_option').forEach(opt
 
         agentNameDropdown.classList.remove('open')
         e.stopPropagation()
+
+        checkAgentIdentityDirty('name', agentName)
     })
 })
-
 document.addEventListener('click', () => agentNameDropdown.classList.remove('open'))
 
-// =====================
-//  SAVE BUTTON
-// =====================
-document.getElementById('agent_identity_save_btn').addEventListener('click', () => {
+// =============================================================================
+//  BUTTON ACTIVATION & IPC (agent-identity-data)
+//  Tracks which fields have been modified since last save.
+//  Enables the Save button only when there are pending changes.
+//  On save, relays data to renderer.js → WebSocket → backend.
+// =============================================================================
+const saveAgentIdentityData = document.getElementById('agent_identity_save_btn')
+
+// Activate Button Helper (visual) — renamed to avoid colliding with
+// account_settings_renderer.js's setSaveButtonDisabledStyle (both scripts
+// share the same global scope since neither is a module).
+function setAgentIdentitySaveButtonDisabledStyle(isDisabled) {
+    if (isDisabled) saveAgentIdentityData.classList.add('disabled')
+    else saveAgentIdentityData.classList.remove('disabled')
+}
+
+saveAgentIdentityData.disabled = true
+setAgentIdentitySaveButtonDisabledStyle(true)
+
+const agentIdentityInputContainers = {
+    name: document.querySelector('.agent_name_select_div'),
+}
+
+// Snapshot of values at load time. `behavior` and `sphere` get their real
+// initial values set later (once the default behavior / saved sphere are
+// resolved), so they start as null and get filled in below.
+const agentIdentityOriginalValues = { name: 'jarvis', behavior: null}
+const agentIdentityDirtyFields = new Set()
+
+// Checks if a given key has changed from its original value and updates dirtyFields
+function checkAgentIdentityDirty(key, currentValue) {
+    const changed = currentValue !== agentIdentityOriginalValues[key]
+    if (changed) agentIdentityDirtyFields.add(key)
+    else agentIdentityDirtyFields.delete(key)
+
+    const isDisabled = agentIdentityDirtyFields.size === 0
+    saveAgentIdentityData.disabled = isDisabled
+    setAgentIdentitySaveButtonDisabledStyle(isDisabled)
+}
+
+
+saveAgentIdentityData.addEventListener('click', () => {
+    if (agentIdentityDirtyFields.size === 0) return
+
+    agentIdentityDirtyFields.forEach(key => {
+        if (key === 'name') triggerSavePulse(agentIdentityInputContainers.name)
+        // behavior: no animation intentionally
+        if (key === 'behavior') triggerSavePulse(document.querySelector('#view_agent_identity .behavior_option.selected'))
+    })
+
     const name     = currentAgentName
     const wakeWord = currentWakeWord
     const behavior = document.querySelector('#view_agent_identity .behavior_option.selected')?.dataset.value ?? null
+
+    // Update snapshot with whatever is currently selected
+    agentIdentityOriginalValues.name     = currentAgentName
+    agentIdentityOriginalValues.behavior = behavior
+    agentIdentityOriginalValues.sphere   = currentIdentitySphere
+
+    agentIdentityDirtyFields.clear()
+    saveAgentIdentityData.disabled = true
+    setAgentIdentitySaveButtonDisabledStyle(true)
 
     if (ipcRenderer) ipcRenderer.send('agent-identity-data', { agent_name: name, wake_word: wakeWord, agent_behavior: behavior })
 })
 
 
-// =============================================================================
+// ======================================
 //  BEHAVIOR OPTIONS
-// =============================================================================
+// ======================================
 const behaviorOptions = document.querySelectorAll('#view_agent_identity .behavior_option')
 
 function selectBehavior(option) {
     behaviorOptions.forEach(o => o.classList.remove('selected'))
     option.classList.add('selected')
+    checkAgentIdentityDirty('behavior', option.dataset.value)
 }
 
 behaviorOptions.forEach(opt => opt.addEventListener('click', () => selectBehavior(opt)))
 
-if (behaviorOptions.length > 0) selectBehavior(behaviorOptions[0])
+if (behaviorOptions.length > 0) {
+    // Set initial selection WITHOUT marking it dirty — this is the baseline.
+    behaviorOptions.forEach(o => o.classList.remove('selected'))
+    behaviorOptions[0].classList.add('selected')
+    agentIdentityOriginalValues.behavior = behaviorOptions[0].dataset.value
+}
 
 
 // =============================================================================
@@ -134,6 +196,7 @@ Object.entries(window.SPHERE_THEMES).forEach(([key, theme]) => {
         card.classList.add('selected')
 
         if (ipcRenderer) ipcRenderer.send('sphere-changed', { sphere: currentIdentitySphere })
+
     })
 
     agentIdentitySphereSelector.appendChild(card)
@@ -169,5 +232,3 @@ function initAgentIdentity() {
 }
 
 window.initAgentIdentity = initAgentIdentity
-
-

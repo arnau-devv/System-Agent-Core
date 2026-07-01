@@ -1,8 +1,9 @@
 import asyncio
 import uvicorn
-from ws_server import app as ws_app
+import ws_server
 from pathlib import Path
 from dotenv import load_dotenv
+from ws_server import app as ws_app
 from core.event_bus import EventBus
 from core.state_manager import StateManager
 from modules.ai.ai_service import AiService
@@ -16,14 +17,16 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 async def main():
     try:
-        event_bus           = EventBus()
-        state_manager       = StateManager(event_bus)
-        audio_recorder      = AudioRecorder()
-        wake_word_service   = WakeWordService(event_bus, audio_recorder)        
-        stt_service         = SttService(event_bus, audio_recorder)
-        ai_service          = AiService(event_bus)
-        tts_service         = TtsService(event_bus)
-        sound_engine        = SoundEngine(event_bus)
+        event_bus             = EventBus()
+        state_manager         = StateManager(event_bus)
+        audio_recorder        = AudioRecorder()
+        wake_word_service     = WakeWordService(event_bus, audio_recorder)        
+        stt_service           = SttService(event_bus, audio_recorder)
+        ai_service            = AiService(event_bus)
+        tts_service           = TtsService(event_bus)
+        sound_engine          = SoundEngine(event_bus)
+        
+        ws_server.system_prompt_builder = ai_service._system_prompt_builder
         
         await asyncio.sleep(0.1)
         

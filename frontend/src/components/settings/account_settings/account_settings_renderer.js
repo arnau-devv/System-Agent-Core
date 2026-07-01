@@ -63,14 +63,16 @@ dropdown.addEventListener('click', (e) => {
 function initCountryDropdown() {
     document.querySelectorAll('.country_option').forEach(option => {
         option.addEventListener('click', (e) => {
-            selectedCountry  = option.dataset.flag //data-value -> ['es', 'fr', 'us', etc...]
-            const label = option.textContent.trim() //Country Name -> ['Spain', 'France', etc...]
+            const label      = option.textContent.trim() //Country Name -> ['Spain', 'France', etc...]
+            selectedCountry  = label
+            // selectedCountry  = option.dataset.flag | data-value -> ['es', 'fr', 'us', etc...]
+
             //Flag (class > fi fi-[..])
-            const spanElement = option.querySelector('span');
+            const spanElement   = option.querySelector('span');
             const flagClassName = spanElement.className;
 
-            selectedFlag.className        = flagClassName
-            selectedLabel.textContent       = label
+            selectedFlag.className    = flagClassName
+            selectedLabel.textContent = label
             countrySelectedEl.classList.add('has_value')
 
             document.querySelectorAll('.country_option').forEach(o => o.classList.remove('selected'))
@@ -78,6 +80,8 @@ function initCountryDropdown() {
 
             dropdown.classList.remove('open')
             e.stopPropagation()
+
+            checkUserDirtyInputs('country', selectedCountry)
         })
     })
 
@@ -88,15 +92,85 @@ window.initCountryDropdown = initCountryDropdown
 
 
 // =============================================================================
-//  USER INFORMATION Logic
-// Toggles the Save button's disabled/enabled state.
-// Relays data to renderer.js, which then emits it to the backend over 
-// a WebSocket connection.
+//  BUTTON ACTIVATION & IPC (user-data)
+//  Tracks which inputs have been modified since last save.
+//  Enables the Save button only when there are pending changes.
+//  On save, relays data to renderer.js → WebSocket → backend.
 // =============================================================================
 const saveUserData = document.getElementById('account_settings_save_btn')
+// Activate Button Helper (visual)
+function setSaveUserButtonDisabledStyle (isDisabled) {
+    if (isDisabled) saveUserData.classList.add('disabled')
+    else saveUserData.classList.remove('disabled')
+}
+
+saveUserData.disabled = true
+setSaveUserButtonDisabledStyle(true)
+
+const trackedUserInputs = {
+    name:  document.getElementById('name_input'),
+    alias: document.querySelector('.input_suffix')
+}
+
+// DOM references to each input's parent container (for the save animation)
+const userInputContainers = {
+    name:    document.querySelector('.name_textarea_div'),
+    alias:   document.querySelector('.input_with_prefix'),
+    country: document.querySelector('.country_select_div'),
+}
+// Snapshot of values at load time
+// pendant -> apply data persistance
+const originalUserValues = {
+    name:    document.getElementById('name_input').value.trim(),
+    alias:   document.querySelector('.input_suffix').value.trim(),
+    country: null 
+}
+const dirtyUserDataFields    = new Set()  // Keys of inputs that differ from their original value
+
+// Checks if a given key has changed from its original value and updates dirtyFields
+function checkUserDirtyInputs(key, currentValue) {
+    const changed = currentValue !== originalUserValues[key]
+    if (changed) dirtyUserDataFields.add(key)
+    else dirtyUserDataFields.delete(key)
+
+    let isDisabled = dirtyUserDataFields.size === 0;
+    saveUserData.disabled = isDisabled;
+    setSaveUserButtonDisabledStyle(isDisabled);
+}
+
+Object.entries(trackedUserInputs).forEach(([key, input]) => {
+    originalUserValues[key] = input.value.trim()
+})
+
+// Changes detection
+Object.entries(trackedUserInputs).forEach(([key, input]) => {
+    input.addEventListener('input', () => {
+        checkUserDirtyInputs(key, input.value.trim())
+    })
+})
+
+function triggerSavePulse(container) {
+    if (!container) return
+    container.classList.add('save_pulse')
+    container.addEventListener('animationend', () => container.classList.remove('save_pulse'), { once: true })
+}
 
 saveUserData.addEventListener('click', () => {
-    const name  = document.getElementById('name_input').value.trim()
-    const alias = document.querySelector('.input_suffix').value.trim()
+    if (dirtyUserDataFields.size === 0) return
+
+    dirtyUserDataFields.forEach(key => {
+        // Update snapshot — inputs use .value, country uses selectedCountry
+        if (key === 'country') originalUserValues.country = selectedCountry
+        else originalUserValues[key] = trackedUserInputs[key].value.trim()
+
+        triggerSavePulse(userInputContainers[key])
+    })
+
+    dirtyUserDataFields.clear()
+    saveUserData.disabled = true
+    setSaveUserButtonDisabledStyle(true)
+
+    const name  = trackedUserInputs.name.value.trim()
+    const alias = trackedUserInputs.alias.value.trim()
     if (ipcRenderer) ipcRenderer.send('user-data', { user_name: name, user_alias: alias, user_country: selectedCountry })
 })

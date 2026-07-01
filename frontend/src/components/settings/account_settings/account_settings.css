@@ -33,7 +33,7 @@
 }
 .account_header_image_profile_container {
     position: relative;
-    top: -40px;
+    top: -35px;
     left: 13px;
     margin-bottom: -40px;
     width: 70px;
@@ -380,59 +380,7 @@
 }
 
 
-/* FOR ACTIVATION MODE WITH JS (FUTURE ) */
-/* .account_settings_save_btn {
-    margin-right: 20px;
-    flex-shrink: 0;
-    border: none;
-    font-weight: 500;
-    font-size: 10.5px;
-    color: rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.04);
-    padding: 7px 14px;
-    border-radius: 6px;
-    font-family: 'Poppins', sans-serif;
-    cursor: not-allowed;
-    letter-spacing: 0.3px;
-    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, background 0.2s ease, color 0.2s ease;
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-    pointer-events: none;
-}
-
-.account_settings_save_btn.activated {
-    color: rgba(255, 255, 255, 0.95);
-    background: rgb(22, 163, 74);
-    cursor: pointer;
-    pointer-events: auto;
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.4),
-        0 3px 8px rgba(0, 100, 40, 0.3),
-        0 0 0 1px rgba(40, 200, 90, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.22),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-}
-.account_settings_save_btn.activated:hover {
-    filter: brightness(1.12);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.45),
-        0 5px 14px rgba(0, 100, 40, 0.4),
-        0 0 0 1px rgba(40, 200, 90, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.22),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-}
-.account_settings_save_btn.activated:active {
-    transform: translateY(1px) scale(0.98);
-    filter: brightness(0.95);
-    box-shadow:
-        0 0px 1px rgba(0, 0, 0, 0.4),
-        0 1px 4px rgba(0, 100, 40, 0.2),
-        0 0 0 1px rgba(40, 200, 90, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 2px 4px rgba(0, 0, 0, 0.2);
-} */
+/* ── Save Button ── */
 .account_settings_save_btn {
     margin-right: 20px;
     flex-shrink: 0;
@@ -446,7 +394,12 @@
     font-family: 'Poppins', sans-serif;
     cursor: pointer;
     letter-spacing: 0.3px;
-    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    transition: 
+        background-color 0.25s ease,
+        color 0.25s ease,
+        filter 0.15s ease,
+        transform 0.1s ease,
+        box-shadow 0.25s ease;
     box-shadow:
         0 1px 2px rgba(0, 0, 0, 0.4),
         0 3px 8px rgba(0, 100, 40, 0.3),
@@ -473,3 +426,62 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.account_settings_save_btn.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.55);
+    background: rgb(90, 100, 94);
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.25),
+        0 2px 5px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    filter: none;
+    transform: none;
+}
+
+/* --- v1 --- */
+@keyframes save_pulse {
+    0%   { 
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 
+                    0 0 0 1px rgba(74, 222, 128, 0.4);
+    }
+    60%  { 
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 
+                    0 0 0 5px rgba(74, 222, 128, 0.08);
+    }
+    100% { 
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 
+                    0 0 0 7px rgba(74, 222, 128, 0);
+    }
+}
+
+.save_pulse { animation: save_pulse 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* --- v2 --- */
+@keyframes save_pulse {
+    0%   { 
+        box-shadow: 
+            0 0 0 1px rgba(74, 222, 128, 0.9),
+            0 0 0 2px rgba(74, 222, 128, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            inset 0 0 10px rgba(74, 222, 128, 0.08);
+    }
+    60%  { 
+        box-shadow: 
+            0 0 0 1px rgba(74, 222, 128, 0.2),
+            0 0 0 7px rgba(74, 222, 128, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            inset 0 0 4px rgba(74, 222, 128, 0.03);
+    }
+    100% { 
+        box-shadow: 
+            0 0 0 1px rgba(0, 0, 0, 0.3),
+            0 0 0 7px rgba(74, 222, 128, 0),
+            inset 0 1px 0 rgba(255, 255, 255, 0.04),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    }
+}
+.save_pulse { animation: save_pulse 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }

@@ -6,6 +6,9 @@ app = FastAPI()
 # Global reference to the connected frontend
 connected_socket: WebSocket | None = None
 
+# Instance created in main.py; shares the same chat_history reference as ai_service on run
+system_prompt_builder = None
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     global connected_socket
@@ -18,17 +21,16 @@ async def websocket_endpoint(websocket: WebSocket):
         
         # User personal data & Agent behavior data
         # format -> {name: 'x-data', data: message}
-        
         try:
             if message.get("name") == "user-data":
                 data = message.get("data", {})
-                # await handle_user_data(data)
-        except ValueError:
-            raise "[Error] key: 'name' || 'data' doesnt match from backend" 
+                await system_prompt_builder.handle_user_data(data)
+        except Exception as e:
+            raise f"[ws_server] Error: {e}"
         
         try:
             if message.get("name") == "agent-identity-data":
                 data = message.get("data", {})
-                # await handle_agent_identity_data(data)
+                await system_prompt_builder.handle_agent_identity_data(data)
         except ValueError:
-            raise "[Error] key: 'name' || 'data' doesnt match from backend"
+            raise f"[ws_server] Error: {e}"
