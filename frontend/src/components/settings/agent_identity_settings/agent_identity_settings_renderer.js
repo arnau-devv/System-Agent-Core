@@ -43,13 +43,13 @@ const agentNameLabel    = document.getElementById('agent_name_label')
 const wakeWordDisplay   = document.getElementById('agent_identity_wake_word')
 
 const wakeWords = {
-    jarvis:  '"Hey Jarvis"',
-    cortana: '"Hey Cortana"',
-    pixie:   '"Hey Pixie"',
+    jarvis:  'Hey Jarvis',
+    cortana: 'Hey Cortana',
+    pixie:   'Hey Pixie',
 }
 
 let currentAgentName = 'jarvis'
-let currentWakeWord = "Hey Jarvis"
+let currentWakeWord = 'Hey Jarvis'
 
 agentNameDropdown.addEventListener('click', (e) => {
     agentNameDropdown.classList.toggle('open')
@@ -232,3 +232,41 @@ function initAgentIdentity() {
 }
 
 window.initAgentIdentity = initAgentIdentity
+
+
+
+// =============================================================================
+// DATA INIT
+// user data reciebed as -> { "agent_name": "", "wake_word": "", "agent_behavior": "" }
+// =============================================================================
+function applyAgentIdentityData(data) {
+    if (!data || Object.keys(data).length === 0) return
+
+    if (data.agent_name) {
+        const option = document.querySelector(`#agent_name_dropdown .agent_name_option[data-value="${data.agent_name}"]`)
+        if (option) {
+            const label = option.lastChild.textContent.trim()
+            agentNameAvatar.textContent = label.charAt(0).toUpperCase()
+            agentNameLabel.textContent  = label
+            agentNameSelected.classList.add('has_value')
+            document.querySelectorAll('#agent_name_dropdown .agent_name_option').forEach(o => o.classList.remove('selected'))
+            option.classList.add('selected')
+        }
+
+        currentAgentName = data.agent_name
+        currentWakeWord  = data.wake_word ?? wakeWords[data.agent_name] ?? ''
+        wakeWordDisplay.textContent = currentWakeWord
+        agentIdentityOriginalValues.name = data.agent_name
+    }
+
+    if (data.agent_behavior) {
+        const option = document.querySelector(`#view_agent_identity .behavior_option[data-value="${data.agent_behavior}"]`)
+        if (option) {
+            behaviorOptions.forEach(o => o.classList.remove('selected'))
+            option.classList.add('selected')
+        }
+        agentIdentityOriginalValues.behavior = data.agent_behavior
+    }
+}
+
+window.applyAgentIdentityData = applyAgentIdentityData

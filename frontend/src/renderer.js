@@ -20,6 +20,7 @@ function connectWebSocket() {
 
    socket.onmessage = (event) => {
       const message = JSON.parse(event.data)
+      console.log("[backend-message] ",  message)
       ipcRenderer.send('backend-message', message)    // forward to main.js for routing
    }
 }

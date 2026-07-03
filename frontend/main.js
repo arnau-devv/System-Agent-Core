@@ -78,6 +78,16 @@ function createSettingsWindow() {
     })
 
     settingsWindow.loadFile('src/components/settings/settings.html')
+    settingsWindow.webContents.on('did-finish-load', () => {
+        settingsWindow.webContents.openDevTools()
+        if (cachedInitConfig) {
+            // INIT-CONFIG arrives from the backend on WebSocket connect, before settings is open.
+            // We cache it in main and re-send it once the window finishes loading,
+            // ensuring the renderer's listeners are mounted before the message arrives.
+            settingsWindow.webContents.send('backend-message', { name: 'INIT-CONFIG', data: cachedInitConfig })
+        }
+
+    })
 }
 
 // ----------- Agent settings window -----------
@@ -113,13 +123,13 @@ function createSettingsWindow() {
 
 ipcMain.on('toggle-settings', () => {
     if (settingsWindow) { settingsWindow.destroy(); settingsWindow = null }
-    else { createSettingsWindow(); settingsWindow.show(); settingsWindow.focus() }
+    else {
+        createSettingsWindow()
+        settingsWindow.show()
+        settingsWindow.focus()
+    }
 })
 
-// ipcMain.on('toggle-agent-settings', () => {
-//     if (agentSettingsWindow) { agentSettingsWindow.destroy(); agentSettingsWindow = null }
-//     else { createAgentSettingsWindow(); agentSettingsWindow.show(); agentSettingsWindow.focus() }
-// })
 
 // ----------- Close handlers -----------
 ipcMain.on('close-app', () => {
@@ -136,7 +146,6 @@ ipcMain.on('close-app', () => {
 
 ipcMain.on('close-chat',           () => { chatWindow.hide() })
 ipcMain.on('close-settings',       () => { settingsWindow?.destroy();      settingsWindow = null })
-// ipcMain.on('close-agent-settings', () => { agentSettingsWindow?.destroy(); agentSettingsWindow = null })
 
 
 // =============================================================================
@@ -153,8 +162,6 @@ ipcMain.on('background-changed', (event, data) => {
         settingsWindow.webContents.send('background-changed', data)
     if (chatWindow && !chatWindow.isDestroyed())
         chatWindow.webContents.send('background-changed', data)
-    // if (agentSettingsWindow && !agentSettingsWindow.isDestroyed())
-    //     agentSettingsWindow.webContents.send('background-changed', data)
 })
 
 // Renderer windows invoke this on load to get the persisted background
@@ -185,16 +192,28 @@ ipcMain.handle('get-sphere', () => configStore.get('sphere'))
 //  Agent identity settings sends 'agent-identity-data' with 
 //      {agent_name: name, wake_word: currentWakeWord, agent_behavior: behavior}
 // =============================================================================
+// ipcMain.on('user-data', (event, data) => {
+//     if (mainWindow && !mainWindow.isDestroyed())
+//         mainWindow.webContents.send('user-data', data)
+// })
+
+// ipcMain.on('agent-identity-data', (event, data) => {
+//     if (mainWindow && !mainWindow.isDestroyed())
+//         mainWindow.webContents.send('agent-identity-data', data)
+// })
 ipcMain.on('user-data', (event, data) => {
+    // Update cache so settings window always shows the latest data
+    cachedInitConfig.user = data
     if (mainWindow && !mainWindow.isDestroyed())
         mainWindow.webContents.send('user-data', data)
 })
 
 ipcMain.on('agent-identity-data', (event, data) => {
+    // Update cache so settings window always shows the latest data
+    if (cachedInitConfig) cachedInitConfig.agent_identity = data
     if (mainWindow && !mainWindow.isDestroyed())
         mainWindow.webContents.send('agent-identity-data', data)
 })
-
 
 
 
@@ -205,29 +224,39 @@ ipcMain.on('agent-identity-data', (event, data) => {
 //  whichever windows care about each event type.
 // =============================================================================
 
-// Events consumed by the main window (titlebar status + sphere animation)
+// let cachedInitConfig = null
+let cachedInitConfig = { user: {}, agent_identity: {} }   // en vez de null
+
+
+ipcMain.on('backend-message', (event, message) => {
+    handleMainMessages(message)
+    handleSettingsMessage(message)
+    handleChatMessages(message)
+})
+
 const mainEvents = [
     'LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVIDERS_DOWN',
     'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
     'WW_PROVIDER_NAMES',  'ACTIVE_WW_PROVIDER',  'ALL_WW_PROVIDERS_DOWN',
     'WAKE_DETECTED', 'IDLE'
 ]
-
 function handleMainMessages(message) {
     if (mainEvents.includes(message.name))
         mainWindow.webContents.send('backend-message', message)
 }
 
+const settingsEvents = ["INIT-CONFIG"]
+function handleSettingsMessage(message) {
+    if (!settingsEvents.includes(message.name)) return
+    if (!settingsWindow || settingsWindow.isDestroyed()) cachedInitConfig = message.data
+    else settingsWindow.webContents.send('backend-message', message)
+}
 // STT_DONE / AI_DONE carry the transcript and AI response shown in chat
 function handleChatMessages(message) {
     if ((message.name === 'STT_DONE' || message.name === 'AI_DONE') && chatWindow)
         chatWindow.webContents.send('backend-message', message)
 }
 
-ipcMain.on('backend-message', (event, message) => {
-    handleMainMessages(message)
-    handleChatMessages(message)
-})
 
 
 // =============================================================================

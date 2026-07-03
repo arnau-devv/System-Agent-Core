@@ -3,6 +3,17 @@
 let ipcRenderer = null
 try { ipcRenderer = require('electron').ipcRenderer } catch (e) {}
 
+// =============================================================================
+// DATA (user & agent) INIT - IPC (router)
+// =============================================================================
+ipcRenderer.on('backend-message', (event, message) => {
+    if (message.name === 'INIT-CONFIG') {
+        applyUserData(message.data.user)
+        applyAgentIdentityData(message.data.agent_identity)
+    }
+})
+
+
 
 // =============================================================================
 //  HEADER — close button

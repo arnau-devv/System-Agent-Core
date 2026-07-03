@@ -64,8 +64,7 @@ function initCountryDropdown() {
     document.querySelectorAll('.country_option').forEach(option => {
         option.addEventListener('click', (e) => {
             const label      = option.textContent.trim() //Country Name -> ['Spain', 'France', etc...]
-            selectedCountry  = label
-            // selectedCountry  = option.dataset.flag | data-value -> ['es', 'fr', 'us', etc...]
+            selectedCountry  = option.dataset.value  //| data-value -> ['es', 'fr', 'us', etc...]
 
             //Flag (class > fi fi-[..])
             const spanElement   = option.querySelector('span');
@@ -89,6 +88,7 @@ function initCountryDropdown() {
 }
 
 window.initCountryDropdown = initCountryDropdown
+
 
 
 // =============================================================================
@@ -174,3 +174,36 @@ saveUserData.addEventListener('click', () => {
     const alias = trackedUserInputs.alias.value.trim()
     if (ipcRenderer) ipcRenderer.send('user-data', { user_name: name, user_alias: alias, user_country: selectedCountry })
 })
+
+// =============================================================================
+// DATA INIT
+// =============================================================================
+// user data reciebed as -> { "user_name": "", "user_alias": "", "user_country": "" }
+function applyUserData(data) {
+    if (!data || Object.keys(data).length === 0) return
+
+    if (data.user_name) {
+        trackedUserInputs.name.value = data.user_name
+        originalUserValues.name      = data.user_name
+    }
+    if (data.user_alias) {
+        trackedUserInputs.alias.value = data.user_alias
+        originalUserValues.alias        = data.user_alias
+    }
+
+    if (data.user_country) {
+        const option = document.querySelector(`.country_option[data-value="${data.user_country}"]`)
+        if (option) {
+            const span = option.querySelector('span')
+            selectedFlag.className     = span.className
+            selectedLabel.textContent  = option.textContent.trim()
+            countrySelectedEl.classList.add('has_value')
+            document.querySelectorAll('.country_option').forEach(o => o.classList.remove('selected'))
+            option.classList.add('selected')
+            selectedCountry            = data.user_country
+            originalUserValues.country = data.user_country
+        }
+    }
+}
+
+window.applyUserData = applyUserData
