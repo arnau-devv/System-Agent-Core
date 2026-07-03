@@ -6,3 +6,6 @@ class BaseWakeWordProvider:
         raise NotImplementedError("Wake word provider must implement listen()")
     
     def get_name(self): return self._name
+    
+    def reset(self): pass
+    

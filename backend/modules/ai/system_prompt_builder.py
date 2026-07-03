@@ -5,13 +5,9 @@
 # LLMs tend to follow instructions at the top of the prompt more reliably (primacy bias).
 # Critical rules should always be placed first.
 # =============================================================================
+from persistance.config_store import config_store
 
-class SystemPromptBuilder:
-    def __init__(self, chat_history: list):
-        self._chat_history = chat_history
-        self.__user_data = {}
-        self.__agent_identity_data = {}
-        self.__BEHAVIOR_PROMPTS = {
+BEHAVIOR_PROMPTS = {
             "assistant": (
                 "Your role is to be a highly efficient personal assistant. "
                 "You are direct, precise and results-oriented. "
@@ -48,7 +44,14 @@ class SystemPromptBuilder:
                 "You are engaged, proactive and treat every project as a shared mission. "
                 "You push for quality and will challenge ideas constructively to make them better. "
             ),
-        }
+}
+
+class SystemPromptBuilder:
+    def __init__(self, chat_history: list):
+        self._chat_history = chat_history
+        self.__user_data = config_store.get("user")
+        self.__agent_identity_data = config_store.get("agent_identity")
+        self.__rebuild()
     
     @staticmethod
     def generate_base_prompt():
@@ -72,12 +75,14 @@ class SystemPromptBuilder:
         # from account_settings_renderer.js > ws_service >
         # data = {user_name: name, user_alias: alias, user_country: selectedCountry}
         self.__user_data = data
+        config_store.write("user", data) 
         self.__rebuild()
     
     async def handle_agent_identity_data(self, data):
         # from agent_identity_settings_renderer.js > ws_service >
         # data = { agent_name: name, wake_word: wakeWord, agent_behavior: behavior }
-        self.__agent_identity_data = data   
+        self.__agent_identity_data = data
+        config_store.write("agent_identity", data)  
         self.__rebuild() 
         
         
@@ -103,7 +108,7 @@ class SystemPromptBuilder:
         agent_name = data.get("agent_name", "Jarvis")
         behavior   = data.get("agent_behavior", "assistant")
 
-        behavior_prompt = self.__BEHAVIOR_PROMPTS.get(behavior, self.__BEHAVIOR_PROMPTS["assistant"])
+        behavior_prompt = BEHAVIOR_PROMPTS.get(behavior, BEHAVIOR_PROMPTS["assistant"])
 
         return (
             f"Your name as an agent is {agent_name}. "

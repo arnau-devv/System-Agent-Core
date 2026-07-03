@@ -36,14 +36,15 @@ class WakeWordService:
             message = await self._queue.get()
             if message["name"] == "IDLE":
                 self._wake_word = False
+                # Brief delay to let the microphone buffer drain any residual audio
+                # from the previous interaction before opening a new stream.
                 await asyncio.sleep(0.5)
-                
-                for provider in self._providers:
-                    provider.reset()
                 
                 print("[WakeWordService] System idle, starting microphone listener...")
                 await self._listen()
                 if self._wake_word:
+                    for provider in self._providers:
+                        provider.reset()
                     await self._event_bus.publish("WAKE_DETECTED", {})
 
     async def _listen(self):
@@ -57,6 +58,7 @@ class WakeWordService:
         with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS,
                             dtype=DTYPE, blocksize=CHUNK_SIZE,
                             callback=callback):
+            
             while True:
                 await asyncio.sleep(CHUNK_DURATION)
                 try:
