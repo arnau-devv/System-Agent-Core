@@ -68,10 +68,9 @@ ipcRenderer.on('agent-identity-data', (event, message) => {
 // =============================================================================
 //  TITLEBAR
 // =============================================================================
-
 // ----------- DOM references -----------
-const openChatBtn     = document.getElementById('open_chat_btn')
 const closeAppBtn     = document.getElementById('close_app_btn')
+const titlebar        = document.getElementById('titlebar') 
 const statusDiv       = document.getElementById('connection_status')
 const statusText      = document.getElementById('connection_status_text')
 const connectedLlmP   = document.getElementById('tooltip_llm_container')
@@ -80,6 +79,10 @@ const connectedWwP    = document.getElementById('tooltip_ww_container')
 const connectedLlmSpan = document.getElementById('tooltip_llm')
 const connectedTtsSpan = document.getElementById('tooltip_tts')
 const connectedWwSpan  = document.getElementById('tooltip_ww')
+
+// ---- App closing IPC -> main.js ----
+closeAppBtn.addEventListener('click', () => { ipcRenderer.send('close-app') })
+
 
 // ----------- Event lists -----------
 // Which backend events belong to the titlebar
@@ -242,5 +245,24 @@ ipcRenderer.on('sphere-changed', (event, data) => {
 // =============================================================================
 //  NAVBAR
 // =============================================================================
-closeAppBtn.addEventListener('click', () => { ipcRenderer.send('close-app') })
-// openChatBtn.addEventListener('click', () => { ipcRenderer.send('toggle-chat') })
+
+const navbarMarker    = document.getElementById('navbar_marker')
+const navbarContainer = document.getElementById('navbar_container')
+const leftArrow       = document.getElementById('arrow_left')
+const rightArrow      = document.getElementById('arrow_right')
+
+// Returns true if any module is currently open.
+// Add every module view here to keep the check centralized.
+function areOpenedModules() {
+   return chatView.classList.contains('module_opened')
+}
+
+// Applies subtle CSS state to the navbar when a module is open/closed.
+// Call this inside every module's toggle click handler.
+function openedModuleNavbarBehavior() {
+   const opened = areOpenedModules()
+   navbarMarker.classList.toggle('module_opened', opened)
+   navbarContainer.classList.toggle('module_opened', opened)
+   leftArrow.classList.toggle('module_opened', opened)
+   rightArrow.classList.toggle('module_opened', opened)
+}

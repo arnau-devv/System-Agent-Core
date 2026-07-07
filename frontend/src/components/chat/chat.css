@@ -1,23 +1,211 @@
-.chat_main_container{
-    position: absolute;
-    border: 1px solid red;
-    width: 400px;
-    height: 700px;
-    display: none;
+.chat_main_view {
+    position: fixed;
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    padding: 5px;
+    gap: 5px;
+
+    /* El contenedor general solo controla visibilidad y el blur de fondo,
+       ya no mueve nada — el movimiento vive en los hijos */
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    backdrop-filter: blur(0px) saturate(100%);
+    transition:
+        opacity 0.3s ease,
+        backdrop-filter 0.35s ease,
+        visibility 0s linear 0.35s;
+}
+
+.chat_main_view.module_opened {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    backdrop-filter: blur(28px) saturate(160%);
+    transition:
+        opacity 0.3s ease,
+        backdrop-filter 0.35s ease,
+        visibility 0s linear 0s;
+}
+
+.x {
+    /* border: 1px solid green; */
+    width: 200px;
+    height: 100%;
+}
+
+/* -------------------- BUBBLE EFFECT (por grupo) -------------------- */
+
+.titlebar_supporter,
+.chat_main_container {
+    opacity: 0;
+    /* border: 1px solid red; */
+/* 
+    background: rgba(10, 11, 16, 0.35);
+    backdrop-filter: blur(12px) saturate(140%);
+
+    padding: 10px; */
+    box-sizing: border-box;
+    transform: scale(0.85) translateY(14px);
+    transition:
+        opacity 0.35s ease,
+        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.chat_main_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.chat_main_view.module_opened .titlebar_supporter {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    transition-delay: 0s;
+}
+
+.chat_main_view.module_opened .chat_main_container {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    transition-delay: 0.06s;
+}
+
+.chat_main_view:not(.module_opened) .titlebar_supporter,
+.chat_main_view:not(.module_opened) .chat_main_container {
+    transition:
+        opacity 0.2s ease,
+        transform 0.25s cubic-bezier(0.4, 0, 1, 1);
+    transition-delay: 0s;
+}
+/* ------------------------------------------------------------------ */
+
+.titlebar_supporter {
+    width: 100%;
+    height: 37px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+    transform-origin: center top;
+    background: rgba(10, 11, 16, 0.35);
+    backdrop-filter: blur(12px) saturate(140%);
 }
 
 
+/* ====================================================
+                    Chat Sidebar 
+====================================================== */
+.chat_sidebar_container {
+    width: 50px;
+    flex-shrink: 0;
+    height: 100%;
+    box-sizing: border-box;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-radius: 10px;
+    background: rgba(8, 9, 13, 0.92);
+    border-right: 0px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 5px;
+    overflow: hidden;
+    /* Cerrar: rebote leve */
+    transition: width 0.32s cubic-bezier(0.33, 1.05, 0.68, 1);
+}
 
-/* <div class="chat_main_container" id="chat_main_container">
-        <!-- conversation selector (pending to apply) -->
-        <div class="chat_conversation_selector" id="chat_conversation_selector"></div>
-        <!-- chat messages container -->
-        <div class="chat_messages_main_container" id="chat_messages_main_container">
-            <div class="chat_messages_container" id="chat_messages_container"></div>
-            <div class="chat_input_container">
-                <input type="text" id="chat_input" placeholder="Type your message...">
-                <button id="send_message_btn">Send</button>
-            </div>
-        </div>
+/* ------ Sidebar Opening ------- */
+.chat_sidebar_container.opened {
+    width: 350px;
+    /* Abrir: rebote más marcado */
+    transition: width 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
 
-    </div> */
+.sidebar_switch {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 23px;
+    flex-shrink: 0;
+}
+
+.sidebar_switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sidebar_switch_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.178);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.55),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.04);
+    transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top-right-radius: 1px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+.sidebar_switch_slider::before {
+    position: absolute;
+    content: "";
+    height: 15px;
+    width: 2px;
+    border-radius: 2px;
+    left: 4px;
+    bottom: 4px;
+    background-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transition: 0.35s ease;
+}
+
+.sidebar_switch input:checked + .sidebar_switch_slider {
+    background-color: rgba(120, 140, 255, 0.247);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 1px rgba(120, 140, 255, 0.08);
+}
+
+.sidebar_switch input:checked + .sidebar_switch_slider::before {
+    background-color: rgba(150, 165, 255, 0.9);
+    box-shadow: 0 0 6px rgba(120, 140, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+    transform: translateX(330px);
+}
+
+.chat_container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(10, 11, 16, 0.35);
+    backdrop-filter: blur(12px) saturate(140%);
+}
+
+
+/* -------------------- EXTERNAL COMPONENTS */
+.sphere_wrapper.chat_mode {
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: none;
+}

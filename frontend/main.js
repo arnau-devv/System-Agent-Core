@@ -79,7 +79,7 @@ function createSettingsWindow() {
 
     settingsWindow.loadFile('src/components/settings/settings.html')
     settingsWindow.webContents.on('did-finish-load', () => {
-        settingsWindow.webContents.openDevTools()
+        // settingsWindow.webContents.openDevTools()
         if (cachedInitConfig) {
             // INIT-CONFIG arrives from the backend on WebSocket connect, before settings is open.
             // We cache it in main and re-send it once the window finishes loading,
@@ -269,5 +269,4 @@ app.whenReady().then(() => {
     pythonProcess.stderr.on('data', (data) => console.error(`Python error: ${data}`))
 
     createMainWindow()
-    // createChatWindow()
 })

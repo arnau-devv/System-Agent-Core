@@ -39,39 +39,43 @@
 
     <!--------  PRINCIPAL INTERFACE --------->
     <div class="principal_content">
-        <div class="sphere_wrapper">
-            <div id="sphere_container"></div>
-        </div>
+    </div>
+    
+    <!-------- SPHERE --------->
+    <div class="sphere_wrapper" id="sphere_wrapper">
+        <div id="sphere_container"></div>
     </div>
 
     <!-------- CHAT -------->
-    <div class="chat_main_container" id="chat_main_container">
-        <!-- conversation selector (pending to apply) -->
-        <div class="chat_conversation_selector" id="chat_conversation_selector"></div>
-        <!-- chat messages container -->
-        <div class="chat_messages_main_container" id="chat_messages_main_container">
-            <div class="chat_messages_container" id="chat_messages_container"></div>
-            <div class="chat_input_container">
-                <input type="text" id="chat_input" placeholder="Type your message...">
-                <button id="send_message_btn">Send</button>
+    <div class="chat_main_view" id="chat_main_view">
+        <div class="titlebar_supporter"></div>
+        
+        <div class="chat_main_container">
+            <!-- <div class="x"></div> -->
+            <div class="chat_sidebar_container" id="chat_sidebar_container">
+                <label class="sidebar_switch" id="sidebar_toggle_switch">
+                    <input type="checkbox" id="sidebar_toggle_checkbox">
+                    <span class="sidebar_switch_slider"></span>
+                </label>
             </div>
-        </div>
 
+            <div class="chat_container"></div>
+        </div>
     </div>
 
     <!-------- NAVBAR -------->
     <!-- Controlls Views -->
-    <div class="navbar_container">
-        <div class="navbar_marker">
-            <div class="navbar_marker_arrow">
-                <div class="arrow_left"></div>
-                <div class="arrow_right"></div>
+    <div class="navbar_container" id="navbar_container">
+        <div class="navbar_marker" id="navbar_marker">
+            <div class="navbar_marker_arrow" id="navbar_marker_arrow">
+                <div class="arrow_left" id="arrow_left"></div>
+                <div class="arrow_right" id="arrow_right"></div>
             </div>
         </div>
         <div class="navbar" id="navbar">
             <button id="btn1"></button>
             <button id="btn2"></button>
-            <button id="open_chat_btn" class="open_chat_btn"><img class="open_chat_icon" src="../assets/images/open_chat.png"></button>
+            <button id="toggle_chat_btn" class="open_chat_btn"><img class="open_chat_icon" src="../assets/images/open_chat.png"></button>
             <button id="home_btn"><img class="open_chat_icon" src="../assets/images/ai_sphere.png"></button>
             <button id="btn5"></button>
             <button id="btn6"></button>

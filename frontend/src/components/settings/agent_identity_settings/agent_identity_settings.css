@@ -125,7 +125,6 @@ Do not touch settings.css for visual changes in this view.
 
 
 /* ── Name select (input surface) ── */
-/* ── Name select (input surface) ── */
 .agent_identity_select_div {
     display: flex;
     flex-direction: row;
@@ -381,8 +380,6 @@ Do not touch settings.css for visual changes in this view.
     gap: 2px;
     min-width: 0;
     overflow: hidden;
-    /* border: 1px solid rgba(255, 255, 0, 0.603); */
-
 }
 .behavior_option_title {
     margin: 0;
@@ -392,18 +389,8 @@ Do not touch settings.css for visual changes in this view.
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* border: 1px solid rgba(255, 255, 0, 0.603); */
     flex-shrink: 0;
 }
-/* .behavior_option_desc {
-    margin: 0;
-    font-weight: 300;
-    font-size: 6px;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.28);
-    min-width: 0;
-    border: 1px solid rgba(0, 38, 255, 0.603); 
-} */
 
 
 /* ── Custom behavior textarea ── */
@@ -436,44 +423,91 @@ Do not touch settings.css for visual changes in this view.
 #agent_identity_custom_input::placeholder { color: rgba(255, 255, 255, 0.15); }
 
 
-/* ── Sphere selector ── */
+/* ================================================================
+   ── Sphere selector — carousel ──
+   Container is now taller (same width, set by the parent layout).
+   Structure built entirely in JS: [prev arrow][viewport>track>cards][next arrow].
+   Only the "active" card sits centered at full size/opacity; the rest
+   peek in at reduced scale/opacity, clipped by overflow:hidden on the
+   container — no scrollbar needed anymore.
+   ================================================================ */
 .agent_identity_sphere_selector {
+    position: relative;
     border-radius: 6px;
     background: rgb(28, 32, 35);
     box-shadow:
         0 0 0 1px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    max-height: 115px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 15px;
+    height: 180px;
     width: 100%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    overflow: hidden;
 }
-.agent_identity_sphere_selector::-webkit-scrollbar { width: 2px; }
-.agent_identity_sphere_selector::-webkit-scrollbar-track { background: transparent; }
-.agent_identity_sphere_selector::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+/* ── Prev/next arrows ── */
+.sphere_carousel_arrow {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    z-index: 2;
+}
+.sphere_carousel_arrow svg { width: 14px; height: 14px; }
+.sphere_carousel_arrow:hover  { background: rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.9); }
+.sphere_carousel_arrow:active { transform: scale(0.92); }
+
+/* ── Viewport (clips) / track (slides) ── */
+.sphere_carousel_viewport {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+.sphere_carousel_track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
 
 .sphere_card {
-    width: 50px;
-    height: 50px;
-    border-radius: 5px;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
     flex-shrink: 0;
     cursor: pointer;
     box-sizing: border-box;
     border: 1px solid rgb(88, 88, 88);
-    transition: border 0.2s ease, transform 0.15s ease;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    opacity: 0.35;
+    transform: scale(0.78);
+    transition: border 0.25s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
 }
-.sphere_card:hover  { transform: scale(1.1); }
-.sphere_card:active { transform: scale(1); }
+.sphere_card.active {
+    opacity: 1;
+    transform: scale(1);
+}
 .sphere_card.selected {
     border: 2px solid rgba(255, 255, 255, 0.85);
     animation: card_border_pulse 2.8s ease-out infinite;

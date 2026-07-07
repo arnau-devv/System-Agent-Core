@@ -25,7 +25,7 @@
 //      bg.setColors(["#0a0a2e", "#1a1a5e", "#0d3b6e", "#1a6b8a"]);
 //
 //  API devuelta por initGrainyBg (y también colgada en window para compatibilidad):
-//    setColors(colorsArray) — actualiza los colores del gradiente
+//    setColors(colorsArray) — actualiza los colores del gradienteMira
 //    resize()               — fuerza un resize del canvas (ej: al mostrar un contenedor oculto)
 // ============================================================
 
