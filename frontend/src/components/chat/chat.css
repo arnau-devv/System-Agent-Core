@@ -33,11 +33,7 @@
         visibility 0s linear 0s;
 }
 
-.x {
-    /* border: 1px solid green; */
-    width: 200px;
-    height: 100%;
-}
+
 
 /* -------------------- BUBBLE EFFECT (por grupo) -------------------- */
 
@@ -115,7 +111,7 @@
     background: rgba(8, 9, 13, 0.92);
     border-right: 0px solid rgba(255, 255, 255, 0.05);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     padding: 5px;
@@ -157,13 +153,14 @@
         inset 0 2px 4px rgba(0, 0, 0, 0.55),
         inset 0 -1px 1px rgba(255, 255, 255, 0.04);
     transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    border-top-right-radius: 1px;
+    /* border-top-right-radius: 1px;
     border-top-left-radius: 7px;
     border-bottom-left-radius: 7px;
-    border-bottom-right-radius: 7px;
+    border-bottom-right-radius: 7px; */
+    border-radius: 7px;
 }
 
-.sidebar_switch_slider::before {
+/* .sidebar_switch_slider::before {
     position: absolute;
     content: "";
     height: 15px;
@@ -174,7 +171,7 @@
     background-color: rgba(255, 255, 255, 0.55);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     transition: 0.35s ease;
-}
+} */
 
 .sidebar_switch input:checked + .sidebar_switch_slider {
     background-color: rgba(120, 140, 255, 0.247);
@@ -183,12 +180,179 @@
         inset 0 -1px 1px rgba(120, 140, 255, 0.08);
 }
 
-.sidebar_switch input:checked + .sidebar_switch_slider::before {
+/* .sidebar_switch input:checked + .sidebar_switch_slider::before {
     background-color: rgba(150, 165, 255, 0.9);
     box-shadow: 0 0 6px rgba(120, 140, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
     transform: translateX(330px);
+} */
+
+/* ---- */
+.sidebar_hidden_input {
+    opacity: 0; /* Hidden by default */
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    /* border: 1px solid rgba(255, 0, 0, 0.305); */
+    border: none;
+    position: absolute;
+    left: -10px;
+    top: 3px;
+    background-color: transparent;
+    transition: opacity 0.25s ease, width 0.25s ease;
+    /* Text style*/
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.518);
+    margin: 0;
+}
+.sidebar_hidden_input:focus {
+    outline: none; border: none; box-shadow: none;
+}    
+
+/* Activates/becomes visible only when the checkbox is checked */
+.sidebar_switch input#sidebar_toggle_checkbox:checked ~ .sidebar_hidden_input {
+    opacity: 1;
+    pointer-events: auto;
+    width: 75%;
+    height: 20px;
+    position: relative;
+    padding: 4px 8px;
+    box-sizing: border-box;
 }
 
+.sidebar_close_arrow {
+    position: absolute;
+    right: 10px;
+    top: 51%;
+    transform: translateY(-50%) translateX(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.25s ease, color 0.2s ease;
+    /* Efecto relieve/grabado: sombra clara abajo simula luz entrando en el hueco */
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18));
+}
+
+.sidebar_switch input#sidebar_toggle_checkbox:checked ~ .sidebar_close_arrow {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) translateX(0);
+}
+
+.sidebar_switch input#sidebar_toggle_checkbox:checked ~ .sidebar_close_arrow:hover {
+    color: rgba(0, 0, 0, 0.75);
+}
+
+
+/* ----------- SIDEBAR CONTENT --------------*/
+.chat_sidebar_content {
+    opacity: 0;
+    width: 100% !important;
+    height: 100%;
+    /* border: 1px solid rgba(255, 0, 0, 0.651); */
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    transition: opacity 0.25s ease;
+}
+.chat_sidebar_container:has(#sidebar_toggle_checkbox:checked) .chat_sidebar_content {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.chat_conversation_list_container {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    width: 102%;
+    max-height: 200px;
+    box-sizing: border-box;
+    padding: 5px;
+
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 2px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Scrollbar fino y discreto, coherente con la estética glass */
+.chat_conversation_list_container::-webkit-scrollbar { width: 2px;}
+.chat_conversation_list_container::-webkit-scrollbar-track { background: transparent; }
+.chat_conversation_list_container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+}
+.chat_conversation_list_container::-webkit-scrollbar-thumb:hover { background: rgba(150, 165, 255, 0.35); }
+.chat_conversation_list_container::-webkit-scrollbar { display: none;}
+.conversation {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border-radius: 5px;
+
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03);
+
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.conversation:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(1px);
+}
+
+.conversation:active {
+    background: rgba(120, 140, 255, 0.1);
+    border-color: rgba(150, 165, 255, 0.2);
+}
+
+/* Estado "seleccionada" (añadir clase .active desde JS) */
+.conversation.active {
+    background: rgba(120, 140, 255, 0.14);
+    border-color: rgba(150, 165, 255, 0.25);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.04),
+        0 0 8px rgba(120, 140, 255, 0.08);
+}
+
+.conversation_tittle {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.75);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    transition: color 0.2s ease;
+}
+
+.conversation:hover .conversation_tittle { color: rgba(255, 255, 255, 0.95); }
+
+.conversation.active .conversation_tittle { color: rgba(190, 200, 255, 0.95); }
+
+
+/* -------------------- CHAT CONTAINER -----------------*/
 .chat_container {
     width: 100%;
     height: 100%;
@@ -202,10 +366,19 @@
     backdrop-filter: blur(12px) saturate(140%);
 }
 
-
 /* -------------------- EXTERNAL COMPONENTS */
 .sphere_wrapper.chat_mode {
-    z-index: 1;
     background: rgba(0, 0, 0, 0.15);
     backdrop-filter: none;
+    top: 60px;
+    left: calc(100% - 20px);
+    transform: translate(-100%, 0) scale(0.3);
+    transform-origin: top right;
+}
+.sphere_wrapper.chat_mode  #sphere_container {
+    transition:
+        width     0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        height    0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 140%;
+    height: 140%;
 }

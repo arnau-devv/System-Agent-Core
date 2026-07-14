@@ -1,4 +1,45 @@
 import os
+import threading
+import numpy as np
+import soundfile as sf
+import sounddevice as sd
+
+
+class AudioManager:
+    # Loads and plays the application's audio assets.
+    # Sound files are loaded on demand and cached in memory
+    # to avoid repeated disk access and reduce playback latency.
+    def __init__(self):
+        self._base_dir = os.path.dirname(__file__)
+        self._sounds_dir = os.path.join(self._base_dir, "sounds")
+
+        # Cache loaded sounds so each file is loaded only once.
+        # Each entry is a tuple (data: np.ndarray, samplerate: int).
+        self._sounds = {}
+
+    def load(self, name: str) -> tuple:
+        if name in self._sounds:
+            return self._sounds[name]
+
+        path = os.path.join(self._sounds_dir, name)
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"[AudioManager] Audio not found: {path}")
+
+        data, samplerate = sf.read(path, dtype='float32')
+        self._sounds[name] = (data, samplerate)
+        return (data, samplerate)
+
+    def play(self, name: str):
+        # Played in a background thread so it never blocks the event loop
+        data, samplerate = self.load(name)
+        threading.Thread(target=sd.play, args=(data, samplerate), daemon=True).start()
+
+    def stop_all(self):
+        sd.stop()
+
+
+"""
+import os
 import pygame
 from pygame import mixer
 
@@ -42,3 +83,4 @@ class AudioManager:
         
     def stop_all(self):
         pygame.mixer.stop()
+"""

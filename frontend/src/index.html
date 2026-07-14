@@ -51,12 +51,41 @@
         <div class="titlebar_supporter"></div>
         
         <div class="chat_main_container">
-            <!-- <div class="x"></div> -->
+
             <div class="chat_sidebar_container" id="chat_sidebar_container">
+                <!-- Sidebar Opener -->
                 <label class="sidebar_switch" id="sidebar_toggle_switch">
                     <input type="checkbox" id="sidebar_toggle_checkbox">
                     <span class="sidebar_switch_slider"></span>
+                    <input type="text" class="sidebar_hidden_input" id="sidebar_hidden_input" placeholder="Search conversations..." spellcheck="false">
+                    <span class="sidebar_close_arrow" title="Cerrar panel">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 6 9 12 15 18"></polyline>
+                        </svg>
+                    </span>
                 </label>
+                
+                <div class="chat_sidebar_content">
+                    <div class="chat_conversation_list_container" id="chat_list_container">
+                        <div class="conversation"><p class="conversation_tittle">Fixing a React state bug</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Weekly meal plan ideas</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Resume review and feedback</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Trip itinerary for Japan</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Explain quantum computing basics</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Email draft for client follow-up</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Python script for data cleaning</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Brainstorming startup names</p></div>
+                        <div class="conversation"><p class="conversation_tittle">SQL query optimization help</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Workout routine for beginners</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Summarizing a research paper</p></div>
+                        <div class="conversation"><p class="conversation_tittle">CSS layout not centering</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Birthday gift ideas for mom</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Interview prep questions</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Debugging a Node.js API</p></div>
+                        <div class="conversation"><p class="conversation_tittle">Book recommendations sci-fi</p></div>
+                    </div>
+                </div>
+                
             </div>
 
             <div class="chat_container"></div>

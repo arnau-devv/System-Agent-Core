@@ -272,6 +272,7 @@ PRINCIPAL CONTENT
     box-shadow: 
         0 0 0 1px rgba(255, 255, 255, 0.06),
         0 8px 60px rgba(0, 0, 0, 0.4);
+    z-index: 1;
 
     transform: translate(-50%, -50%);
 
@@ -292,6 +293,9 @@ PRINCIPAL CONTENT
 #sphere_container {
     width: 125%;
     height: 125%;
+    transition:
+        width     0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        height    0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #sphere_container canvas {

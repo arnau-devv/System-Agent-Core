@@ -1,6 +1,7 @@
 import asyncio
 import uvicorn
 import ws_server
+from persistance.db import init_db, get_db
 from pathlib import Path
 from dotenv import load_dotenv
 from ws_server import app as ws_app
@@ -28,6 +29,9 @@ async def main():
         
         ws_server.system_prompt_builder = ai_service._system_prompt_builder
         
+        await get_db()
+        await init_db()
+        
         await asyncio.sleep(0.1)
         
         async def run_server():
@@ -36,12 +40,12 @@ async def main():
             await server.serve()
 
         await asyncio.gather(
-            sound_engine.run(),
-            wake_word_service.run(),
-            state_manager.run(),
-            ai_service.run(),
-            tts_service.run(),
-            stt_service.run(),
+            sound_engine        .run(),
+            wake_word_service   .run(),
+            state_manager       .run(),
+            ai_service          .run(),
+            tts_service         .run(),
+            stt_service         .run(),
             run_server()
         )
     except Exception as e:

@@ -20,7 +20,7 @@ toggleChatBtn.addEventListener('click', () => {
     sphereApplyChatMode()
     openedModuleNavbarBehavior()
 })
-// chatView.classList.add('module_opened')
+chatView.classList.add('module_opened')
 
 
 // ------- SIDEBAR TOGGLE --------

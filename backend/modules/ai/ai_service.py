@@ -29,7 +29,6 @@ class AiService:
         self._chat_history.append({"role": role, "content": content})
         
     async def run(self):
-        # WebSocket -> Sends all LLM provider names to the frontend
         await self._ws_send("LLM_PROVIDER_NAMES", self._provider_names)
         while True:
             message = await self._queue.get()
