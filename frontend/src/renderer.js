@@ -85,16 +85,15 @@ closeAppBtn.addEventListener('click', () => { ipcRenderer.send('close-app') })
 
 
 // ----------- Event lists -----------
-// Which backend events belong to the titlebar
 const titlebarEvents = [
    'LLM_PROVIDER_NAMES', 'ACTIVE_LLM_PROVIDER', 'ALL_LLM_PROVIDERS_DOWN',
    'TTS_PROVIDER_NAMES', 'ACTIVE_TTS_PROVIDER', 'ALL_TTS_PROVIDERS_DOWN',
    'WW_PROVIDER_NAMES',  'ACTIVE_WW_PROVIDER',  'ALL_WW_PROVIDERS_DOWN'
 ]
 
-// Which backend events belong to the sphere
 const sphereEvents = ['WAKE_DETECTED', 'IDLE']
 
+const chatEvents = ["CHAT_MESSAGE"]
 // ----------- Message routing -----------
 // Decides if this window should handle a given backend message
 function canHandleBackendMessage(message, events) {
@@ -109,6 +108,10 @@ ipcRenderer.on('backend-message', (event, message) => {
    if (canHandleBackendMessage(message, sphereEvents)) {
       console.log('[Sphere]:', message.name, message.data)
       setTimeout(() => sphereInstance?.setState(message.name), sphereDelays[message.name])
+   }
+   if (canHandleBackendMessage(message, chatEvents)) {
+      console.log('[Chat]:', message.name, message.data)
+      if (message.name === "CHAT_MESSAGE") handleMessage(message)
    }
 })
 

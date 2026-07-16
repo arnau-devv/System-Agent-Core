@@ -192,15 +192,6 @@ ipcMain.handle('get-sphere', () => configStore.get('sphere'))
 //  Agent identity settings sends 'agent-identity-data' with 
 //      {agent_name: name, wake_word: currentWakeWord, agent_behavior: behavior}
 // =============================================================================
-// ipcMain.on('user-data', (event, data) => {
-//     if (mainWindow && !mainWindow.isDestroyed())
-//         mainWindow.webContents.send('user-data', data)
-// })
-
-// ipcMain.on('agent-identity-data', (event, data) => {
-//     if (mainWindow && !mainWindow.isDestroyed())
-//         mainWindow.webContents.send('agent-identity-data', data)
-// })
 ipcMain.on('user-data', (event, data) => {
     // Update cache so settings window always shows the latest data
     cachedInitConfig.user = data
@@ -224,7 +215,6 @@ ipcMain.on('agent-identity-data', (event, data) => {
 //  whichever windows care about each event type.
 // =============================================================================
 
-// let cachedInitConfig = null
 let cachedInitConfig = { user: {}, agent_identity: {} }   // en vez de null
 
 
@@ -251,10 +241,11 @@ function handleSettingsMessage(message) {
     if (!settingsWindow || settingsWindow.isDestroyed()) cachedInitConfig = message.data
     else settingsWindow.webContents.send('backend-message', message)
 }
-// STT_DONE / AI_DONE carry the transcript and AI response shown in chat
+
+const chatEvents = ["CHAT_MESSAGE"]
 function handleChatMessages(message) {
-    if ((message.name === 'STT_DONE' || message.name === 'AI_DONE') && chatWindow)
-        chatWindow.webContents.send('backend-message', message)
+    if (chatEvents.includes(message.name))
+        mainWindow.webContents.send('backend-message', message)
 }
 
 

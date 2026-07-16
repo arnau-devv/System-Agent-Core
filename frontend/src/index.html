@@ -88,7 +88,63 @@
                 
             </div>
 
-            <div class="chat_container"></div>
+            <div class="chat_container" id="chat_container">
+                <div class="chat_messages" id="chat_messages">
+                    <!-- From chat_renderer.js -> 
+                    if agent:
+                        <div class="chat_message agent" style="opacity: 1; transform: translateY(0px); transition: opacity 0.3s ease, transform 0.3s ease;">
+                            <div class="chat_avatar"></div>
+                            <div class="chat_message_column">
+                                <h3>assistant</h3>
+                                <p></p>
+                            </div>
+                        </div>
+                        
+                    if user:
+                        <div class="chat_message user" style="opacity: 1; transform: translateY(0px); transition: opacity 0.3s ease, transform 0.3s ease;">
+                            <div class="chat_avatar">
+                                <img src="../assets/images/pfp_example.png" alt="">
+                            </div>
+                            <div class="chat_message_column">
+                                <h3>user</h3>
+                                <p></p>
+                            </div>
+                        </div>
+                    -->
+                </div>
+                <!-- <div class="chat_input_container">
+                    <textarea id="chat_input" placeholder="Type your message..." spellcheck="false"></textarea>
+                    <button id="send_message_btn"><img src="../assets/images/send_icon.png" alt=""></button>
+                </div> -->
+                <!-- <div class="chat-input-wrapper">
+                    <textarea class="chat-input-field" rows="1" placeholder="Escribe un mensaje..."></textarea>
+                </div> -->
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input-field" id="chatField" rows="1" 
+                                placeholder="Escribe un mensaje..." spellcheck="false"></textarea>
+                    <div class="chat-input-toolbar">
+                        <div class="toolbar-left">
+                        <button class="chat-toolbar-btn" title="Adjuntar archivo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+                            </svg>
+                        </button>
+                        <button class="chat-toolbar-btn" title="Micrófono">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16">
+                            <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+                            <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+                            </svg>
+                        </button>
+                        </div>
+                        <button class="chat-send-btn" id="send_message_btn" title="Enviar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

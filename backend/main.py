@@ -1,7 +1,7 @@
 import asyncio
 import uvicorn
 import ws_server
-from persistance.db import init_db, get_db
+from persistance.db import init_db
 from pathlib import Path
 from dotenv import load_dotenv
 from ws_server import app as ws_app
@@ -29,7 +29,6 @@ async def main():
         
         ws_server.system_prompt_builder = ai_service._system_prompt_builder
         
-        await get_db()
         await init_db()
         
         await asyncio.sleep(0.1)

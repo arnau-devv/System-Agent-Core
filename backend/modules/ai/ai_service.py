@@ -3,6 +3,7 @@ import ws_server
 from core.event_bus import EventBus
 from datetime import datetime, timedelta
 from modules.ai.provider_factory import create_llm_providers
+from persistance.components.chat_repository import save_message, get_all_messages
 from modules.ai.system_prompt_builder import SystemPromptBuilder
 
 # AI chat message roles:
@@ -29,6 +30,13 @@ class AiService:
         self._chat_history.append({"role": role, "content": content})
         
     async def run(self):
+        # Load persisted conversation history from DB
+        saved_messages = await get_all_messages()
+        ws_server.saved_messages = saved_messages
+        for msg in saved_messages:
+            self._add_message(msg["role"], msg["content"]) 
+            # await self._ws_send("CHAT_MESSAGE", {"role": msg["role"], "content": msg["content"]})
+            
         await self._ws_send("LLM_PROVIDER_NAMES", self._provider_names)
         while True:
             message = await self._queue.get()
@@ -41,10 +49,14 @@ class AiService:
         # Orchestrates the full response cycle for a single user input
         print(f"[AiService] Received: '{user_input}'")
         self._add_message("user", user_input)
+        await save_message("user", user_input)
+        await self._ws_send("CHAT_MESSAGE", {"role": "user", "content": user_input})
         await self._event_bus.publish("THINKING", {})
         response = await self._generate_response()
         if response:
             self._add_message("assistant", response)
+            await save_message("assistant", response)
+            await self._ws_send("CHAT_MESSAGE", {"role": "assistant", "content": response})
             await self._event_bus.publish("AI_DONE", {"response": response})
         else:
             await self._event_bus.publish("IDLE", {})

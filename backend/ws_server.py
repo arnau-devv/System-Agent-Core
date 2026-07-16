@@ -3,7 +3,7 @@ from fastapi import FastAPI, WebSocket
 from persistance.config_store import config_store
 
 app = FastAPI()
-
+saved_messages = []
 # Global reference to the connected frontend
 connected_socket: WebSocket | None = None
 
@@ -24,6 +24,13 @@ async def websocket_endpoint(websocket: WebSocket):
             "agent_identity": config_store.get("agent_identity")
         }
     }))
+    
+    for msg in saved_messages:
+        await websocket.send_text(json.dumps({
+            "name": "CHAT_MESSAGE",
+            "data": {"role": msg["role"], "content": msg["content"]}
+        }))
+    
     
     while True: # keep connection open
         raw_data = await websocket.receive_text()
