@@ -228,6 +228,7 @@ ipcRenderer.on('background-changed', (event, data) => {
 //  events like WAKE_DETECTED and IDLE.
 // =============================================================================
 const sphereContainer = document.getElementById('sphere_container')
+const sphereWrapper = document.getElementById('sphere_wrapper')
 const sphereDelays    = { WAKE_DETECTED: 250, IDLE: 250 }
 let   sphereInstance  = null
 
@@ -244,7 +245,57 @@ ipcRenderer.on('sphere-changed', (event, data) => {
    else if (data.sphere === 'ion') sphereInstance = window.createIonSphere(sphereContainer)
 })
 
+// ============================================================
+//  SPHERE CLICK MANAGER
+//  First click: activates and sends to backend.
+//  Second click within 3s: blocked (disabled state).
+//  Second click after 3s: treated as a new first click.
+// ============================================================
 
+sphereWrapper.addEventListener('click', () => { sphereClickingManager() })
+
+let firstSphereClickTimer = null
+
+function sphereClickingManager() {
+   const now = Date.now()
+
+   // No previous click recorded — treat as first click
+   if (firstSphereClickTimer === null) {
+      firstSphereClickTimer = now
+      activeSphereClick()
+      return
+   }
+
+   const elapsed = now - firstSphereClickTimer
+
+   // Second click within 3s — block it
+   if (elapsed < 3000) disabledSphereClick()
+   // More than 3s since last click — treat as a fresh first click
+   else {
+      firstSphereClickTimer = now
+      activeSphereClick()
+   }
+}
+
+function activeSphereClick() {
+   sphereWrapper.classList.remove('disabled_sphere_click')
+   sphereWrapper.classList.add('active_sphere_click')
+
+   if (socket && socket.readyState === WebSocket.OPEN) {
+      console.log('[Sphere] Click sent to backend')
+      socket.send(JSON.stringify({ name: 'sphere-toggled' }))
+   }
+}
+
+function disabledSphereClick() {
+   sphereWrapper.classList.remove('active_sphere_click')
+   sphereWrapper.classList.add('disabled_sphere_click')
+   
+   // Remove class after animation ends so the red doesn't persist
+   sphereWrapper.addEventListener('animationend', () => {
+      sphereWrapper.classList.remove('disabled_sphere_click')
+   }, { once: true })  // once: true removes the listener automatically after firing
+}
 // =============================================================================
 //  NAVBAR
 // =============================================================================

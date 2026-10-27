@@ -277,7 +277,7 @@ PRINCIPAL CONTENT
     transform: translate(-50%, -50%);
 
     transition:
-        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.1s cubic-bezier(0.4, 0, 0.2, 1),
         width     0.4s cubic-bezier(0.4, 0, 0.2, 1),
         height    0.4s cubic-bezier(0.4, 0, 0.2, 1),
         top       0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -286,9 +286,53 @@ PRINCIPAL CONTENT
         right     0.4s cubic-bezier(0.4, 0, 0.2, 1),
         all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.sphere_wrapper:hover {
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 8px 60px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.4);
+}
 
+.sphere_wrapper:active, 
+.sphere_wrapper.active_sphere_click:active {
+    transform: translate(-50%, -50%) scale(0.98);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 4px 30px rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.45);
+}
 
+.sphere_wrapper.disabled_sphere_click {
+    animation: error-shake 0.4s ease-in-out both;
+}
 
+@keyframes error-shake {
+    0% { 
+        transform: translate(-50%, -50%);
+    }
+    20% { 
+        transform: translate(calc(-50% - 3px), -50%); 
+        border-color: rgba(255, 50, 50, 1);
+        box-shadow: 0 0 14px 2px rgba(255, 50, 50, 0.8), 0 4px 30px rgba(0, 0, 0, 0.4); 
+    }
+    40% { 
+        transform: translate(calc(-50% + 3px), -50%); 
+    }
+    60% { 
+        transform: translate(calc(-50% - 2px), -50%); 
+        border-color: rgba(255, 50, 50, 0.6);
+        box-shadow: 0 0 8px 1px rgba(255, 50, 50, 0.4), 0 4px 30px rgba(0, 0, 0, 0.4); 
+    }
+    80% { 
+        transform: translate(calc(-50% + 2px), -50%); 
+    }
+    100% { 
+        transform: translate(-50%, -50%); 
+        border-color: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 8px 60px rgba(0, 0, 0, 0.4); 
+    }
+}
 
 #sphere_container {
     width: 125%;

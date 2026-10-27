@@ -4,12 +4,16 @@ import ws_server
 from core.event_bus import EventBus
 class StateManager:
     SYSTEM_STATES = ["IDLE", "LISTENING", "PROCESSING_STT", "THINKING", "SPEAKING", "SPEAKING_DONE"]
-    emotional_states = ["NEUTRAL", "HAPPY", "CONFUSED", "ANGRY"]
+    SYSTEM_EVENTS = ["WAKE_DETECTED", "USER_CHAT_INPUT", "STOP_SPEAKING"]
     def __init__(self, event_bus: EventBus):
         self._event_bus = event_bus
         self._queue = event_bus.subscribe("state_manager")
-        self.system_state = "IDLE"
-        self.emotional_state = "NEUTRAL"
+        self._system_state = "IDLE"
+        self._last_system_event = ""
+        
+    @property
+    def system_state(self):
+        return self._system_state
         
     # Receieves a Event_Bus message -> {"name": event_name, "data": data} 
     async def run(self):
@@ -25,14 +29,14 @@ class StateManager:
             
             if ws_server.connected_socket:
                 try: await ws_server.connected_socket.send_text(json.dumps({"name": state, "data": data}))
-                except Exception as e: raise f"[WebSocket] Error -> {e}"
+                except Exception as e: print(f"[WebSocket] Error -> {e}")
                 
             if state in StateManager.SYSTEM_STATES:
-                self.system_state = state
+                self._system_state = state
                 print(f"[StateManager] System state: {state}")
-            elif state in StateManager.emotional_states:
-                self.emotional_state = state
-                print(f"[StateManager] Emotional state: {state}")
+            if state in StateManager.SYSTEM_EVENTS:
+                self._last_system_event = state
+                print(f"[StateManager] System event: {state}")
                 
             if state == "SPEAKING_DONE":
                 await self._event_bus.publish("KEEP_LISTENING", {})

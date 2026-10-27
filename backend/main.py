@@ -28,6 +28,8 @@ async def main():
         sound_engine          = SoundEngine(event_bus)
         
         ws_server.system_prompt_builder = ai_service._system_prompt_builder
+        ws_server.event_bus = event_bus
+        ws_server.state_manager = state_manager
         
         await init_db()
         

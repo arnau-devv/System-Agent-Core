@@ -10,6 +10,7 @@ class SttService:
         self._event_bus = event_bus
         self._queue = event_bus.subscribe("stt_service")
         self._audio_recorder = audio_recorder
+        self._current_task = None
         # compute_type="int8" forces integer quantization: optimal for CPU (ARM/x86) registers,
         # halving RAM (~150MB) and doubling speed, whereas int16 / float16 would degrade CPU performance
         self._model = WhisperModel("small", device="cpu", compute_type="int8")
@@ -23,11 +24,35 @@ class SttService:
 
             if message["name"] in ["WAKE_DETECTED", "KEEP_LISTENING"]:
                 await self._event_bus.publish("LISTENING", {})
-                #await asyncio.sleep(0.1)  # wait for wake word audio to fade
-                audio = await self._audio_recorder.record()
+                
+                # Wrap record() as a cancellable task so USER_CHAT_INPUT can interrupt it
+                record_task = asyncio.create_task(self._audio_recorder.record())
+                
+                # Listen simultaneously for new messages while recording
+                cancelled_input = None
+                while not record_task.done():
+                    try:
+                        # Check for new messages without blocking more than one chunk duration
+                        incoming = await asyncio.wait_for(self._queue.get(), timeout=0.1)
+                        if incoming["name"] == "USER_CHAT_INPUT":
+                            record_task.cancel()
+                            cancelled_input = incoming["data"]["user_input"]
+                            break
+                    except asyncio.TimeoutError:
+                        continue  # no new message, keep waiting for record() to finish
+
+                if cancelled_input is not None:
+                    # Recording was interrupted — pass the chat input directly to AI
+                    print(f"[SttService] Recording cancelled — routing chat input: '{cancelled_input}'")
+                    await self._event_bus.publish("STT_DONE", {"user_input": cancelled_input})
+                    continue
+
+                try:
+                    audio = await record_task
+                except asyncio.CancelledError:
+                    continue
 
                 if audio is None:
-                    # Timeout — no voice detected, return to idle
                     await self._event_bus.publish("IDLE", {})
                     continue
 
@@ -37,11 +62,9 @@ class SttService:
                 text = self._transcribe(audio)
                 
                 if text is None:
-                    # Transcription failed due to an error
                     print("[SttService] Transcription error")
                     await self._event_bus.publish("IDLE", {})
                 elif not text.strip():
-                    # Transcription succeeded but returned empty — silence or inaudible audio
                     print("[SttService] Empty transcription")
                     await self._event_bus.publish("IDLE", {})
                 else:

@@ -1,4 +1,5 @@
 import json
+import asyncio
 import ws_server
 from core.event_bus import EventBus
 from datetime import datetime, timedelta
@@ -23,6 +24,7 @@ class AiService:
         self._chat_history = [ { "role": "system", "content": SystemPromptBuilder.generate_base_prompt()} ]
         # System "content" defines the agent's personality and language.
         self._system_prompt_builder = SystemPromptBuilder(self._chat_history)
+        self._current_task = None
 
     # Appends a message to the conversation history.
     # Called before and after each API call to keep the full context.
@@ -38,28 +40,44 @@ class AiService:
             # await self._ws_send("CHAT_MESSAGE", {"role": msg["role"], "content": msg["content"]})
             
         await self._ws_send("LLM_PROVIDER_NAMES", self._provider_names)
+        
         while True:
             message = await self._queue.get()
-            if message["name"] == "STT_DONE":
-                await self._event_bus.publish("THINKING", {})
+            if message["name"] in ["STT_DONE", "USER_CHAT_INPUT"]:
+                
+                
+                if self._current_task and not self._current_task.done():
+                    await self._event_bus.publish("STOP_SPEAKING", {})
+                    self._current_task.cancel() 
+                    print("[AiService] AI generation cancelled due new input.")
+                    
                 user_input = message["data"]["user_input"]
-                await self._handle_user_input(user_input)
+                await self._event_bus.publish("THINKING", {})
+                self._current_task = asyncio.create_task(self._handle_user_input(user_input))
 
     async def _handle_user_input(self, user_input: str):
-        # Orchestrates the full response cycle for a single user input
-        print(f"[AiService] Received: '{user_input}'")
-        self._add_message("user", user_input)
-        await save_message("user", user_input)
-        await self._ws_send("CHAT_MESSAGE", {"role": "user", "content": user_input})
-        await self._event_bus.publish("THINKING", {})
-        response = await self._generate_response()
-        if response:
-            self._add_message("assistant", response)
-            await save_message("assistant", response)
-            await self._ws_send("CHAT_MESSAGE", {"role": "assistant", "content": response})
-            await self._event_bus.publish("AI_DONE", {"response": response})
-        else:
-            await self._event_bus.publish("IDLE", {})
+        try:
+            # Orchestrates the full response cycle for a single user input
+            print(f"[AiService] Received: '{user_input}'")
+            self._add_message("user", user_input)
+            await save_message("user", user_input)
+            await self._ws_send("CHAT_MESSAGE", {"role": "user", "content": user_input})
+            
+            response = await self._generate_response()
+            
+            if response:
+                self._add_message("assistant", response)
+                await save_message("assistant", response)
+                await self._ws_send("CHAT_MESSAGE", {"role": "assistant", "content": response})
+                await self._event_bus.publish("AI_DONE", {"response": response})
+            else:
+                await self._event_bus.publish("IDLE", {})
+                
+        except asyncio.CancelledError:
+            # La tarea fue cancelada por un nuevo input. 
+            # No publicamos "IDLE" porque el nuevo flujo ya publicó "THINKING"
+            print(f"[AiService] Tarea abortada limpiamente para el input: '{user_input}'")
+            raise # Siempre se debe relanzar el CancelledError para que asyncio cierre la tarea del todo
 
     async def _generate_response(self) -> str | None:
         # Tries each provider in order until one succeeds

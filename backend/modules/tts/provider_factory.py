@@ -4,12 +4,11 @@ from modules.tts.providers.edge_tts import EdgeTTSProvider
 
 def create_tts_providers() -> list:
     providers = []
-    
     # EdgeTTS — fallback, free, requires internet, no API key
     edgetts_voice = os.getenv("EDGE_TTS_VOICE")
     if edgetts_voice:
         providers.append(EdgeTTSProvider(voice_id = edgetts_voice))
-    
+        
     # ElevenLabs — primary, best quality, requires API key and internet
     elevenlabs_api_key = os.getenv("ELEVENLABS_API_KEY")
     if elevenlabs_api_key:
@@ -20,6 +19,8 @@ def create_tts_providers() -> list:
                 voice_id = os.getenv("ELEVENLABS_VOICE_ID")
             )
         )
+    
+    
     
 
     if not providers:

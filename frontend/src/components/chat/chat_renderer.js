@@ -12,8 +12,6 @@
 //  Grabs the sphere wrapper so the chat module can push it into chat_mode,
 //  resizing and repositioning it when the chat opens or closes.
 // =============================================================================
-const sphereWrapper = document.getElementById('sphere_wrapper')
-
 const chatView      = document.getElementById('chat_main_view')
 const toggleChatBtn = document.getElementById('toggle_chat_btn')
 
@@ -123,8 +121,10 @@ function renderMessages() {
 //  TEXT INPUT
 //  Auto-resizes the textarea as the user types. Height grows upward until it
 //  reaches the 250px cap, at which point vertical scrolling is enabled.
+//  Sends user input to backend via -> WebSocket
 // =============================================================================
 const chatField = document.getElementById('chatField')
+const sendBtn = document.getElementById('send_message_btn');
 
 chatField.addEventListener('input', () => {
     chatField.style.height = 'auto'
@@ -136,3 +136,17 @@ chatField.addEventListener('input', () => {
         chatField.style.overflowY = 'hidden'
     }
 })
+
+sendBtn.addEventListener('click', () => {
+    const message = chatField.value.trim();
+    if (message !== "") {
+        chatField.value = '';
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            console.log("User Input [websocket -> backend]:", message); 
+            socket.send(JSON.stringify({
+                name: 'user-input',
+                data: message
+            }));
+        }
+    }
+});

@@ -83,7 +83,7 @@ Do not touch settings.css for visual changes in this view.
 .background_previsualizer {
     border: 1px solid rgba(255, 255, 255, 0.06);
     height: 80px;
-    width: 120px;
+    width: 100%;
     border-radius: 5px;
     background: transparent;
     position: relative;

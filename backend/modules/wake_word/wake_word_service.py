@@ -61,6 +61,14 @@ class WakeWordService:
             
             while True:
                 await asyncio.sleep(CHUNK_DURATION)
+                
+                # Check for interruption messages while listening
+                try:
+                    incoming = self._queue.get_nowait()
+                    return  # Any message interrupts listen()
+                except asyncio.QueueEmpty:
+                    pass
+            
                 try:
                     chunk = q.get_nowait()
                 except queue.Empty:
